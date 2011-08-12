@@ -1,0 +1,154 @@
+#!/bin/bash
+
+PHP_BUILD_ROOT=$(readlink -f "$(dirname $0)/..")
+
+function usage {
+    echo "Build PHP into a prefix"
+    echo
+    echo "Usage: $(basename $0) <definition> <prefix>"
+    echo
+    echo "Arguments:"
+    echo "  definition: Build Definition, which package to download and other things"
+    echo "  prefix:     Directory where the executables should go into"
+    echo
+}
+
+DEFINITION=$1
+PREFIX=$2
+
+if [ -z "$prefix" ]; then
+    PREFIX=$(pwd)
+fi
+
+function download {
+    local url=$1
+    local package_file="$PHP_BUILD_ROOT/packages/$(basename $url)"
+
+    wget -qP "$PHP_BUILD_ROOT/tmp" "$url" > /dev/null
+
+    if [ 0 -ne $? ]; then
+        return $?
+    fi
+
+    cp "$PHP_BUILD_ROOT/tmp/$(basename $url)" "$PHP_BUILD_ROOT/packages/"
+
+    if [ ! -d "$PHP_BUILD_ROOT/source/$DEFINITION" ]; then
+        mkdir "$PHP_BUILD_ROOT/source/$DEFINITION"
+    fi
+
+    tar -xj --strip-components 1 -f "$package_file" -C "$PHP_BUILD_ROOT/source/$DEFINITION"
+    return $?
+}
+
+function install_package {
+    local url=$1
+
+    if [ ! -f "$PHP_BUILD_ROOT/packages/$(basename $url)" ]; then
+        download $url
+    fi
+
+    build_package "$PHP_BUILD_ROOT/source/$DEFINITION"
+}
+
+function build_package {
+    local source_path=$1
+
+    if [ ! -d "$PREFIX" ]; then
+        mkdir "$PREFIX"
+    fi
+
+    configure_package "$source_path"
+
+    make -C "$source_path" > /dev/null
+    make -C "$source_path" install > /dev/null
+
+    echo
+    echo "What php.ini should be used?"
+    ini_options="php.ini-development php.ini-production none"
+    select ini_file in $ini_options; do
+        if [ "$ini_file" = "none" ]; then
+            break
+        fi
+
+        if [ -f "$source_path/$ini_file" ]; then
+            echo "Using $ini_file as php.ini"
+            cp "$source_path/$ini_file" "$PREFIX/etc/php.ini"
+        else
+            echo "$ini_file not found in $source_path"
+        fi
+        break
+    done
+
+    echo "Done."
+}
+
+function configure_package {
+    local source_path=$1
+    local backup_pwd=$(pwd)
+
+    cd "$source_path"
+
+    if [ ! -d "$PREFIX/etc" ]; then
+        mkdir "$PREFIX/etc"
+    fi
+
+    if [ ! -d "$PREFIX/etc/conf.d" ]; then
+        mkdir "$PREFIX/etc/conf.d"
+    fi
+
+    options="--without-pear \
+--with-gd \
+--with-jpeg-dir=/usr \
+--with-png-dir=/usr \
+--with-vpx-dir=/usr \
+--with-freetype-dir=/usr \
+--with-t1lib=/usr \
+--enable-gd-native-ttf \
+--enable-exif \
+--with-config-file-path="$PREFIX/etc" \
+--with-config-file-scan-dir="$PREFIX/etc/conf.d" \
+--with-mysql=/usr \
+--with-zlib \
+--with-zlib-dir=/usr \
+--with-gettext \
+--with-kerberos \
+--with-imap-ssl \
+--with-mcrypt=/usr \
+--with-pdo-mysql=/usr \
+--with-pdo-sqlite \
+--enable-soap \
+--enable-xmlreader \
+--with-xsl \
+--enable-ftp \
+--enable-cgi \
+--with-curl=/usr \
+--with-tidy \
+--with-xmlrpc \
+--with-mbstring \
+--enable-sysvsem \
+--enable-sysvshm \
+--enable-shmop \
+--with-readline \
+--with-mysqli=/usr/bin/mysql_config \
+--prefix=$PREFIX"
+
+    if [ -d "/usr/lib64" ]; then
+        options="$options --with-libdir=lib64"
+    fi
+
+    ./configure $options > /dev/null
+
+    cd "$backup_pwd"
+}
+
+if [ -z $1 ]; then
+    usage
+    exit 1
+fi
+
+if [ ! -f "$PHP_BUILD_ROOT/definitions/$DEFINITION" ]; then
+    echo "Definition $definition not found."
+    exit 127
+fi
+
+source "$PHP_BUILD_ROOT/definitions/$DEFINITION"
