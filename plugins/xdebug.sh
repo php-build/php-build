@@ -3,22 +3,22 @@
 function install_xdebug_master {
     local TEMP_DIR="$PHP_BUILD_ROOT/tmp"
 
-    if [ -d "$TEMP_DIR/xdebug" ] && [ -d "$TEMP_DIR/xdebug/.git" ]; then
+    if [ -d "$TEMP_DIR/xdebug-master" ] && [ -d "$TEMP_DIR/xdebug-master/.git" ]; then
         local old_pwd=$(pwd)
 
         echo "Updating XDebug from master"
 
-        cd "$TEMP_DIR/xdebug"
+        cd "$TEMP_DIR/xdebug-master"
         git pull origin master > /dev/null
         cd "$old_pwd"
     else
         echo "Fetching XDebug from master"
-        git clone git://github.com/derickr/xdebug.git "$TEMP_DIR/xdebug" > /dev/null
+        git clone git://github.com/derickr/xdebug.git "$TEMP_DIR/xdebug-master" > /dev/null
     fi
 
-    _build_xdebug "$TEMP_DIR/xdebug"
+    _build_xdebug "$TEMP_DIR/xdebug-master"
 
-    git --git-dir="$TEMP_DIR/xdebug/.git" reset --hard HEAD
+    git --git-dir="$TEMP_DIR/xdebug-master/.git" reset --hard HEAD
 }
 
 function install_xdebug {
