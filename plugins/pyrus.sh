@@ -9,11 +9,11 @@ function install_pyrus {
         rm "$PREFIX/bin/pyrus.phar"
     fi
 
-    if [ ! -f "$PHP_BUILD_ROOT/tmp/pyrus.phar" ]; then
-        wget -qP "$PHP_BUILD_ROOT/tmp" $pyrus_url
+    if [ ! -f "$PHP_BUILD_ROOT/packages/pyrus.phar" ]; then
+        wget -qP "$PHP_BUILD_ROOT/packages" $pyrus_url
     fi
 
-    cp "$PHP_BUILD_ROOT/tmp/pyrus.phar" "$PREFIX/bin/pyrus.phar"
+    cp "$PHP_BUILD_ROOT/packages/pyrus.phar" "$PREFIX/bin/pyrus.phar"
 
     if [ ! -d "$PREFIX/pear" ]; then
         mkdir "$PREFIX/pear"
