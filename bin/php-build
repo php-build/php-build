@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PHP_BUILD_ROOT=$(readlink -f "$(dirname $0)/..")
+set -e
 
 function usage {
     echo "Build PHP into a prefix"
@@ -13,28 +13,29 @@ function usage {
     echo
 }
 
+PHP_BUILD_ROOT=$(readlink -f "$(dirname $0)/..")
 DEFINITION=$1
 PREFIX=$2
-
-if [ -z "$prefix" ]; then
-    PREFIX=$(pwd)
-fi
 
 function download {
     local url=$1
     local package_file="$PHP_BUILD_ROOT/packages/$(basename $url)"
+    local temp_package="$PHP_BUILD_ROOT/tmp/$(basename $url)"
 
-    wget -qP "$PHP_BUILD_ROOT/tmp" "$url" > /dev/null
-
-    if [ 0 -ne $? ]; then
-        return $?
+    if [ -f "$temp_package" ]; then
+        rm "$temp_package"
     fi
 
-    cp "$PHP_BUILD_ROOT/tmp/$(basename $url)" "$PHP_BUILD_ROOT/packages/"
-
-    if [ ! -d "$PHP_BUILD_ROOT/source/$DEFINITION" ]; then
-        mkdir "$PHP_BUILD_ROOT/source/$DEFINITION"
+    if [ ! -f "$package_file" ]; then
+        wget -qP "$PHP_BUILD_ROOT/tmp" "$url" > /dev/null
+        cp "$temp_package" "$PHP_BUILD_ROOT/packages/"
     fi
+
+    if [ -d "$PHP_BUILD_ROOT/source/$DEFINITION" ]; then
+        rm "$PHP_BUILD_ROOT/source/$DEFINITION" -rf
+    fi
+
+    mkdir "$PHP_BUILD_ROOT/source/$DEFINITION"
 
     tar -xj --strip-components 1 -f "$package_file" -C "$PHP_BUILD_ROOT/source/$DEFINITION"
     return $?
@@ -43,11 +44,20 @@ function download {
 function install_package {
     local url=$1
 
-    if [ ! -f "$PHP_BUILD_ROOT/packages/$(basename $url)" ]; then
-        download $url
+    download $url
+    build_package "$PHP_BUILD_ROOT/source/$DEFINITION"
+}
+
+function load_plugins {
+    if [ ! -d "$1" ]; then
+        return 1
     fi
 
-    build_package "$PHP_BUILD_ROOT/source/$DEFINITION"
+    for plugin in "$1/"*.sh
+    do
+        source $plugin
+        echo "Loaded $(basename $plugin .sh) Plugin."
+    done
 }
 
 function build_package {
@@ -150,5 +160,7 @@ if [ ! -f "$PHP_BUILD_ROOT/definitions/$DEFINITION" ]; then
     echo "Definition $definition not found."
     exit 127
 fi
+
+load_plugins "$PHP_BUILD_ROOT/plugins"
 
 source "$PHP_BUILD_ROOT/definitions/$DEFINITION"
