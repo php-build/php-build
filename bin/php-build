@@ -1,16 +1,22 @@
 #!/bin/bash
+#/ php-build, Builds PHP with recipes.
+#/ 
+#/ Usage: php-build [--definitions] [<definition>] [<prefix>]
+#/
+#/ Arguments:
+#/   definition:    What release should be used, as well as release-specific
+#/                  configuration.
+#/   prefix:        All built Executables, Configs and Libs are placed in this
+#/                  directory. It's created if it doesn't exist.
+#/
+#/ Options:
+#/   --definitions: Lists all available definitions
+#/
 
 set -e
 
-function usage {
-    echo "Build PHP into a prefix"
-    echo
-    echo "Usage: $(basename $0) <definition> <prefix>"
-    echo
-    echo "Arguments:"
-    echo "  definition: Build Definition, which package to download and other things"
-    echo "  prefix:     Directory where the executables should go into"
-    echo
+function display_usage {
+    grep '^#/' <"$0" | cut -c4- >&2
 }
 
 PHP_BUILD_ROOT=$(readlink -f "$(dirname $0)/..")
@@ -39,6 +45,12 @@ function download {
 
     tar -xj --strip-components 1 -f "$package_file" -C "$PHP_BUILD_ROOT/source/$DEFINITION"
     return $?
+}
+
+function list_definitions {
+    for definition in "$PHP_BUILD_ROOT/definitions/"*; do
+        echo $(basename "$definition")
+    done
 }
 
 function install_package {
@@ -151,16 +163,28 @@ function configure_package {
     cd "$backup_pwd"
 }
 
+# Here the magic begins.
+
+# Display the Usage message if no arguments are given.
 if [ -z $1 ]; then
-    usage
+    display_usage
     exit 1
 fi
 
+if [ "$1" = "--definitions" ]; then
+    list_definitions
+    exit 0
+fi
+
+# Check if the requested Definition exists.
 if [ ! -f "$PHP_BUILD_ROOT/definitions/$DEFINITION" ]; then
-    echo "Definition $definition not found."
+    echo "Definition $DEFINITION not found." >&2
     exit 127
 fi
 
+# Load all definition plugins. Plugins register functions
+# for use whithin definitions. See the xdebug and pyrus plugins for
+# examples.
 load_plugins "$PHP_BUILD_ROOT/plugins"
 
 source "$PHP_BUILD_ROOT/definitions/$DEFINITION"
