@@ -1,4 +1,6 @@
 
+configure_option "--with-mbstring"
+
 install_package "https://downloads.php.net/ilia/php-5.3.7RC5.tar.bz2"
 install_pyrus
 install_xdebug "2.1.2"

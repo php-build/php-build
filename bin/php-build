@@ -15,15 +15,47 @@
 
 set -e
 
-function display_usage {
-    grep '^#/' <"$0" | cut -c4- >&2
-}
+CONFIGURE_OPTIONS="--without-pear \
+--with-gd \
+--with-jpeg-dir=/usr \
+--with-png-dir=/usr \
+--with-vpx-dir=/usr \
+--with-freetype-dir=/usr \
+--with-t1lib=/usr \
+--enable-gd-native-ttf \
+--enable-exif \
+--with-mysql=/usr \
+--with-zlib \
+--with-zlib-dir=/usr \
+--with-gettext \
+--with-kerberos \
+--with-imap-ssl \
+--with-mcrypt=/usr \
+--with-pdo-mysql=/usr \
+--with-pdo-sqlite \
+--enable-soap \
+--enable-xmlreader \
+--with-xsl \
+--enable-ftp \
+--enable-cgi \
+--with-curl=/usr \
+--with-tidy \
+--with-xmlrpc \
+--enable-sysvsem \
+--enable-sysvshm \
+--enable-shmop \
+--with-readline \
+--with-mysqli=/usr/bin/mysql_config"
 
 PHP_BUILD_ROOT=$(readlink -f "$(dirname $0)/..")
 DEFINITION=$1
 PREFIX=$2
 
 E_DEFINITION_NOT_FOUND=127
+
+function display_usage {
+    grep '^#/' <"$0" | cut -c4- >&2
+}
 
 function download {
     local url=$1
@@ -37,6 +69,7 @@ function download {
     if [ ! -f "$package_file" ]; then
         wget -qP "$PHP_BUILD_ROOT/tmp" "$url" > /dev/null
         cp "$temp_package" "$PHP_BUILD_ROOT/packages/"
+        rm "$temp_package"
     fi
 
     if [ -d "$PHP_BUILD_ROOT/source/$DEFINITION" ]; then
@@ -106,9 +139,48 @@ function build_package {
     echo "Done."
 }
 
+# This function sets and unsets arguments for `configure`. Pass it
+# the `-D` option to unset the argument given in `$2`. Otherwise
+# the first argument is the name of the option and the second
+# argument contains the optional value.
+function configure_option {
+    if [ "$1" = "-D" ]; then
+        # This variable will contain the filtered arguments.
+        local filtered=
+
+        for option in $CONFIGURE_OPTIONS; do
+            # If the argument starts with the given string in `$1`
+            # then skip it from concatenation. Otherwise add it to
+            # the filtered options.
+            case "$option" in
+                "$2"*) ;;
+                *) filtered="$filtered $option";;
+            esac
+        done
+        
+        # Trim the leading whitespace added in the concatenation.
+        filtered=$(echo "$filtered" | sed -e 's/[ ]*//')
+
+        # Then replace the old argument list with the new one.
+        CONFIGURE_OPTIONS="$filtered"
+        return 0
+    fi
+
+    CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $1"
+
+    if [ -n "$2" ]; then
+        CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS=$2"
+    fi
+}
+
 function configure_package {
     local source_path=$1
     local backup_pwd=$(pwd)
+
+    local argv="$CONFIGURE_OPTIONS \
+--with-config-file-path="$PREFIX/etc" \
+--with-config-file-scan-dir="$PREFIX/etc/conf.d" \
+--prefix=$PREFIX"
 
     cd "$source_path"
 
@@ -120,47 +192,11 @@ function configure_package {
         mkdir "$PREFIX/etc/conf.d"
     fi
 
-    options="--without-pear \
---with-gd \
---with-jpeg-dir=/usr \
---with-png-dir=/usr \
---with-vpx-dir=/usr \
---with-freetype-dir=/usr \
---with-t1lib=/usr \
---enable-gd-native-ttf \
---enable-exif \
---with-config-file-path="$PREFIX/etc" \
---with-config-file-scan-dir="$PREFIX/etc/conf.d" \
---with-mysql=/usr \
---with-zlib \
---with-zlib-dir=/usr \
---with-gettext \
---with-kerberos \
---with-imap-ssl \
---with-mcrypt=/usr \
---with-pdo-mysql=/usr \
---with-pdo-sqlite \
---enable-soap \
---enable-xmlreader \
---with-xsl \
---enable-ftp \
---enable-cgi \
---with-curl=/usr \
---with-tidy \
---with-xmlrpc \
---with-mbstring \
---enable-sysvsem \
---enable-sysvshm \
---enable-shmop \
---with-readline \
---with-mysqli=/usr/bin/mysql_config \
---prefix=$PREFIX"
-
     if [ -d "/usr/lib64" ]; then
-        options="$options --with-libdir=lib64"
+        argv="$argv --with-libdir=lib64"
     fi
 
-    ./configure $options > /dev/null
+    ./configure $argv > /dev/null
 
     cd "$backup_pwd"
 }
