@@ -23,6 +23,8 @@ PHP_BUILD_ROOT=$(readlink -f "$(dirname $0)/..")
 DEFINITION=$1
 PREFIX=$2
 
+E_DEFINITION_NOT_FOUND=127
+
 function download {
     local url=$1
     local package_file="$PHP_BUILD_ROOT/packages/$(basename $url)"
@@ -179,7 +181,7 @@ fi
 # Check if the requested Definition exists.
 if [ ! -f "$PHP_BUILD_ROOT/definitions/$DEFINITION" ]; then
     echo "Definition $DEFINITION not found." >&2
-    exit 127
+    exit $E_DEFINITION_NOT_FOUND 
 fi
 
 # Load all definition plugins. Plugins register functions
