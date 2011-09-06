@@ -11,6 +11,8 @@
 #/
 #/ Options:
 #/   --definitions: Lists all available definitions
+#/   --ini|i:       Specifies which php.ini-<environment> from the
+#/                  source distribution is used as default php.ini
 #/
 
 set -e
@@ -48,6 +50,14 @@ CONFIGURE_OPTIONS="--without-pear \
 --with-readline"
 
 PHP_BUILD_ROOT=$(readlink -f "$(dirname $0)/..")
+PHP_DEFAULT_INI=
+
+if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
+    PHP_DEFAULT_INI="php.ini-$2"
+    shift
+    shift
+fi
+
 DEFINITION=$1
 PREFIX=$2
 
@@ -137,22 +147,14 @@ function build_package {
     make -C "$source_path" > /dev/null
     make -C "$source_path" install > /dev/null
 
-    echo
-    echo "What php.ini should be used?"
-    ini_options="php.ini-development php.ini-production none"
-    select ini_file in $ini_options; do
-        if [ "$ini_file" = "none" ]; then
-            break
-        fi
-
-        if [ -f "$source_path/$ini_file" ]; then
-            echo "Using $ini_file as php.ini"
-            cp "$source_path/$ini_file" "$PREFIX/etc/php.ini"
+    if [ -n "$PHP_DEFAULT_INI" ]; then
+        if [ -f "$source_path/$PHP_DEFAULT_INI" ]; then
+            echo "Using $PHP_DEFAULT_INI as php.ini"
+            cp "$source_path/$PHP_DEFAULT_INI" "$PREFIX/etc/php.ini"
         else
-            echo "$ini_file not found in $source_path"
+            echo "$PHP_DEFAULT_INI not found in $source_path" >&2
         fi
-        break
-    done
+    fi
 
     echo "Done."
 }
