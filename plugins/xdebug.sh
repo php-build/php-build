@@ -17,7 +17,7 @@ function install_xdebug_master {
 
     cd "$source_dir"
     git reset --hard HEAD
-    cd -
+    cd - > /dev/null
 }
 
 function install_xdebug {
@@ -51,8 +51,6 @@ function _build_xdebug {
     local old_pwd=$(pwd)
 
     cd "$source_dir"
-
-    local php_version=$(echo "<?php echo PHP_VERSION;" | "$PREFIX/bin/php")
 
     $PREFIX/bin/phpize > /dev/null
     "$(pwd)/configure" --enable-xdebug --with-php-config=$PREFIX/bin/php-config > /dev/null
