@@ -58,8 +58,6 @@ if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
     shift
 fi
 
-AFTER_INSTALL_TRIGGERS=
-
 DEFINITION=$1
 PREFIX=$2
 
@@ -125,18 +123,12 @@ function install_package {
     build_package "$PHP_BUILD_ROOT/source/$DEFINITION"
 }
 
-function after_install {
-    if [ -z "$1" ]; then
-        echo "Warning: after_install call with empty arguments" >&2
-        return 1
-    fi
-
-    AFTER_INSTALL_TRIGGERS="$AFTER_INSTALL_TRIGGERS $1"
-}
-
 function trigger_after_install {
-    for trigger in $AFTER_INSTALL_TRIGGERS; do
-        echo -n "Executing after install trigger \"$trigger\""
+    export PHP_BUILD_ROOT
+    export PREFIX
+
+    for trigger in "$PHP_BUILD_ROOT/triggers/after-install/"*; do
+        echo -n "Executing after install trigger \"$(basename $trigger)\""
         "$trigger"
         echo " Done."
     done
@@ -147,10 +139,10 @@ function load_plugins {
         return 1
     fi
 
-    for plugin in "$1/"*.sh
+    for plugin in "$1/"*
     do
         source $plugin
-        echo "Loaded $(basename $plugin .sh) Plugin."
+        echo "Loaded $(basename $plugin) Plugin."
     done
 }
 
