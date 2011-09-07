@@ -136,8 +136,9 @@ function after_install {
 
 function trigger_after_install {
     for trigger in $AFTER_INSTALL_TRIGGERS; do
-        echo "Executing after install trigger \"$trigger\""
+        echo -n "Executing after install trigger \"$trigger\""
         "$trigger"
+        echo " Done."
     done
 }
 
@@ -267,7 +268,7 @@ fi
 # examples.
 load_plugins "$PHP_BUILD_ROOT/plugins"
 
-#source "$PHP_BUILD_ROOT/definitions/$DEFINITION"
+source "$PHP_BUILD_ROOT/definitions/$DEFINITION"
 
 trigger_after_install
 
