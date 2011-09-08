@@ -1,7 +1,7 @@
 #!/bin/bash
 #/ php-build, Builds PHP with recipes.
 #/
-#/ Usage: php-build [--definitions] [<definition>] [<prefix>]
+#/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
 #/
 #/ Arguments:
 #/   definition:    What release should be used, as well as release-specific
