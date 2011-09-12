@@ -19,6 +19,7 @@ function install_pyrus {
         mkdir "$PREFIX/pear"
     fi
 
+    # Store Pyrus' config in `share/pear`.
     local pyrus_home="$PREFIX/share/pear"
 
     # Create Pyrus' own Home Directory
@@ -33,33 +34,34 @@ function install_pyrus {
 
     # Create the Pyrus executable
     #
-    local pyrus_sh="$PREFIX/bin/pyrus"
-
-    echo "#!/bin/bash" > $pyrus_sh
-
     # Pyrus looks for its config by default in the User's Home Directory,
     # so define a separate Home Directory just for Pyrus to isolate
     # the Configs between PHP versions
-    echo "export HOME=$pyrus_home" >> $pyrus_sh
-    echo "$PREFIX/bin/php -dphar.readonly=0 $PREFIX/bin/pyrus.phar \$*" >> $pyrus_sh
+    cat > "$PREFIX/bin/pyrus" <<SH
+#!/usr/bin/env bash
+export HOME=$pyrus_home
+$PREFIX/bin/php -dphar.readonly=0 $PREFIX/bin/pyrus.phar \$*
+SH
 
     chmod +x "$PREFIX/bin/pyrus"
 
-    # Setup Pyrus to place executables in the version's bin directory
-    # so executables can be later easier collected on rehash
-    local pear_sysconfig=$(cat <<EOF
+    # Setup Pyrus to place executables in the version's `bin` directory
+    # so that one can simply add the version's `bin` directory to the
+    # `PATH`.
+    cat > "$PREFIX/pear/.config" <<EOF
 <?xml version="1.0"?>
 <pearconfig version="1.0">
     <bin_dir>$PREFIX/bin</bin_dir>
 </pearconfig>
 EOF
-)
 
-    echo "$pear_sysconfig" > "$PREFIX/pear/.config"
+    if [ ! -d "$pyrus_home/.pear" ]; then
+        mkdir "$pyrus_home/.pear"
+    fi
 
     # Create the default pearconfig.xml by hand, otherwise the
     # User would be asked for the PEAR path on the first run.
-    local pear_config=$(cat <<EOF
+    cat > "$pyrus_home/.pear/pearconfig.xml" <<EOF
 <?xml version="1.0"?>
 <pearconfig version="1.0">
     <default_channel>pear2.php.net</default_channel>
@@ -75,13 +77,6 @@ EOF
     <plugins_dir>$PREFIX/share/pear/.pear</plugins_dir>
 </pearconfig>
 EOF
-)
-
-    if [ ! -d "$pyrus_home/.pear" ]; then
-        mkdir "$pyrus_home/.pear"
-    fi
-
-    echo $pear_config > "$pyrus_home/.pear/pearconfig.xml"
 
     echo Done.
 }
