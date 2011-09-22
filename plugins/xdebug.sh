@@ -4,6 +4,7 @@
 # snapshots.
 function install_xdebug_master {
     local source_dir="$PHP_BUILD_ROOT/source/xdebug-master"
+    local cwd=$(pwd)
 
     if [ -d "$source_dir" ] && [ -d "$source_dir/.git" ]; then
         echo "Updating XDebug from master"
@@ -19,7 +20,7 @@ function install_xdebug_master {
 
     cd "$source_dir"
     git reset --hard HEAD > /dev/null
-    cd - > /dev/null
+    cd "$cwd"
 }
 
 # On the contrary, for stable PHP versions we need a stable XDebug version
