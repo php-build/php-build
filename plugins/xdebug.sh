@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# PHP.next Development releases depend on current XDebug development
+# snapshots.
 function install_xdebug_master {
     local source_dir="$PHP_BUILD_ROOT/source/xdebug-master"
 
@@ -16,21 +18,25 @@ function install_xdebug_master {
     _build_xdebug "$source_dir"
 
     cd "$source_dir"
-    git reset --hard HEAD
+    git reset --hard HEAD > /dev/null
     cd - > /dev/null
 }
 
+# On the contrary, for stable PHP versions we need a stable XDebug version
 function install_xdebug {
     local version=$1
 
     if [ -z "$version" ]; then
+        echo "install_xdebug: No Version given." >&3
         return 1
     fi
 
+    # We cache the tarballs for XDebug versions in `packages/`.
     if [ ! -f "$PHP_BUILD_ROOT/packages/xdebug-$version.tgz" ]; then
         wget -qP "$PHP_BUILD_ROOT/packages" "http://xdebug.org/files/xdebug-$version.tgz"
     fi
 
+    # Each tarball gets extracted to `source/xdebug-$version`.
     if [ -d "$PHP_BUILD_ROOT/source/xdebug-$version" ]; then
         rm "$PHP_BUILD_ROOT/source/xdebug-$version" -rf
     fi
@@ -48,20 +54,23 @@ function _build_xdebug {
 
     echo "Installing the XDebug Extension..."
 
-    local old_pwd=$(pwd)
+    local cwd=$(pwd)
 
     cd "$source_dir"
 
-    $PREFIX/bin/phpize > /dev/null
-    "$(pwd)/configure" --enable-xdebug --with-php-config=$PREFIX/bin/php-config > /dev/null
+    {
+        $PREFIX/bin/phpize > /dev/null
+        "$(pwd)/configure" --enable-xdebug \
+        --with-php-config=$PREFIX/bin/php-config > /dev/null
 
-    make > /dev/null
-    make install > /dev/null
+        make > /dev/null
+        make install > /dev/null
+    } >&4 2>&1
 
     local xdebug_ini="$PREFIX/etc/conf.d/xdebug.ini"
 
-    # Somehow xdebug needs the absolute path to the extensions directory
-    # to get loaded, so get it from the PHP binary
+    # Zend extensions are not looked up in PHP's extension dir, so
+    # we need to find the absolute path for the extension_dir.
     local extension_dir=$(echo "<?php echo ini_get('extension_dir');" | "$PREFIX/bin/php")
 
     if [ ! -f "$xdebug_ini" ]; then
@@ -70,7 +79,7 @@ function _build_xdebug {
         echo "html_errors=on" >> $xdebug_ini
     fi
 
-    cd "$old_pwd"
+    cd "$cwd"
 
     echo "Done."
 }

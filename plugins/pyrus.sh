@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_pyrus {
-    echo "Installing Pyrus..."
+    echo -n "Installing Pyrus..."
 
     local pyrus_url="http://pear2.php.net/pyrus.phar"
 
@@ -39,8 +39,8 @@ function install_pyrus {
     # the Configs between PHP versions
     cat > "$PREFIX/bin/pyrus" <<SH
 #!/usr/bin/env bash
-export HOME=$pyrus_home
-$PREFIX/bin/php -dphar.readonly=0 $PREFIX/bin/pyrus.phar \$*
+export HOME="$pyrus_home"
+"$PREFIX/bin/php" -dphar.readonly=0 "$PREFIX/bin/pyrus.phar" \$@
 SH
 
     chmod +x "$PREFIX/bin/pyrus"
@@ -78,5 +78,5 @@ EOF
 </pearconfig>
 EOF
 
-    echo Done.
+    echo " Done."
 }
