@@ -1,0 +1,4 @@
+
+install_package "http://downloads.php.net/stas/php-5.4.0beta1.tar.bz2"
+install_pyrus
+install_xdebug_master
