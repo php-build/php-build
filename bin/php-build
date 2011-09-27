@@ -240,6 +240,10 @@ function configure_package {
     cd "$backup_pwd"
 }
 
+function with_openssl {
+    configure_option "--with-openssl"
+}
+
 function build_error {
     {
         echo "BUILD ERROR"
