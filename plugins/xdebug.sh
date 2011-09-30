@@ -7,12 +7,12 @@ function install_xdebug_master {
     local cwd=$(pwd)
 
     if [ -d "$source_dir" ] && [ -d "$source_dir/.git" ]; then
-        echo "Updating XDebug from master"
+        log "XDebug" "Updating XDebug from Git Master"
         cd "$source_dir"
         git pull origin master > /dev/null
         cd -
     else
-        echo "Fetching XDebug from master"
+        log "XDebug" "Fetching from Git Master"
         git clone git://github.com/derickr/xdebug.git "$source_dir" > /dev/null
     fi
 
@@ -26,15 +26,18 @@ function install_xdebug_master {
 # On the contrary, for stable PHP versions we need a stable XDebug version
 function install_xdebug {
     local version=$1
+    local package_url="http://xdebug.org/files/xdebug-$version.tgz"
 
     if [ -z "$version" ]; then
         echo "install_xdebug: No Version given." >&3
         return 1
     fi
 
+    log "XDebug" "Downloading $package_url"
+
     # We cache the tarballs for XDebug versions in `packages/`.
     if [ ! -f "$PHP_BUILD_ROOT/packages/xdebug-$version.tgz" ]; then
-        wget -qP "$PHP_BUILD_ROOT/packages" "http://xdebug.org/files/xdebug-$version.tgz"
+        wget -qP "$PHP_BUILD_ROOT/packages" "$package_url"
     fi
 
     # Each tarball gets extracted to `source/xdebug-$version`.
@@ -52,10 +55,9 @@ function install_xdebug {
 
 function _build_xdebug {
     local source_dir="$1"
-
-    echo "Installing the XDebug Extension..."
-
     local cwd=$(pwd)
+
+    log "XDebug" "Compiling in $source_dir"
 
     cd "$source_dir"
 
@@ -75,7 +77,8 @@ function _build_xdebug {
     local extension_dir=$(echo "<?php echo ini_get('extension_dir');" | "$PREFIX/bin/php")
 
     if [ ! -f "$xdebug_ini" ]; then
-        echo "Installing xdebug.ini"
+        log "XDebug" "Installing XDebug configuration in $xdebug_ini"
+
         echo "zend_extension=\"$extension_dir/xdebug.so\"" > $xdebug_ini
         echo "html_errors=on" >> $xdebug_ini
     fi

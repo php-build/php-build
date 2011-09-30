@@ -1,19 +1,26 @@
 #!/bin/bash
 
-function install_pyrus {
-    echo -n "Installing Pyrus..."
+download_pyrus() {
+    local pyrus_url="$1"
 
-    local pyrus_url="http://pear2.php.net/pyrus.phar"
+    log "Pyrus", "Downloading from $pyrus_url"
 
-    if [ -f "$PREFIX/bin/pyrus.phar" ]; then
-        rm "$PREFIX/bin/pyrus.phar"
+    if [ -z "$pyrus_url" ]; then
+        pyrus_url="http://pear2.php.net/pyrus.phar"
     fi
 
     if [ ! -f "$PHP_BUILD_ROOT/packages/pyrus.phar" ]; then
         wget -qP "$PHP_BUILD_ROOT/packages" $pyrus_url
     fi
+}
 
+copy_pyrus_phar() {
     cp "$PHP_BUILD_ROOT/packages/pyrus.phar" "$PREFIX/bin/pyrus.phar"
+}
+
+install_pyrus() {
+    download_pyrus
+    copy_pyrus_phar
 
     if [ ! -d "$PREFIX/pear" ]; then
         mkdir "$PREFIX/pear"
@@ -31,6 +38,8 @@ function install_pyrus {
     # Add the directory where the PHP Files of PEAR Packages get installed
     # to PHP's include path
     echo "include_path=.:$PREFIX/pear/php" > "$PREFIX/etc/conf.d/pear.ini"
+
+    log "Pyrus" "Installing executable in $PREFIX/bin/pyrus"
 
     # Create the Pyrus executable
     #
@@ -77,6 +86,4 @@ EOF
     <plugins_dir>$PREFIX/share/pear/.pear</plugins_dir>
 </pearconfig>
 EOF
-
-    echo " Done."
 }

@@ -56,6 +56,9 @@ TMP="$PHP_BUILD_ROOT/tmp"
 PHP_DEFAULT_INI=
 
 if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
+    if [ -f "$2" ]; then
+        PHP_DEFAULT_INI="$2"
+    fi
     PHP_DEFAULT_INI="php.ini-$2"
     shift
     shift
@@ -88,10 +91,19 @@ function init {
     fi
 }
 
+function log {
+    local marker="$1"
+    local text="$2"
+
+    echo "    [$marker]:  $text" >&3
+}
+
 function download {
     local url=$1
     local package_file="$PHP_BUILD_ROOT/packages/$(basename $url)"
     local temp_package="$PHP_BUILD_ROOT/tmp/$(basename $url)"
+
+    log "Downloading" "$url"
 
     if [ -f "$temp_package" ]; then
         rm "$temp_package"
@@ -135,9 +147,8 @@ function trigger_after_install {
     export PHP_BUILD_ROOT
     export PREFIX
 
-    echo "Trigger after-install"
     for trigger in "$PHP_BUILD_ROOT/triggers/after-install.d/"*; do
-        echo "$(basename $trigger)"
+        log "After Install Trigger" "$(basename $trigger)"
         "$trigger" 2>&4
     done
 }
@@ -157,11 +168,14 @@ function load_plugins {
 function build_package {
     local source_path=$1
 
+
     if [ ! -d "$PREFIX" ]; then
         mkdir "$PREFIX"
     fi
 
     configure_package "$source_path"
+
+    log "Make" "$source_path"
 
     make -C "$source_path" > /dev/null
     make -C "$source_path" install > /dev/null
@@ -212,6 +226,11 @@ function configure_option {
     fi
 }
 
+# Compile PHP with SSL support
+function with_openssl {
+    configure_option "--with-openssl"
+}
+
 function configure_package {
     local source_path=$1
     local backup_pwd=$(pwd)
@@ -220,6 +239,8 @@ function configure_package {
 --with-config-file-path="$PREFIX/etc" \
 --with-config-file-scan-dir="$PREFIX/etc/conf.d" \
 --prefix=$PREFIX"
+    
+    log "Configure" "$source_path"
 
     cd "$source_path"
 
@@ -238,10 +259,6 @@ function configure_package {
     ./configure $argv > /dev/null
 
     cd "$backup_pwd"
-}
-
-function with_openssl {
-    configure_option "--with-openssl"
 }
 
 function build_error {
@@ -292,8 +309,11 @@ fi
 # examples.
 load_plugins "$PHP_BUILD_ROOT/plugins"
 
+echo "$PHP_DEFAULT_INI gets used as php.ini"
+
 echo
 echo "Building $DEFINITION into $PREFIX"
+echo
 
 trap cleanup_abort SIGINT SIGTERM
 
@@ -305,3 +325,11 @@ source "$PHP_BUILD_ROOT/definitions/$DEFINITION"
 trigger_after_install 2>&4
 
 trap - ERR
+
+if [ -n $LOG_PATH ]; then
+    log "Info" "The Log File is not empty, but the Build did not fail.\
+ Maybe just warnings got logged.\
+ You can review the log in $LOG_PATH"
+fi
+
+log "Success" "Built $DEFINITION successfully."
