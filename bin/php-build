@@ -17,6 +17,9 @@
 
 set -e
 
+# Preserve STDERR on FD3, so we can easily log build
+# errors on FD2 to a file and use FD3 for php-build's 
+# visible error messages.
 exec 3<&2
 
 CONFIGURE_OPTIONS="--without-pear \
@@ -51,10 +54,35 @@ CONFIGURE_OPTIONS="--without-pear \
 --with-pdo-mysql=mysqlnd \
 --with-readline"
 
-PHP_BUILD_ROOT=$(readlink -f "$(dirname $0)/..")
+# Simpe function for resolving a
+# relative path to an absolute one
+# by only using `cd -L`.
+#
+# This is needed because BSD's `readlink` does not
+# support the `-f` flag which is an issue on OSX.
+function realpath {
+    local path="$1"
+
+    if [ -z "$path" ]; then
+        echo "realpath: Path is empty" >&3
+        return 1
+    fi
+
+    local cwd="$(pwd)"
+
+    cd -L "$path"
+    echo "$(pwd)"
+    cd "$cwd"
+}
+
+PHP_BUILD_ROOT=$(realpath "$(dirname $0)/..")
 TMP="$PHP_BUILD_ROOT/tmp"
 PHP_DEFAULT_INI=
 
+# If `-i` or `--ini` is given as first argument, then
+# treat the second argument as `php.ini` file. If this
+# file does not exist, than it is looked up later
+# in the PHP package.
 if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
     if [ -f "$2" ]; then
         PHP_DEFAULT_INI="$2"
