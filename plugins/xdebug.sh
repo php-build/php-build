@@ -83,7 +83,5 @@ function _build_xdebug {
         echo "html_errors=on" >> $xdebug_ini
     fi
 
-    cd "$cwd"
-
-    echo "Done."
+    cd "$cwd" > /dev/null
 }

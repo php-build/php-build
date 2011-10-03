@@ -3,11 +3,11 @@
 download_pyrus() {
     local pyrus_url="$1"
 
-    log "Pyrus", "Downloading from $pyrus_url"
-
     if [ -z "$pyrus_url" ]; then
         pyrus_url="http://pear2.php.net/pyrus.phar"
     fi
+
+    log "Pyrus" "Downloading from $pyrus_url"
 
     if [ ! -f "$PHP_BUILD_ROOT/packages/pyrus.phar" ]; then
         wget -qP "$PHP_BUILD_ROOT/packages" $pyrus_url
