@@ -97,6 +97,8 @@ PREFIX=$2
 
 E_DEFINITION_NOT_FOUND=127
 
+# Processes the Help front matter of the script
+# and displays it on STDERR.
 function display_usage {
     grep '^#/' <"$0" | cut -c4- >&3
 }

@@ -26,15 +26,6 @@ install_pyrus() {
         mkdir "$PREFIX/pear"
     fi
 
-    # Store Pyrus' config in `share/pear`.
-    local pyrus_home="$PREFIX/share/pear"
-
-    # Create Pyrus' own Home Directory
-    # so it will not place them in the real user's home directory
-    if [ ! -d "$pyrus_home" ]; then
-        mkdir -p "$pyrus_home"
-    fi
-
     # Add the directory where the PHP Files of PEAR Packages get installed
     # to PHP's include path
     echo "include_path=.:$PREFIX/pear/php" > "$PREFIX/etc/conf.d/pear.ini"
@@ -48,42 +39,33 @@ install_pyrus() {
     # the Configs between PHP versions
     cat > "$PREFIX/bin/pyrus" <<SH
 #!/usr/bin/env bash
-export HOME="$pyrus_home"
-"$PREFIX/bin/php" -dphar.readonly=0 "$PREFIX/bin/pyrus.phar" \$@
+"$PREFIX/bin/php" -dphar.readonly=0 "$PREFIX/bin/pyrus.phar" "$PREFIX/pear" \$@
 SH
 
     chmod +x "$PREFIX/bin/pyrus"
 
-    # Setup Pyrus to place executables in the version's `bin` directory
-    # so that one can simply add the version's `bin` directory to the
-    # `PATH`.
-    cat > "$PREFIX/pear/.config" <<EOF
-<?xml version="1.0"?>
-<pearconfig version="1.0">
-    <bin_dir>$PREFIX/bin</bin_dir>
-</pearconfig>
-EOF
+    if [ ! -f "$HOME/.pear/pearconfig.xml" ]; then
+        [ ! -d "$HOME/.pear" ] && mkdir "$HOME/.pear"
 
-    if [ ! -d "$pyrus_home/.pear" ]; then
-        mkdir "$pyrus_home/.pear"
-    fi
-
-    # Create the default pearconfig.xml by hand, otherwise the
-    # User would be asked for the PEAR path on the first run.
-    cat > "$pyrus_home/.pear/pearconfig.xml" <<EOF
+        # Create the default pearconfig.xml by hand, otherwise the
+        # User would be asked for the PEAR path on the first run.
+        cat > "$HOME/.pear/pearconfig.xml" <<EOF
 <?xml version="1.0"?>
 <pearconfig version="1.0">
     <default_channel>pear2.php.net</default_channel>
     <auto_discover>0</auto_discover>
     <http_proxy></http_proxy>
-    <cache_dir>$PREFIX/pear/cache</cache_dir>
-    <temp_dir>$PREFIX/pear/temp</temp_dir>
+    <cache_dir>$HOME/.pear/cache</cache_dir>
+    <temp_dir>$HOME/.pear/tmp</temp_dir>
     <verbose>1</verbose>
     <preferred_state>stable</preferred_state>
     <umask>0022</umask>
     <cache_ttl>3600</cache_ttl>
-    <my_pear_path>$PREFIX/pear</my_pear_path>
-    <plugins_dir>$PREFIX/share/pear/.pear</plugins_dir>
+    <my_pear_path>$HOME/.pear</my_pear_path>
+    <plugins_dir>$HOME/.pear</plugins_dir>
 </pearconfig>
 EOF
+    fi
+
+    "$PREFIX/bin/pyrus" set bin_dir "$PREFIX/bin" &> /dev/null
 }
