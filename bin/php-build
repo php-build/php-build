@@ -52,6 +52,7 @@ CONFIGURE_OPTIONS="--without-pear \
 --with-mysql=mysqlnd \
 --with-mysqli=mysqlnd \
 --with-pdo-mysql=mysqlnd \
+--enable-pcntl \
 --with-readline"
 
 # Simpe function for resolving a
