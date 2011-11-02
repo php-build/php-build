@@ -26,14 +26,9 @@ CONFIGURE_OPTIONS="--without-pear \
 --with-gd \
 --with-jpeg-dir=/usr \
 --with-png-dir=/usr \
---with-vpx-dir=/usr \
---with-freetype-dir=/usr \
---with-t1lib=/usr \
---enable-gd-native-ttf \
 --enable-exif \
 --with-zlib \
 --with-zlib-dir=/usr \
---with-gettext \
 --with-kerberos \
 --with-imap-ssl \
 --with-mcrypt=/usr \
@@ -129,6 +124,16 @@ function log {
     echo "    [$marker]:  $text" >&3
 }
 
+function is_osx {
+    local uname=$(uname)
+
+    if [ "$uname" = "Darwin" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 function download {
     local url=$1
     local package_file="$PHP_BUILD_ROOT/packages/$(basename $url)"
@@ -147,7 +152,7 @@ function download {
     fi
 
     if [ -d "$PHP_BUILD_ROOT/source/$DEFINITION" ]; then
-        rm "$PHP_BUILD_ROOT/source/$DEFINITION" -rf
+        rm -rf "$PHP_BUILD_ROOT/source/$DEFINITION"
     fi
 
     mkdir "$PHP_BUILD_ROOT/source/$DEFINITION"
@@ -177,11 +182,15 @@ function install_package {
 function trigger_after_install {
     export PHP_BUILD_ROOT
     export PREFIX
+    local triggers_dir="$PHP_BUILD_ROOT/triggers/after-install.d/"
+    local triggers=$(ls "$triggers_dir")
 
-    for trigger in "$PHP_BUILD_ROOT/triggers/after-install.d/"*; do
-        log "After Install Trigger" "$(basename $trigger)"
-        "$trigger" 2>&4
-    done
+    if [ -n "$triggers" ]; then
+        for trigger in "$triggers_dir"*; do
+            log "After Install Trigger" "$(basename $trigger)"
+            "$trigger" 2>&4
+        done
+    fi
 }
 
 function load_plugins {
@@ -198,7 +207,6 @@ function load_plugins {
 
 function build_package {
     local source_path=$1
-
 
     if [ ! -d "$PREFIX" ]; then
         mkdir "$PREFIX"
@@ -266,6 +274,15 @@ function configure_package {
     local source_path=$1
     local backup_pwd=$(pwd)
 
+    if is_osx; then
+        configure_option -D "--with-gettext"
+        configure_option -D "--with-readline"
+        configure_option "--with-libedit"
+
+        configure_option -D "--with-png-dir"
+        configure_option "--with-png-dir" "/usr/X11"
+    fi
+
     local argv="$CONFIGURE_OPTIONS \
 --with-config-file-path="$PREFIX/etc" \
 --with-config-file-scan-dir="$PREFIX/etc/conf.d" \
@@ -294,7 +311,9 @@ function configure_package {
 
 function build_error {
     {
+        echo
         echo "BUILD ERROR"
+        echo $(tail -n1 "$LOG_PATH")
         echo
         echo "The Log is available here ${LOG_PATH}"
         echo
@@ -304,7 +323,7 @@ function build_error {
 }
 
 function cleanup_abort {
-    rm "$PREFIX" -rf
+    rm -rf "$PREFIX"
 }
 
 # Here the magic begins.
@@ -348,7 +367,7 @@ echo
 
 trap cleanup_abort SIGINT SIGTERM
 
-trap build_error ERR
+trap build_error ERR EXIT
 source "$PHP_BUILD_ROOT/definitions/$DEFINITION"
 
 # After Install Triggers are all executables placed in `triggers/after-install.d`
@@ -356,6 +375,7 @@ source "$PHP_BUILD_ROOT/definitions/$DEFINITION"
 trigger_after_install 2>&4
 
 trap - ERR
+trap - EXIT
 
 if [ -n $LOG_PATH ]; then
     log "Info" "The Log File is not empty, but the Build did not fail.\
