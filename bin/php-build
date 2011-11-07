@@ -17,6 +17,10 @@
 
 set -e
 
+if [ -n "$PHP_BUILD_DEBUG" ]; then
+    set -x
+fi
+
 # Preserve STDERR on FD3, so we can easily log build
 # errors on FD2 to a file and use FD3 for php-build's 
 # visible error messages.
@@ -207,6 +211,7 @@ function load_plugins {
 
 function build_package {
     local source_path=$1
+    local cwd="$(pwd)"
 
     if [ ! -d "$PREFIX" ]; then
         mkdir "$PREFIX"
@@ -216,8 +221,10 @@ function build_package {
 
     log "Make" "$source_path"
 
-    make -C "$source_path" > /dev/null
-    make -C "$source_path" install > /dev/null
+    cd "$source_path"
+    make > /dev/null
+    make install > /dev/null
+    cd "$cwd"
 
     if [ -n "$PHP_DEFAULT_INI" ]; then
         if [ -f "$source_path/$PHP_DEFAULT_INI" ]; then
@@ -256,6 +263,12 @@ function configure_option {
         # Then replace the old argument list with the new one.
         CONFIGURE_OPTIONS="$filtered"
         return 0
+    else
+        if [ "$1" = "-R" ]; then
+            configure_option -D "$2"
+            configure_option "$2" "$3"
+            return 0
+        fi
     fi
 
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $1"
@@ -300,7 +313,7 @@ function configure_package {
         mkdir "$PREFIX/etc/conf.d"
     fi
 
-    if [ -d "/usr/lib64" ]; then
+    if [ "$(uname -p)" = "x86_64" ]; then
         argv="$argv --with-libdir=lib64"
     fi
 
