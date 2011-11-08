@@ -3,7 +3,7 @@
 # PHP.next Development releases depend on current XDebug development
 # snapshots.
 function install_xdebug_master {
-    local source_dir="$PHP_BUILD_ROOT/source/xdebug-master"
+    local source_dir="$TMP/source/xdebug-master"
     local cwd=$(pwd)
 
     if [ -d "$source_dir" ] && [ -d "$source_dir/.git" ]; then
@@ -36,21 +36,21 @@ function install_xdebug {
     log "XDebug" "Downloading $package_url"
 
     # We cache the tarballs for XDebug versions in `packages/`.
-    if [ ! -f "$PHP_BUILD_ROOT/packages/xdebug-$version.tgz" ]; then
-        wget -qP "$PHP_BUILD_ROOT/packages" "$package_url"
+    if [ ! -f "$TMP/packages/xdebug-$version.tgz" ]; then
+        wget -qP "$TMP/packages" "$package_url"
     fi
 
     # Each tarball gets extracted to `source/xdebug-$version`.
-    if [ -d "$PHP_BUILD_ROOT/source/xdebug-$version" ]; then
-        rm "$PHP_BUILD_ROOT/source/xdebug-$version" -rf
+    if [ -d "$TMP/source/xdebug-$version" ]; then
+        rm "$TMP/source/xdebug-$version" -rf
     fi
 
-    tar -xzf "$PHP_BUILD_ROOT/packages/xdebug-$version.tgz" -C "$PHP_BUILD_ROOT/source"
+    tar -xzf "$TMP/packages/xdebug-$version.tgz" -C "$TMP/source"
 
-    [[ -f "$PHP_BUILD_ROOT/source/package.xml" ]] && rm "$PHP_BUILD_ROOT/source/package.xml"
-    [[ -f "$PHP_BUILD_ROOT/source/package2.xml" ]] && rm "$PHP_BUILD_ROOT/source/package2.xml"
+    [[ -f "$TMP/source/package.xml" ]] && rm "$TMP/source/package.xml"
+    [[ -f "$TMP/source/package2.xml" ]] && rm "$TMP/source/package2.xml"
 
-    _build_xdebug "$PHP_BUILD_ROOT/source/xdebug-$version"
+    _build_xdebug "$TMP/source/xdebug-$version"
 }
 
 function _build_xdebug {

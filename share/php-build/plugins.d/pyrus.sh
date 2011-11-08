@@ -9,13 +9,13 @@ download_pyrus() {
 
     log "Pyrus" "Downloading from $pyrus_url"
 
-    if [ ! -f "$PHP_BUILD_ROOT/packages/pyrus.phar" ]; then
-        wget -qP "$PHP_BUILD_ROOT/packages" $pyrus_url
+    if [ ! -f "$TMP/packages/pyrus.phar" ]; then
+        wget -qP "$TMP/packages" $pyrus_url
     fi
 }
 
 copy_pyrus_phar() {
-    cp "$PHP_BUILD_ROOT/packages/pyrus.phar" "$PREFIX/bin/pyrus.phar"
+    cp "$TMP/packages/pyrus.phar" "$PREFIX/bin/pyrus.phar"
 }
 
 install_pyrus() {
