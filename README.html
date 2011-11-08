@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='content-type' value='text/html;charset=utf8'>
+  <meta name='generator' value='Ronn/v0.7.3 (http://github.com/rtomayko/ronn/tree/0.7.3)'>
+  <title>php-build(1) - Builds PHP versions with their coexistence in mind.</title>
+  <style type='text/css' media='all'>
+  /* style: man */
+  body#manpage {margin:0}
+  .mp {max-width:100ex;padding:0 9ex 1ex 4ex}
+  .mp p,.mp pre,.mp ul,.mp ol,.mp dl {margin:0 0 20px 0}
+  .mp h2 {margin:10px 0 0 0}
+  .mp > p,.mp > pre,.mp > ul,.mp > ol,.mp > dl {margin-left:8ex}
+  .mp h3 {margin:0 0 0 4ex}
+  .mp dt {margin:0;clear:left}
+  .mp dt.flush {float:left;width:8ex}
+  .mp dd {margin:0 0 0 9ex}
+  .mp h1,.mp h2,.mp h3,.mp h4 {clear:left}
+  .mp pre {margin-bottom:20px}
+  .mp pre+h2,.mp pre+h3 {margin-top:22px}
+  .mp h2+pre,.mp h3+pre {margin-top:5px}
+  .mp img {display:block;margin:auto}
+  .mp h1.man-title {display:none}
+  .mp,.mp code,.mp pre,.mp tt,.mp kbd,.mp samp,.mp h3,.mp h4 {font-family:monospace;font-size:14px;line-height:1.42857142857143}
+  .mp h2 {font-size:16px;line-height:1.25}
+  .mp h1 {font-size:20px;line-height:2}
+  .mp {text-align:justify;background:#fff}
+  .mp,.mp code,.mp pre,.mp pre code,.mp tt,.mp kbd,.mp samp {color:#131211}
+  .mp h1,.mp h2,.mp h3,.mp h4 {color:#030201}
+  .mp u {text-decoration:underline}
+  .mp code,.mp strong,.mp b {font-weight:bold;color:#131211}
+  .mp em,.mp var {font-style:italic;color:#232221;text-decoration:none}
+  .mp a,.mp a:link,.mp a:hover,.mp a code,.mp a pre,.mp a tt,.mp a kbd,.mp a samp {color:#0000ff}
+  .mp b.man-ref {font-weight:normal;color:#434241}
+  .mp pre {padding:0 4ex}
+  .mp pre code {font-weight:normal;color:#434241}
+  .mp h2+pre,h3+pre {padding-left:0}
+  ol.man-decor,ol.man-decor li {margin:3px 0 10px 0;padding:0;float:left;width:33%;list-style-type:none;text-transform:uppercase;color:#999;letter-spacing:1px}
+  ol.man-decor {width:100%}
+  ol.man-decor li.tl {text-align:left}
+  ol.man-decor li.tc {text-align:center;letter-spacing:4px}
+  ol.man-decor li.tr {text-align:right;float:right}
+  </style>
+</head>
+<!--
+  The following styles are deprecated and will be removed at some point:
+  div#man, div#man ol.man, div#man ol.head, div#man ol.man.
+
+  The .man-page, .man-decor, .man-head, .man-foot, .man-title, and
+  .man-navigation should be used instead.
+-->
+<body id='manpage'>
+  <div class='mp' id='man'>
+
+  <div class='man-navigation' style='display:none'>
+    <a href="#NAME">NAME</a>
+    <a href="#SYNOPSIS">SYNOPSIS</a>
+    <a href="#DESCRIPTION">DESCRIPTION</a>
+    <a href="#OPTIONS">OPTIONS</a>
+    <a href="#ENVIRONMENT">ENVIRONMENT</a>
+    <a href="#COPYRIGHT">COPYRIGHT</a>
+  </div>
+
+  <ol class='man-decor man-head man head'>
+    <li class='tl'>php-build(1)</li>
+    <li class='tc'></li>
+    <li class='tr'>php-build(1)</li>
+  </ol>
+
+  <h2 id="NAME">NAME</h2>
+<p class="man-name">
+  <code>php-build</code> - <span class="man-whatis">Builds PHP versions with their coexistence in mind.</span>
+</p>
+
+<h2 id="SYNOPSIS">SYNOPSIS</h2>
+
+<p><code>php-build</code> <code>--definitions</code> <br />
+<code>php-build</code> [<code>-i</code>|<code>--ini</code> <var>env</var>] <var>definition</var> <var>prefix</var></p>
+
+<h2 id="DESCRIPTION">DESCRIPTION</h2>
+
+<p><code>php-build</code> builds common PHP versions so, that they
+can be used side by side in a development environment.</p>
+
+<p><code>php-build</code> works with written <strong>definitions</strong> for each
+PHP version which you want to build. These definitions
+typically include directives, which tell where to download
+the source package, which XDebug version to use (if any)
+or add/remove/replace specific build options.</p>
+
+<p>To list all available definitions pass the <code>--definitions</code>
+flag. Definitions are looked up in <code>share/php-build/definitions</code>.</p>
+
+<p>To build a definition pass it as the <var>definition</var> argument
+and the path where you want to place the compiled artifacts
+as <var>prefix</var> argument.</p>
+
+<p><strong>Important:</strong> You <em>cannot</em> move the <var>prefix</var> folder
+afterwards. All paths are written <em>absolute</em> to all
+generated configs and executables!</p>
+
+<p>For example to build PHP 5.4.0beta2 into your <code>~/local</code>
+folder with development configuration:</p>
+
+<p><code>$ php-build --ini development 5.4.0beta2 ~/local/5.4.0beta2</code></p>
+
+<p>Here is a quick overview of what is stored where:</p>
+
+<ul>
+<li><code>bin/php</code>, The PHP Executable</li>
+<li><code>bin/pyrus</code>, a Pyrus environment scoped to this PHP version</li>
+<li><code>etc/php.ini</code></li>
+<li><code>etc/conf.d/</code>, PHP is configured to look for additional
+<code>.ini</code> files in this directory. Place your extension's
+config files or your config overrides here.</li>
+<li><code>pear/</code>, here are the source files of PEAR packages located
+which were installed via <code>pyrus</code>. The executables of PEAR packages
+are put in the <code>bin/</code> folder (<strong>not</strong> in <code>pear/bin</code>). This
+directory is configured as include path for PHP.</li>
+</ul>
+
+
+<h3 id="Definitions">Definitions</h3>
+
+<p>Definitions are the <em>blueprints</em> for building PHP versions. Definitions
+are Shell Scripts, which call some predefined functions. Definitions are
+stored in <code>share/php-build/definitions</code>. <code>php-build</code> ships with
+definitions for common PHP releases starting with PHP 5.3. You can
+take a look at these to get a feel for them.</p>
+
+<p><code>php-build</code> defines utility functions for building a PHP source tarball
+and manipulating config files. <code>php-build</code> supports
+<strong>plugins</strong> which provide additional functions for usage within
+definitions. Plugins must have the extension <code>.sh</code> and
+are looked up in <code>share/plugins.d</code>.</p>
+
+<p><code>php-build</code> ships with these plugins:</p>
+
+<ul>
+<li><code>pyrus</code>, Provides a <code>install_pyrus</code> command which downloads
+a <code>pyrus.phar</code> and sets up a Pyrus install local to this <var>prefix</var></li>
+<li><code>xdebug</code>, Provides the <code>install_xdebug</code> <var>version</var> and
+<code>install_xdebug_master</code> commands. Use <code>install_xdebug_master</code>
+for building development versions of PHP and <code>install_xdebug</code>
+<var>version</var> for building stable releases.</li>
+</ul>
+
+
+<p><code>php-build</code> ships with these definition commands by default:</p>
+
+<ul>
+<li><code>install_package</code> <var>url</var>, Downloads the source package from
+the provided <var>url</var>, extract it and run the build process.
+Please provide only <var>url</var>s to <code>.bz2</code> files for now!</li>
+<li><code>configure_option</code> <code>[-R]</code> <code>[-D]</code> <var>name</var> <var>value</var>, by default adds
+the option with <var>name</var> to the argument list for <code>configure</code>. If a
+<var>value</var> is passed, then it adds <var>name</var>=<var>value</var> to the argument list.
+The <code>-D</code> flag removes the option <var>name</var> from the argument list, and
+the flag <code>-R</code>, sets a new <var>value</var> for the existing option <var>name</var>.</li>
+</ul>
+
+
+<h2 id="OPTIONS">OPTIONS</h2>
+
+<dl>
+<dt><code>--definitions</code></dt><dd>Lists all definitions, which are available to build.</dd>
+<dt><code>-i</code> <var>env</var>, <code>--ini</code> <var>env</var></dt><dd>Tells <code>php-build</code> to use the <code>php.ini</code>-<var>env</var>
+from the PHP source archive. Typically you would
+use either <code>production</code> or <code>development</code>. Creates an
+empty <code>php.ini</code> by default.</dd>
+</dl>
+
+
+<h2 id="ENVIRONMENT">ENVIRONMENT</h2>
+
+<ul>
+<li><code>PHP_BUILD_DEBUG</code>, set this to <code>yes</code> to trigger a <code>set -x</code>
+call. This echo's all issued shell commands of the script.</li>
+</ul>
+
+
+<h2 id="COPYRIGHT">COPYRIGHT</h2>
+
+<p>php-build is Copyright (C) 2011 Christoph Hochstrasser
+<a href="http://christophh.net" data-bare-link="true">http://christophh.net</a>.</p>
+
+
+  <ol class='man-decor man-foot man foot'>
+    <li class='tl'></li>
+    <li class='tc'>November 2011</li>
+    <li class='tr'>php-build(1)</li>
+  </ol>
+
+  </div>
+</body>
+</html>
