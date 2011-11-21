@@ -79,7 +79,7 @@ function display_usage {
 
 function init {
     if [ ! -d "$TMP" ]; then
-        mkdir "$TMP"
+        mkdir -p "$TMP"
     fi
 
     if [ ! -d "$TMP/packages" ]; then
