@@ -1,6 +1,4 @@
 
-configure_option "--with-mbstring"
-
 install_package "http://snaps.php.net/php5.3-latest.tar.bz2"
 install_pyrus
 install_xdebug "2.1.2"

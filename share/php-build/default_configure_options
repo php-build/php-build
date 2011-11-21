@@ -26,3 +26,4 @@
 --with-pdo-mysql=mysqlnd
 --enable-pcntl
 --with-readline
+--enable-mbstring
