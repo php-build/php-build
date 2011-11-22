@@ -204,16 +204,21 @@ function build_package {
     make install > /dev/null
     cd "$cwd"
 
+    if [ -f "$PREFIX/bin/php.dSYM" ]; then
+        mv "$PREFIX/bin/php.dSYM" "$PREFIX/bin/php"
+    fi
+
+    if [ -f "$PREFIX/bin/php-cgi.dSYM" ]; then
+        mv "$PREFIX/bin/php-cgi.dSYM" "$PREFIX/bin/php-cgi"
+    fi
+
     if [ -n "$PHP_DEFAULT_INI" ]; then
         if [ -f "$source_path/$PHP_DEFAULT_INI" ]; then
-            echo "Using $PHP_DEFAULT_INI as php.ini"
             cp "$source_path/$PHP_DEFAULT_INI" "$PREFIX/etc/php.ini"
         else
             echo "$PHP_DEFAULT_INI not found in $source_path" >&3
         fi
     fi
-
-    echo "Done."
 }
 
 # This function sets and unsets arguments for `configure`. Pass it
@@ -300,13 +305,13 @@ function build_error {
     {
         echo
         echo "BUILD ERROR"
-        echo $(tail -n1 "$LOG_PATH")
+        echo $(tail -n10 "$LOG_PATH")
         echo
         echo "The Log is available here ${LOG_PATH}"
         echo
     } >&3
     
-    cleanup_abort
+    #cleanup_abort
 }
 
 function cleanup_abort {

@@ -33,10 +33,6 @@ install_pyrus() {
     log "Pyrus" "Installing executable in $PREFIX/bin/pyrus"
 
     # Create the Pyrus executable
-    #
-    # Pyrus looks for its config by default in the User's Home Directory,
-    # so define a separate Home Directory just for Pyrus to isolate
-    # the Configs between PHP versions
     cat > "$PREFIX/bin/pyrus" <<SH
 #!/usr/bin/env bash
 "$PREFIX/bin/php" -dphar.readonly=0 "$PREFIX/bin/pyrus.phar" "$PREFIX/pear" \$@
@@ -67,5 +63,6 @@ SH
 EOF
     fi
 
-    "$PREFIX/bin/pyrus" set bin_dir "$PREFIX/bin" &> /dev/null
+    "$PREFIX/bin/pyrus" set bin_dir "$PREFIX/bin/" &> /dev/null
+    "$PREFIX/bin/pyrus" set php_prefix "$PREFIX/bin/" &> /dev/null
 }
