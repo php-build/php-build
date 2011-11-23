@@ -1,0 +1,11 @@
+
+configure_option "--enable-fastcgi"
+
+configure_option -R "--with-mysql" "/usr"
+configure_option -R "--with-mysqli" "/usr/lib/mysql/mysql_config"
+configure_option -R "--with-pdo-mysql" "/usr"
+
+configure_option -D "--enable-mbstring"
+
+install_package "http://museum.php.net/php5/php-5.2.17.tar.bz2"
+install_xdebug "2.1.2"
