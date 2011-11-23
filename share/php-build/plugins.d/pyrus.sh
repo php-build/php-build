@@ -22,20 +22,20 @@ install_pyrus() {
     download_pyrus
     copy_pyrus_phar
 
-    if [ ! -d "$PREFIX/pear" ]; then
-        mkdir "$PREFIX/pear"
+    if [ ! -d "$PREFIX/pyrus" ]; then
+        mkdir "$PREFIX/pyrus"
     fi
 
     # Add the directory where the PHP Files of PEAR Packages get installed
     # to PHP's include path
-    echo "include_path=.:$PREFIX/pear/php" > "$PREFIX/etc/conf.d/pear.ini"
+    echo "include_path=.:$PREFIX/pyrus/php" > "$PREFIX/etc/conf.d/pyrus.ini"
 
     log "Pyrus" "Installing executable in $PREFIX/bin/pyrus"
 
     # Create the Pyrus executable
     cat > "$PREFIX/bin/pyrus" <<SH
 #!/usr/bin/env bash
-"$PREFIX/bin/php" -dphar.readonly=0 "$PREFIX/bin/pyrus.phar" "$PREFIX/pear" \$@
+"$PREFIX/bin/php" -dphar.readonly=0 "$PREFIX/bin/pyrus.phar" "$PREFIX/pyrus" \$@
 SH
 
     chmod +x "$PREFIX/bin/pyrus"
