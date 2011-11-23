@@ -40,7 +40,9 @@ Here is a quick overview of what is stored where:
  * `etc/conf.d/`, PHP is configured to look for additional
    `.ini` files in this directory. Place your extension's 
    config files or your config overrides here.
- * `pear/`, here are the source files of PEAR packages located 
+ * `pear/`, here are PHP source files of PEAR packages installed
+   via `pear` located.
+ * `pyrus/`, here are the source files of PEAR packages located 
    which were installed via `pyrus`. The executables of PEAR packages
    are put in the `bin/` folder (**not** in `pear/bin`). This
    directory is configured as include path for PHP.
@@ -78,6 +80,20 @@ are looked up in `share/plugins.d`.
    <value> is passed, then it adds <name>=<value> to the argument list.
    The `-D` flag removes the option <name> from the argument list, and
    the flag `-R`, sets a new <value> for the existing option <name>.
+
+### pear vs. pyrus
+
+Currently [Pyrus](http://pear2.php.net/PEAR2_Pyrus) is provided
+as the default installer for PEAR packages in the shipped definitions.
+
+If you want to use the `pear` command for managing PEAR packages add
+`with_pear` before the call to `install_package`. You __should remove__ the 
+`install_pyrus` from the definition, otherwise the include paths
+will be messed up and installed executables will conflict as they both
+install them to `$PREFIX/bin`.
+
+The `pear` command installs PHP source files to `$PREFIX/pear` and
+executables to `$PREFIX/bin`.
 
 ## OPTIONS
 
