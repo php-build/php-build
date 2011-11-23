@@ -266,6 +266,14 @@ function with_openssl {
     stub=1
 }
 
+function with_pear {
+    pear_dir="$PREFIX/pear"
+
+    [ ! -d "$PREFIX/pear" ] && mkdir -p "$PREFIX/pear"
+
+    configure_option "--with-pear" "$PREFIX/pear"
+}
+
 function configure_package {
     local source_path=$1
     local backup_pwd=$(pwd)
@@ -275,8 +283,7 @@ function configure_package {
         configure_option -D "--with-readline"
         configure_option "--with-libedit"
 
-        configure_option -D "--with-png-dir"
-        configure_option "--with-png-dir" "/usr/X11"
+        configure_option -R "--with-png-dir" "/usr/X11"
     fi
 
     local argv="$CONFIGURE_OPTIONS \
