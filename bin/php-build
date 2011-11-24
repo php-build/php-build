@@ -22,7 +22,7 @@ set -e
 # This is the usage message, like it's done in 
 # [shocco](https://github.com/rtomayko/shocco).
 #
-#/ php-build, Builds PHP with recipes.
+#/ php-build, Compile and Install PHP
 #/
 #/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
 #/
