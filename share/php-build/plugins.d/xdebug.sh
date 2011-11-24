@@ -19,7 +19,8 @@ function install_xdebug_master {
     _build_xdebug "$source_dir"
 
     cd "$source_dir"
-    git reset --hard HEAD > /dev/null
+    log XDebug "Cleaning up."
+    make clean > /dev/null
     cd "$cwd"
 }
 
@@ -82,6 +83,9 @@ function _build_xdebug {
         echo "zend_extension=\"$extension_dir/xdebug.so\"" > $xdebug_ini
         echo "html_errors=on" >> $xdebug_ini
     fi
+
+    log XDebug "Cleaning up."
+    make clean > /dev/null
 
     cd "$cwd" > /dev/null
 }
