@@ -1,4 +1,27 @@
 #!/bin/bash
+# **php-build** is a utility for building various versions
+# of **PHP** for using them side by side with each other.
+#
+# The overall structure is loosly borrowed from Sam Stephenson's [ruby-build][rb].
+#
+# Installing is currently done by checking out the [php-build][pb] Repository:
+#
+#     git clone git://github.com/CHH/php-build.git
+#     cd php-build
+#     ./bin/php-build --definitions
+#
+# [rb]: https://github.com/sstephenson/ruby-build
+# [pb]: https://github.com/CHH/php-build
+
+# Usage
+# -----
+
+# The most important line in every shell script
+set -e
+
+# This is the usage message, like it's done in 
+# [shocco](https://github.com/rtomayko/shocco).
+#
 #/ php-build, Builds PHP with recipes.
 #/
 #/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
@@ -15,8 +38,9 @@
 #/                  source distribution is used as default php.ini
 #/
 
-set -e
-
+# Set the `PHP_BUILD_DEBUG` environment variable to
+# `yes` to trigger the `set -x` call, which in turn
+# outputs every issued shell command to `STDOUT`.
 if [ -n "$PHP_BUILD_DEBUG" ]; then
     set -x
 fi
@@ -47,28 +71,48 @@ function realpath {
     cd "$cwd"
 }
 
+# Common Variables
+# ----------------
+
+# This is the path where php-build is installed. This
+# is treated as the base for the `share/` and `tmp/`
+# folders of php-build.
 PHP_BUILD_ROOT=$(realpath "$(dirname $0)/..")
 TMP="$PHP_BUILD_ROOT/tmp/php-build"
-PHP_DEFAULT_INI=
 
+# This file gets copied to `$PREFIX/etc/php.ini` once
+# the build is complete. This is by default the PHP tarball's
+# `php.ini-production`.
+PHP_DEFAULT_INI="php.ini-production"
+
+# Read the list of arguments for the call to `./configure`
+# in PHP's source.
+#
+# These arguments are read from `share/php-build/default_configure_options`.
 CONFIGURE_OPTIONS=$(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_options")
 
 # If `-i` or `--ini` is given as first argument, then
-# treat the second argument as `php.ini` file. If this
-# file does not exist, than it is looked up later
-# in the PHP package.
+# treat the second argument as `php.ini` file.
 if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
+    # If an existing path is passed (and the path is a file)
+    # then use this file, otherwise use `php.ini-<value>`
+    # from the tarball.
     if [ -f "$2" ]; then
         PHP_DEFAULT_INI="$2"
+    else
+        PHP_DEFAULT_INI="php.ini-$2"
     fi
-    PHP_DEFAULT_INI="php.ini-$2"
     shift
     shift
 fi
 
+# This is the name of the definition we want to build.
 DEFINITION=$1
+
+# The built PHP version is placed in this directory.
 PREFIX=$2
 
+# Error Code to return if a defintion was not found.
 E_DEFINITION_NOT_FOUND=127
 
 # Processes the Help front matter of the script
@@ -77,6 +121,7 @@ function display_usage {
     grep '^#/' <"$0" | cut -c4- >&3
 }
 
+# Init the directories on first run.
 function init {
     if [ ! -d "$TMP" ]; then
         mkdir -p "$TMP"
@@ -99,6 +144,8 @@ function init {
     fi
 }
 
+# Logs a given log text with a [marker] to
+# STDERR.
 function log {
     local marker="$1"
     local text="$2"
@@ -106,6 +153,9 @@ function log {
     echo "    [$marker]:  $text" >&3
 }
 
+# Uses uname to check if php-build is run on OSX.
+# This is used later on to enable specifc fixes for
+# OSX oddnesses in library file placement.
 function is_osx {
     local uname=$(uname)
 
@@ -116,6 +166,8 @@ function is_osx {
     fi
 }
 
+# Downloads a PHP Source Tarball and extracts it
+# to `$TMP/source/$DEFINITION`.
 function download {
     local url=$1
     local package_file="$TMP/packages/$(basename $url)"
@@ -139,10 +191,15 @@ function download {
 
     mkdir "$TMP/source/$DEFINITION"
 
+    # The PHP tarballs have one directory, which is named
+    # `php-<something underminable>`, so skip this directory
+    # on extraction.
     tar -xj --strip-components 1 -f "$package_file" -C "$TMP/source/$DEFINITION"
     return $?
 }
 
+# List all defintions found in `share/php-build/definitions`.
+#
 function list_definitions {
     {
         for definition in "$PHP_BUILD_ROOT/share/php-build/definitions/"*
@@ -150,15 +207,6 @@ function list_definitions {
             echo $(basename "$definition")
         done
     } | sort >&3
-}
-
-function install_package {
-    local url=$1
-
-    {
-        download $url
-        build_package "$TMP/source/$DEFINITION"
-    } >&4 2>&1
 }
 
 function trigger_after_install {
@@ -200,8 +248,11 @@ function build_package {
     log "Make" "$source_path"
 
     cd "$source_path"
-    make > /dev/null
-    make install > /dev/null
+    {
+        make
+        make install
+        make clean
+    } > /dev/null
     cd "$cwd"
 
     if [ -f "$PREFIX/bin/php.dSYM" ]; then
@@ -216,11 +267,31 @@ function build_package {
         if [ -f "$source_path/$PHP_DEFAULT_INI" ]; then
             cp "$source_path/$PHP_DEFAULT_INI" "$PREFIX/etc/php.ini"
         else
-            echo "$PHP_DEFAULT_INI not found in $source_path" >&3
+            if [ -f "$PHP_DEFAULT_INI" ]; then
+                cp "$PHP_DEFAULT_INI" "$PREFIX/etc/php.ini"
+            fi
         fi
     fi
 }
 
+# Definition commands
+# -------------------
+
+# ### install_package
+#
+# Downloads and builds the PHP tarball from the given URL.
+# For now only `.tar.bz2` archives are supported.
+function install_package {
+    local url=$1
+
+    {
+        download $url
+        build_package "$TMP/source/$DEFINITION"
+    } >&4 2>&1
+}
+
+# ### configure_option
+#
 # This function sets and unsets arguments for `configure`. Pass it
 # the `-D` option to unset the argument given in `$2`. Otherwise
 # the first argument is the name of the option and the second
@@ -261,11 +332,20 @@ function configure_option {
     fi
 }
 
-# Compile PHP with SSL support
+# ### with_openssl
+#
+# Configures PHP with OpenSSL support.
+# 
+# This is left in for backwards compatibility with
+# definitions which were written before `--with-openssl`
+# was in the list of default configure arguments.
 function with_openssl {
     stub=1
 }
 
+# ### with_pear
+#
+# Configures a `pear` install in `$PREFIX/pear`.
 function with_pear {
     pear_dir="$PREFIX/pear"
 
@@ -274,10 +354,21 @@ function with_pear {
     configure_option "--with-pear" "$PREFIX/pear"
 }
 
+# Configure Stage
+# ---------------
+
+# This is invoked by `build_package` and is used to
+# build PHP with the arguments in `$CONFIGURE_OPTIONS`.
+#
 function configure_package {
     local source_path=$1
     local backup_pwd=$(pwd)
 
+    # Mac OSX stores some libraries (for example `libpng`)
+    # in `/usr/X11/lib` instead of `/usr/lib`.
+    #
+    # This currently builds PHP without the `gettext` and `readline`
+    # extensions, as I've currently not got them to work on my machine.
     if is_osx; then
         configure_option -D "--with-gettext"
         configure_option -D "--with-readline"
@@ -286,6 +377,8 @@ function configure_package {
         configure_option -R "--with-png-dir" "/usr/X11"
     fi
 
+    # Add the config-file-path, config-file-scan-dir aswell as the
+    # prefix to the build options, these cannot be changed by definitions.
     local argv="$CONFIGURE_OPTIONS \
 --with-config-file-path="$PREFIX/etc" \
 --with-config-file-scan-dir="$PREFIX/etc/conf.d" \
@@ -299,6 +392,8 @@ function configure_package {
         mkdir -p "$PREFIX/etc/conf.d"
     fi
 
+    # Set the lib dir to `lib64` on **x86_64**
+    # systems.
     if [ "$(uname -p)" = "x86_64" ]; then
         argv="$argv --with-libdir=lib64"
     fi
@@ -308,32 +403,39 @@ function configure_package {
     cd "$backup_pwd"
 }
 
+# Handles build errors, and displays the last 10 lines
+# of the build log.
 function build_error {
     {
         echo
         echo "BUILD ERROR"
         echo $(tail -n10 "$LOG_PATH")
         echo
-        echo "The Log is available here ${LOG_PATH}"
+        echo "The full Log is available here ${LOG_PATH}"
         echo
     } >&3
     
-    #cleanup_abort
+    # Removes the prefix when the build fails.
+    cleanup_abort
 }
 
 function cleanup_abort {
     rm -rf "$PREFIX"
 }
 
-# Here the magic begins.
+# Here the magic begins
+# ---------------------
 
 # Set up the directories needed for the source
 # and the downloaded packages.
 init
 
+# Generate the Path for the build log.
 TIME="$(date "+%Y%m%d%H%M%S")"
 LOG_PATH="$PHP_BUILD_ROOT/var/log/php-build/error.$DEFINITION.$TIME.log"
 
+# Redirect everything logged to STDERR (except messages by php-build itself)
+# to the Log file.
 exec 4<> "$LOG_PATH"
 
 # Display the Usage message if no arguments are given.
@@ -364,18 +466,24 @@ echo
 echo "Building $DEFINITION into $PREFIX"
 echo
 
+# Handle script termination with the `cleanup_abort`.
 trap cleanup_abort SIGINT SIGTERM
 
+# Handle Script Errors with `build_error`.
 trap build_error ERR EXIT
+
+# Source the definition file
 source "$PHP_BUILD_ROOT/share/php-build/definitions/$DEFINITION"
 
-# After Install Triggers are all executables placed in `triggers/after-install.d`
+# Run executables placed in `share/php-build/after-install.d`
 #
 trigger_after_install 2>&4
 
+# Unbind the error handler.
 trap - ERR
 trap - EXIT
 
+# Display a notice if build warnings got logged.
 if [ -n $LOG_PATH ]; then
     log "Info" "The Log File is not empty, but the Build did not fail.\
  Maybe just warnings got logged.\
@@ -383,3 +491,6 @@ if [ -n $LOG_PATH ]; then
 fi
 
 log "Success" "Built $DEFINITION successfully."
+
+trap - SIGINT
+trap - SIGTERM
