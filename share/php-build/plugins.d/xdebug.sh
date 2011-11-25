@@ -17,11 +17,6 @@ function install_xdebug_master {
     fi
 
     _build_xdebug "$source_dir"
-
-    cd "$source_dir"
-    log XDebug "Cleaning up."
-    make clean > /dev/null
-    cd "$cwd"
 }
 
 # On the contrary, for stable PHP versions we need a stable XDebug version
