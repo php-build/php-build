@@ -1,9 +1,9 @@
 
 configure_option "--enable-fastcgi"
 
-configure_option -R "--with-mysql" "/usr"
-configure_option -R "--with-mysqli" "/usr/lib/mysql/mysql_config"
-configure_option -R "--with-pdo-mysql" "/usr"
+configure_option -R "--with-mysql"
+configure_option -R "--with-mysqli"
+configure_option -R "--with-pdo-mysql"
 
 configure_option -D "--enable-mbstring"
 
