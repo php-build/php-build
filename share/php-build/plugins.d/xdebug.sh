@@ -43,7 +43,7 @@ function install_xdebug {
 
     # Each tarball gets extracted to `source/xdebug-$version`.
     if [ -d "$TMP/source/xdebug-$version" ]; then
-        rm "$TMP/source/xdebug-$version" -rf
+        rm -rf "$TMP/source/xdebug-$version"
     fi
 
     tar -xzf "$TMP/packages/xdebug-$version.tgz" -C "$TMP/source"
