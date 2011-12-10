@@ -16,7 +16,8 @@
 # Usage
 # -----
 
-# The most important line in every shell script
+# The most important line in every shell script. Basically this says: This script should
+# fail once a command invocation itself fails.
 set -e
 
 # This is the usage message, like it's done in 
