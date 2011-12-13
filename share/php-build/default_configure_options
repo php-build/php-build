@@ -3,6 +3,7 @@
 --with-jpeg-dir=/usr
 --with-png-dir=/usr
 --enable-exif
+--enable-zip
 --with-zlib
 --with-zlib-dir=/usr
 --with-kerberos
