@@ -53,21 +53,21 @@ exec 3<&2
 
 # Simpe function for resolving a
 # relative path to an absolute one
-# by only using `cd -L`.
-#
-# This is needed because BSD's `readlink` does not
-# support the `-f` flag which is an issue on OSX.
 function realpath {
     local path="$1"
+    local cwd="$(pwd)"
 
     if [ -z "$path" ]; then
         echo "realpath: Path is empty" >&3
         return 1
     fi
 
-    local cwd="$(pwd)"
+	while [ -n "$path" ]; do
+		cd "${path%/*}"
+		local name="${path##*/}"
+		path="$(readlink "$name" || true)"
+	done
 
-    cd -L "$path"
     echo "$(pwd)"
     cd "$cwd"
 }
@@ -78,7 +78,7 @@ function realpath {
 # This is the path where php-build is installed. This
 # is treated as the base for the `share/` and `tmp/`
 # folders of php-build.
-PHP_BUILD_ROOT=$(realpath "$(dirname $0)/..")
+PHP_BUILD_ROOT="$(realpath "$0")/.."
 TMP="$PHP_BUILD_ROOT/tmp/php-build"
 
 # This file gets copied to `$PREFIX/etc/php.ini` once
