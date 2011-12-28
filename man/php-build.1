@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "PHP\-BUILD" "1" "November 2011" "" ""
+.TH "PHP\-BUILD" "1" "December 2011" "" ""
 .
 .SH "NAME"
 \fBphp\-build\fR \- Builds PHP versions with their coexistence in mind\.
@@ -23,6 +23,9 @@ To list all available definitions pass the \fB\-\-definitions\fR flag\. Definiti
 .
 .P
 To build a definition pass it as the \fIdefinition\fR argument and the path where you want to place the compiled artifacts as \fIprefix\fR argument\.
+.
+.P
+The \fIdefinition\fR argument either expects a definition name as listed by \fB\-\-definitions\fR, or a path to the definition file you want to use\.
 .
 .P
 \fBImportant:\fR You \fIcannot\fR move the \fIprefix\fR folder afterwards\. All paths are written \fIabsolute\fR to all generated configs and executables!
@@ -49,7 +52,10 @@ Here is a quick overview of what is stored where:
 \fBetc/conf\.d/\fR, PHP is configured to look for additional \fB\.ini\fR files in this directory\. Place your extension\'s config files or your config overrides here\.
 .
 .IP "\(bu" 4
-\fBpear/\fR, here are the source files of PEAR packages located which were installed via \fBpyrus\fR\. The executables of PEAR packages are put in the \fBbin/\fR folder (\fBnot\fR in \fBpear/bin\fR)\. This directory is configured as include path for PHP\.
+\fBpear/\fR, here are PHP source files of PEAR packages installed via \fBpear\fR located\.
+.
+.IP "\(bu" 4
+\fBpyrus/\fR, here are the source files of PEAR packages located which were installed via \fBpyrus\fR\. The executables of PEAR packages are put in the \fBbin/\fR folder (\fBnot\fR in \fBpear/bin\fR)\. This directory is configured as include path for PHP\.
 .
 .IP "" 0
 .
@@ -80,6 +86,15 @@ Definitions are the \fIblueprints\fR for building PHP versions\. Definitions are
 \fBconfigure_option\fR \fB[\-R]\fR \fB[\-D]\fR \fIname\fR \fIvalue\fR, by default adds the option with \fIname\fR to the argument list for \fBconfigure\fR\. If a \fIvalue\fR is passed, then it adds \fIname\fR=\fIvalue\fR to the argument list\. The \fB\-D\fR flag removes the option \fIname\fR from the argument list, and the flag \fB\-R\fR, sets a new \fIvalue\fR for the existing option \fIname\fR\.
 .
 .IP "" 0
+.
+.SS "pear vs\. pyrus"
+Currently Pyrus \fIhttp://pear2\.php\.net/PEAR2_Pyrus\fR is provided as the default installer for PEAR packages in the shipped definitions\.
+.
+.P
+If you want to use the \fBpear\fR command for managing PEAR packages add \fBwith_pear\fR before the call to \fBinstall_package\fR\. You \fBshould remove\fR the \fBinstall_pyrus\fR from the definition, otherwise the include paths will be messed up and installed executables will conflict as they both install them to \fB$PREFIX/bin\fR\.
+.
+.P
+The \fBpear\fR command installs PHP source files to \fB$PREFIX/pear\fR and executables to \fB$PREFIX/bin\fR\.
 .
 .SH "OPTIONS"
 .

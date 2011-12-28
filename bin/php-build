@@ -10,6 +10,10 @@
 #     cd php-build
 #     ./bin/php-build --definitions
 #
+# Optionally there's a `install.sh` script supplied with php-build, which installs
+# php-build to the location of a `PREFIX` environment variable, which defaults to
+# `/usr/local`.
+#
 # [rb]: https://github.com/sstephenson/ruby-build
 # [pb]: https://github.com/CHH/php-build
 
@@ -29,7 +33,8 @@ set -e
 #/
 #/ Arguments:
 #/   definition:    What release should be used, as well as release-specific
-#/                  configuration.
+#/                  configuration. This is either the name of a builtin definition
+#/                  file (as listed with `--definitions`) or a path to defintion file.
 #/   prefix:        All built Executables, Configs and Libs are placed in this
 #/                  directory. It's created if it doesn't exist.
 #/
@@ -47,7 +52,7 @@ if [ -n "$PHP_BUILD_DEBUG" ]; then
 fi
 
 # Preserve STDERR on FD3, so we can easily log build
-# errors on FD2 to a file and use FD3 for php-build's 
+# errors on FD2 to a file and use FD3 for php-build's
 # visible error messages.
 exec 3<&2
 
@@ -193,7 +198,7 @@ function download {
     mkdir "$TMP/source/$DEFINITION"
 
     # The PHP tarballs have one directory, which is named
-    # `php-<something underminable>`, so skip this directory
+    # `php-<something undeterminable>`, so skip this directory
     # on extraction.
     tar -xj --strip-components 1 -f "$package_file" -C "$TMP/source/$DEFINITION"
     return $?
@@ -433,6 +438,21 @@ init
 
 # Generate the Path for the build log.
 TIME="$(date "+%Y%m%d%H%M%S")"
+DEFINITION_PATH="$PHP_BUILD_ROOT/share/php-build/definitions/$DEFINITION"
+
+# Check if the requested Definition exists.
+if [ ! -f "$DEFINITION_PATH" ]; then
+    # Check if the supplied argument is an existing file itself,
+    # to use definitions outside of the builtin definition path.
+    if [ -f "$DEFINITION" ]; then
+        DEFINITION_PATH="$DEFINITION"
+        DEFINITION=$(basename "$DEFINITION")
+    else
+        log Error "Definition $DEFINITION not found."
+        exit $E_DEFINITION_NOT_FOUND
+    fi
+fi
+
 LOG_PATH="$PHP_BUILD_ROOT/var/log/php-build/error.$DEFINITION.$TIME.log"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
@@ -448,12 +468,6 @@ fi
 if [ "$1" = "--definitions" ]; then
     list_definitions
     exit 0
-fi
-
-# Check if the requested Definition exists.
-if [ ! -f "$PHP_BUILD_ROOT/share/php-build/definitions/$DEFINITION" ]; then
-    echo "Definition $DEFINITION not found." >&3
-    exit $E_DEFINITION_NOT_FOUND
 fi
 
 # Load all definition plugins. Plugins register functions
@@ -474,7 +488,7 @@ trap cleanup_abort SIGINT SIGTERM
 trap build_error ERR EXIT
 
 # Source the definition file
-source "$PHP_BUILD_ROOT/share/php-build/definitions/$DEFINITION"
+source "$DEFINITION_PATH"
 
 # Run executables placed in `share/php-build/after-install.d`
 #

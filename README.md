@@ -23,6 +23,10 @@ To build a definition pass it as the <var>definition</var> argument
 and the path where you want to place the compiled artifacts
 as <var>prefix</var> argument.
 
+The <var>definition</var> argument either expects a definition name as
+listed by `--definitions`, or a path to the definition file you
+want to use.
+
 **Important:** You *cannot* move the <var>prefix</var> folder
 afterwards. All paths are written *absolute* to all
 generated configs and executables!

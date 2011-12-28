@@ -95,6 +95,10 @@ flag. Definitions are looked up in <code>share/php-build/definitions</code>.</p>
 and the path where you want to place the compiled artifacts
 as <var>prefix</var> argument.</p>
 
+<p>The <var>definition</var> argument either expects a definition name as
+listed by <code>--definitions</code>, or a path to the definition file you
+want to use.</p>
+
 <p><strong>Important:</strong> You <em>cannot</em> move the <var>prefix</var> folder
 afterwards. All paths are written <em>absolute</em> to all
 generated configs and executables!</p>
@@ -113,7 +117,9 @@ folder with development configuration:</p>
 <li><code>etc/conf.d/</code>, PHP is configured to look for additional
 <code>.ini</code> files in this directory. Place your extension's
 config files or your config overrides here.</li>
-<li><code>pear/</code>, here are the source files of PEAR packages located
+<li><code>pear/</code>, here are PHP source files of PEAR packages installed
+via <code>pear</code> located.</li>
+<li><code>pyrus/</code>, here are the source files of PEAR packages located
 which were installed via <code>pyrus</code>. The executables of PEAR packages
 are put in the <code>bin/</code> folder (<strong>not</strong> in <code>pear/bin</code>). This
 directory is configured as include path for PHP.</li>
@@ -160,6 +166,20 @@ the flag <code>-R</code>, sets a new <var>value</var> for the existing option <v
 </ul>
 
 
+<h3 id="pear-vs-pyrus">pear vs. pyrus</h3>
+
+<p>Currently <a href="http://pear2.php.net/PEAR2_Pyrus">Pyrus</a> is provided
+as the default installer for PEAR packages in the shipped definitions.</p>
+
+<p>If you want to use the <code>pear</code> command for managing PEAR packages add
+<code>with_pear</code> before the call to <code>install_package</code>. You <strong>should remove</strong> the
+<code>install_pyrus</code> from the definition, otherwise the include paths
+will be messed up and installed executables will conflict as they both
+install them to <code>$PREFIX/bin</code>.</p>
+
+<p>The <code>pear</code> command installs PHP source files to <code>$PREFIX/pear</code> and
+executables to <code>$PREFIX/bin</code>.</p>
+
 <h2 id="OPTIONS">OPTIONS</h2>
 
 <dl>
@@ -187,7 +207,7 @@ call. This echo's all issued shell commands of the script.</li>
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'></li>
-    <li class='tc'>November 2011</li>
+    <li class='tc'>December 2011</li>
     <li class='tr'>php-build(1)</li>
   </ol>
 
