@@ -436,6 +436,17 @@ function cleanup_abort {
 # and the downloaded packages.
 init
 
+# Display the Usage message if no arguments are given.
+if [ -z $1 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    display_usage
+    exit 1
+fi
+
+if [ "$1" = "--definitions" ]; then
+    list_definitions
+    exit 0
+fi
+
 # Generate the Path for the build log.
 TIME="$(date "+%Y%m%d%H%M%S")"
 DEFINITION_PATH="$PHP_BUILD_ROOT/share/php-build/definitions/$DEFINITION"
@@ -458,17 +469,6 @@ LOG_PATH="$PHP_BUILD_ROOT/var/log/php-build/error.$DEFINITION.$TIME.log"
 # Redirect everything logged to STDERR (except messages by php-build itself)
 # to the Log file.
 exec 4<> "$LOG_PATH"
-
-# Display the Usage message if no arguments are given.
-if [ -z $1 ]; then
-    display_usage
-    exit 1
-fi
-
-if [ "$1" = "--definitions" ]; then
-    list_definitions
-    exit 0
-fi
 
 # Load all definition plugins. Plugins register functions
 # for use whithin definitions. See the xdebug and pyrus plugins for
