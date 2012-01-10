@@ -46,7 +46,7 @@ Here is a quick overview of what is stored where:
    config files or your config overrides here.
  * `pear/`, here are PHP source files of PEAR packages installed
    via `pear` located.
- * `pyrus/`, here are the source files of PEAR packages located 
+ * `share/pyrus/.pear/php`, here are the source files of PEAR packages located 
    which were installed via `pyrus`. The executables of PEAR packages
    are put in the `bin/` folder (**not** in `pear/bin`). This
    directory is configured as include path for PHP.
