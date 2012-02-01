@@ -28,7 +28,7 @@ set -e
 # [shocco](https://github.com/rtomayko/shocco).
 #
 #/ php-build, Compile and Install PHP
-#/ Version: v0.1.0
+#/ Version: v0.2.0
 #/
 #/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
 #/
