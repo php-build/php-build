@@ -1,5 +1,6 @@
 --without-pear
 --with-gd
+--enable-sockets
 --with-jpeg-dir=/usr
 --with-png-dir=/usr
 --enable-exif
