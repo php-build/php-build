@@ -119,7 +119,7 @@ folder with development configuration:</p>
 config files or your config overrides here.</li>
 <li><code>pear/</code>, here are PHP source files of PEAR packages installed
 via <code>pear</code> located.</li>
-<li><code>pyrus/</code>, here are the source files of PEAR packages located
+<li><code>share/pyrus/.pear/php</code>, here are the source files of PEAR packages located
 which were installed via <code>pyrus</code>. The executables of PEAR packages
 are put in the <code>bin/</code> folder (<strong>not</strong> in <code>pear/bin</code>). This
 directory is configured as include path for PHP.</li>
@@ -196,6 +196,8 @@ empty <code>php.ini</code> by default.</dd>
 <ul>
 <li><code>PHP_BUILD_DEBUG</code>, set this to <code>yes</code> to trigger a <code>set -x</code>
 call. This echo's all issued shell commands of the script.</li>
+<li><code>PHP_BUILD_XDEBUG_ENABLE</code>, set to <code>off</code> to comment out the
+lines which enable XDebug, in the generated <code>xdebug.ini</code>.</li>
 </ul>
 
 
@@ -207,7 +209,7 @@ call. This echo's all issued shell commands of the script.</li>
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'></li>
-    <li class='tc'>December 2011</li>
+    <li class='tc'>February 2012</li>
     <li class='tr'>php-build(1)</li>
   </ol>
 

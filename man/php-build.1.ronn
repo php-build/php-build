@@ -113,6 +113,8 @@ executables to `$PREFIX/bin`.
 
  * `PHP_BUILD_DEBUG`, set this to `yes` to trigger a `set -x`
    call. This echo's all issued shell commands of the script.
+ * `PHP_BUILD_XDEBUG_ENABLE`, set to `off` to comment out the
+   lines which enable XDebug, in the generated `xdebug.ini`.
 
 ## COPYRIGHT
 

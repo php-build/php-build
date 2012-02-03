@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "PHP\-BUILD" "1" "December 2011" "" ""
+.TH "PHP\-BUILD" "1" "February 2012" "" ""
 .
 .SH "NAME"
 \fBphp\-build\fR \- Builds PHP versions with their coexistence in mind\.
@@ -55,7 +55,7 @@ Here is a quick overview of what is stored where:
 \fBpear/\fR, here are PHP source files of PEAR packages installed via \fBpear\fR located\.
 .
 .IP "\(bu" 4
-\fBpyrus/\fR, here are the source files of PEAR packages located which were installed via \fBpyrus\fR\. The executables of PEAR packages are put in the \fBbin/\fR folder (\fBnot\fR in \fBpear/bin\fR)\. This directory is configured as include path for PHP\.
+\fBshare/pyrus/\.pear/php\fR, here are the source files of PEAR packages located which were installed via \fBpyrus\fR\. The executables of PEAR packages are put in the \fBbin/\fR folder (\fBnot\fR in \fBpear/bin\fR)\. This directory is configured as include path for PHP\.
 .
 .IP "" 0
 .
@@ -110,6 +110,9 @@ Tells \fBphp\-build\fR to use the \fBphp\.ini\fR\-\fIenv\fR from the PHP source 
 .
 .IP "\(bu" 4
 \fBPHP_BUILD_DEBUG\fR, set this to \fByes\fR to trigger a \fBset \-x\fR call\. This echo\'s all issued shell commands of the script\.
+.
+.IP "\(bu" 4
+\fBPHP_BUILD_XDEBUG_ENABLE\fR, set to \fBoff\fR to comment out the lines which enable XDebug, in the generated \fBxdebug\.ini\fR\.
 .
 .IP "" 0
 .
