@@ -1,12 +1,17 @@
 #!/bin/sh
 
-RONN_PATH=$(which ronn)
+if [ -z "$RONN_PATH" ]; then
+    RONN_PATH=$(which ronn)
+fi
 
 if [ -z "$RONN_PATH" ] || [ ! -f "$RONN_PATH" ]; then
     echo "Seams like ronn is not installed." >&2
-    INSTALL_RONN=$(read -p "Install ronn? (y/n)")
+    read -p "Install ronn? (y/n) " INSTALL_RONN
+
     if [ -z "$INSTALL_RONN" ] || [ "$INSTALL_RONN" = "y" ]; then
         sudo gem install ronn
+    else
+        exit 1
     fi
 fi
 
