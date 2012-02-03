@@ -10,7 +10,7 @@ function install_xdebug_master {
         log "XDebug" "Updating XDebug from Git Master"
         cd "$source_dir"
         git pull origin master > /dev/null
-        cd -
+        cd "$cwd"
     else
         log "XDebug" "Fetching from Git Master"
         git clone git://github.com/derickr/xdebug.git "$source_dir" > /dev/null
@@ -70,13 +70,25 @@ function _build_xdebug {
 
     # Zend extensions are not looked up in PHP's extension dir, so
     # we need to find the absolute path for the extension_dir.
-    local extension_dir=$(echo "<?php echo ini_get('extension_dir');" | "$PREFIX/bin/php")
+    local extension_dir=$("$PREFIX/bin/php" -r "echo ini_get('extension_dir');")
+
+    if [ -z "$PHP_BUILD_XDEBUG_ENABLE" ]; then
+        PHP_BUILD_XDEBUG_ENABLE=yes
+    fi
 
     if [ ! -f "$xdebug_ini" ]; then
         log "XDebug" "Installing XDebug configuration in $xdebug_ini"
 
-        echo "zend_extension=\"$extension_dir/xdebug.so\"" > $xdebug_ini
-        echo "html_errors=on" >> $xdebug_ini
+        # Comment out the lines in the xdebug.ini when the env variable
+        # is set to something to "no"
+        local conf_line_prefix=
+        if [ "$PHP_BUILD_XDEBUG_ENABLE" == "off" ]; then
+            log "XDebug" "XDebug is commented out in $xdebug_ini. Remove the \";\" to enable it."
+            conf_line_prefix=";"
+        fi
+
+        echo "$conf_line_prefix zend_extension=\"$extension_dir/xdebug.so\"" > $xdebug_ini
+        echo "$conf_line_prefix html_errors=on" >> $xdebug_ini
     fi
 
     log XDebug "Cleaning up."
