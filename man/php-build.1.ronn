@@ -38,8 +38,10 @@ folder with development configuration:
 
 Here is a quick overview of what is stored where:
 
+ * `bin/`, Contains the PHP executables and all executables installed via `pear` or `pyrus`.
  * `bin/php`, The PHP Executable
- * `bin/pyrus`, a Pyrus environment scoped to this PHP version
+ * `bin/pyrus`, a Pyrus executable, which installs packages _local_ to this PHP version.
+ * `bin/pear`, a PEAR executable, which installs packages _local_ to this PHP version.
  * `etc/php.ini`
  * `etc/conf.d/`, PHP is configured to look for additional
    `.ini` files in this directory. Place your extension's 
@@ -47,9 +49,7 @@ Here is a quick overview of what is stored where:
  * `pear/`, here are PHP source files of PEAR packages installed
    via `pear` located.
  * `share/pyrus/.pear/php`, here are the source files of PEAR packages located 
-   which were installed via `pyrus`. The executables of PEAR packages
-   are put in the `bin/` folder (**not** in `pear/bin`). This
-   directory is configured as include path for PHP.
+   which were installed via `pyrus`. This is configured as Include Path.
 
 ### Definitions
 

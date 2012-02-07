@@ -40,10 +40,16 @@ For example to build PHP 5\.4\.0beta2 into your \fB~/local\fR folder with develo
 Here is a quick overview of what is stored where:
 .
 .IP "\(bu" 4
+\fBbin/\fR, Contains the PHP executables and all executables installed via \fBpear\fR or \fBpyrus\fR\.
+.
+.IP "\(bu" 4
 \fBbin/php\fR, The PHP Executable
 .
 .IP "\(bu" 4
-\fBbin/pyrus\fR, a Pyrus environment scoped to this PHP version
+\fBbin/pyrus\fR, a Pyrus executable, which installs packages \fIlocal\fR to this PHP version\.
+.
+.IP "\(bu" 4
+\fBbin/pear\fR, a PEAR executable, which installs packages \fIlocal\fR to this PHP version\.
 .
 .IP "\(bu" 4
 \fBetc/php\.ini\fR
@@ -55,7 +61,7 @@ Here is a quick overview of what is stored where:
 \fBpear/\fR, here are PHP source files of PEAR packages installed via \fBpear\fR located\.
 .
 .IP "\(bu" 4
-\fBshare/pyrus/\.pear/php\fR, here are the source files of PEAR packages located which were installed via \fBpyrus\fR\. The executables of PEAR packages are put in the \fBbin/\fR folder (\fBnot\fR in \fBpear/bin\fR)\. This directory is configured as include path for PHP\.
+\fBshare/pyrus/\.pear/php\fR, here are the source files of PEAR packages located which were installed via \fBpyrus\fR\. This is configured as Include Path\.
 .
 .IP "" 0
 .

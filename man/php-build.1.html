@@ -111,8 +111,10 @@ folder with development configuration:</p>
 <p>Here is a quick overview of what is stored where:</p>
 
 <ul>
+<li><code>bin/</code>, Contains the PHP executables and all executables installed via <code>pear</code> or <code>pyrus</code>.</li>
 <li><code>bin/php</code>, The PHP Executable</li>
-<li><code>bin/pyrus</code>, a Pyrus environment scoped to this PHP version</li>
+<li><code>bin/pyrus</code>, a Pyrus executable, which installs packages <em>local</em> to this PHP version.</li>
+<li><code>bin/pear</code>, a PEAR executable, which installs packages <em>local</em> to this PHP version.</li>
 <li><code>etc/php.ini</code></li>
 <li><code>etc/conf.d/</code>, PHP is configured to look for additional
 <code>.ini</code> files in this directory. Place your extension's
@@ -120,9 +122,7 @@ config files or your config overrides here.</li>
 <li><code>pear/</code>, here are PHP source files of PEAR packages installed
 via <code>pear</code> located.</li>
 <li><code>share/pyrus/.pear/php</code>, here are the source files of PEAR packages located
-which were installed via <code>pyrus</code>. The executables of PEAR packages
-are put in the <code>bin/</code> folder (<strong>not</strong> in <code>pear/bin</code>). This
-directory is configured as include path for PHP.</li>
+which were installed via <code>pyrus</code>. This is configured as Include Path.</li>
 </ul>
 
 
