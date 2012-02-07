@@ -10,13 +10,23 @@ fi
 
 echo "Installing php-build in $PREFIX"
 
+BIN_DIR="$PREFIX/bin"
+MAN_DIR="$PREFIX/share/man1"
+TMP_DIR="/tmp/php-build"
+LOG_DIR="/var/log/php-build"
+
 echo -n "  - Creating Directories..."
-[ ! -d "$PREFIX/bin" ] && mkdir -p "$PREFIX/bin"
-[ ! -d "$PREFIX/share/man1" ] && mkdir -p "$PREFIX/share/man1"
-[ ! -d "$PREFIX/tmp/php-build/packages" ] && mkdir -p "$PREFIX/tmp/php-build/packages"
-[ ! -d "$PREFIX/tmp/php-build/source" ] && mkdir -p "$PREFIX/tmp/php-build/source"
-[ ! -d "$PREFIX/var/log/php-build" ] && mkdir -p "$PREFIX/var/log/php-build"
+
+[ ! -d "$BIN_DIR" ]          && mkdir -p "$BIN_DIR"
+[ ! -d "$MAN_DIR" ]          && mkdir -p "$MAN_DIR"
+[ ! -d "$TMP_DIR/packages" ] && mkdir -p "$TMP_DIR/packages"
+[ ! -d "$TMP_DIR/source" ]   && mkdir -p "$TMP_DIR/source"
+[ ! -d "$LOG_DIR" ]          && mkdir -p "$LOG_DIR"
+
 echo " Done."
+
+chmod -R 0777 "$TMP_DIR"
+chmod -R 0777 "$LOG_DIR"
 
 echo -n "  - Copying files..."
 cp -R "$DIR/"{bin,share} "$PREFIX/"

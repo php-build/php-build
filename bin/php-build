@@ -85,7 +85,7 @@ function realpath {
 # is treated as the base for the `share/` and `tmp/`
 # folders of php-build.
 PHP_BUILD_ROOT="$(realpath "$0")/.."
-TMP="$PHP_BUILD_ROOT/tmp/php-build"
+TMP="/var/tmp/php-build"
 
 # This file gets copied to `$PREFIX/etc/php.ini` once
 # the build is complete. This is by default the PHP tarball's
@@ -142,8 +142,8 @@ function init {
         mkdir "$TMP/source"
     fi
 
-    if [ ! -d "$PHP_BUILD_ROOT/var/log/php-build" ]; then
-        mkdir -p "$PHP_BUILD_ROOT/var/log/php-build"
+    if [ ! -d "/var/log/php-build" ]; then
+        mkdir -p "/var/log/php-build"
     fi
 
     if [ ! -d "$PHP_BUILD_ROOT/share/php-build/after-install.d" ]; then
@@ -180,20 +180,23 @@ function download {
     local package_file="$TMP/packages/$(basename $url)"
     local temp_package="$TMP/$(basename $url)"
 
+    if [ -d "$TMP/source/$DEFINITION" ]; then
+        log "Skipping" "Already downloaded and extracted $url"
+        return
+    fi
+
     log "Downloading" "$url"
 
+    # Remove the temp file if one exists.
     if [ -f "$temp_package" ]; then
         rm "$temp_package"
     fi
 
+    # Do not download a package when it's already downloaded.
     if [ ! -f "$package_file" ]; then
         wget -qP "$TMP" "$url" > /dev/null
         cp "$temp_package" "$TMP/packages"
         rm "$temp_package"
-    fi
-
-    if [ -d "$TMP/source/$DEFINITION" ]; then
-        rm -rf "$TMP/source/$DEFINITION"
     fi
 
     mkdir "$TMP/source/$DEFINITION"
@@ -202,7 +205,19 @@ function download {
     # `php-<something undeterminable>`, so skip this directory
     # on extraction.
     tar -xj --strip-components 1 -f "$package_file" -C "$TMP/source/$DEFINITION"
+
+    local archive_type=${package_file##*.}
+
+    "extract_$archive_type" "$package_file" "$TMP/source/$DEFINITION"
     return $?
+}
+
+function extract_gz {
+    tar -x -z --strip-components 1 -f "$1" -C "$2"
+}
+
+function extract_bz2 {
+    tar -x -j --strip-components 1 -f "$1" -C "$2"
 }
 
 # List all defintions found in `share/php-build/definitions`.
@@ -219,6 +234,7 @@ function list_definitions {
 function trigger_after_install {
     export PHP_BUILD_ROOT
     export PREFIX
+
     local triggers_dir="$PHP_BUILD_ROOT/share/php-build/after-install.d/"
     local triggers=$(ls "$triggers_dir")
 
@@ -252,7 +268,7 @@ function build_package {
 
     configure_package "$source_path"
 
-    log "Make" "$source_path"
+    log "Compiling" "$source_path"
 
     cd "$source_path"
     {
@@ -391,7 +407,7 @@ function configure_package {
 --with-config-file-scan-dir="$PREFIX/etc/conf.d" \
 --prefix=$PREFIX"
     
-    log "Configure" "$source_path"
+    log "Preparing" "$source_path"
 
     cd "$source_path"
 
@@ -465,7 +481,7 @@ if [ ! -f "$DEFINITION_PATH" ]; then
     fi
 fi
 
-LOG_PATH="$PHP_BUILD_ROOT/var/log/php-build/error.$DEFINITION.$TIME.log"
+LOG_PATH="/var/log/php-build/error.$DEFINITION.$TIME.log"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
 # to the Log file.
