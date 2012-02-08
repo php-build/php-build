@@ -204,8 +204,6 @@ function download {
     # The PHP tarballs have one directory, which is named
     # `php-<something undeterminable>`, so skip this directory
     # on extraction.
-    tar -xj --strip-components 1 -f "$package_file" -C "$TMP/source/$DEFINITION"
-
     local archive_type=${package_file##*.}
 
     "extract_$archive_type" "$package_file" "$TMP/source/$DEFINITION"
