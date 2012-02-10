@@ -1,2 +1,4 @@
 tmp/
 var/
+!share/php-build/after-install.d/.empty
+share/php-build/after-install.d
