@@ -142,10 +142,6 @@ function init {
         mkdir "$TMP/source"
     fi
 
-    if [ ! -d "/var/log/php-build" ]; then
-        mkdir -p "/var/log/php-build"
-    fi
-
     if [ ! -d "$PHP_BUILD_ROOT/share/php-build/after-install.d" ]; then
         mkdir -p "$PHP_BUILD_ROOT/share/php-build/after-install.d"
     fi
@@ -479,7 +475,7 @@ if [ ! -f "$DEFINITION_PATH" ]; then
     fi
 fi
 
-LOG_PATH="/var/log/php-build/error.$DEFINITION.$TIME.log"
+LOG_PATH="/tmp/php-build.$DEFINITION.$TIME.log"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
 # to the Log file.
