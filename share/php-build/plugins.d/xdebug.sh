@@ -5,6 +5,7 @@
 function install_xdebug_master {
     local source_dir="$TMP/source/xdebug-master"
     local cwd=$(pwd)
+    local revision=$1
 
     if [ -d "$source_dir" ] && [ -d "$source_dir/.git" ]; then
         log "XDebug" "Updating XDebug from Git Master"
@@ -14,6 +15,13 @@ function install_xdebug_master {
     else
         log "XDebug" "Fetching from Git Master"
         git clone git://github.com/derickr/xdebug.git "$source_dir" > /dev/null
+    fi
+
+    if [ -n "$revision" ]; then
+        log "XDebug" "Checkout specified revision: $revision"
+        cd "$source_dir"
+        git reset --hard $revision
+        cd "$cwd"
     fi
 
     _build_xdebug "$source_dir"
