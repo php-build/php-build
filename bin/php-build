@@ -28,7 +28,7 @@ set -e
 # [shocco](https://github.com/rtomayko/shocco).
 #
 #/ php-build, Compile and Install PHP
-#/ Version: v0.3.0
+#/ Version: v0.4.0dev
 #/
 #/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
 #/
@@ -297,7 +297,6 @@ function build_package {
 # ### install_package
 #
 # Downloads and builds the PHP tarball from the given URL.
-# For now only `.tar.bz2` archives are supported.
 function install_package {
     local url=$1
 

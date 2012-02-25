@@ -32,7 +32,9 @@ install_pyrus() {
 
     # Add the directory where the PHP Files of PEAR Packages get installed
     # to PHP's include path
-    echo "include_path=.:$PREFIX/share/pyrus/.pear/php" > "$PREFIX/etc/conf.d/pyrus.ini"
+
+    local default_include_path=$("$PREFIX/bin/php" -r "echo get_include_path();")
+    echo "include_path=$default_include_path:$PREFIX/share/pyrus/.pear/php" > "$PREFIX/etc/conf.d/pyrus.ini"
 
     log "Pyrus" "Installing executable in $PREFIX/bin/pyrus"
 
