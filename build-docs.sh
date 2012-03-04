@@ -21,7 +21,4 @@ do
     "$RONN_PATH" "$manpage"
 done
 
-echo "Building README.md" >&2
-"$RONN_PATH" --markdown --pipe "man/php-build.1.ronn" > "README.md"
-
 echo "Done" >&2

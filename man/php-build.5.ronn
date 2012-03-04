@@ -104,5 +104,7 @@ versions also gets its own Pyrus environment (not shared).
  * `install_xdebug` <VERSION>:
    Downloads the tarball for <VERSION> from the XDebug web site,
    installs it and enables it for the PHP version in <PREFIX>.
- * `install_xdebug_master`:
-   Checks out the XDebug from the Git Repository and installs it.
+ * `install_xdebug_master` [<SHA1>]:
+   Checks out the XDebug from the Git Repository and installs it. When
+   a Git commit ID is passed as <SHA1> then this specific Commit ID is used
+   instead of the current `HEAD`.
