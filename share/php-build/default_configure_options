@@ -29,3 +29,4 @@
 --enable-pcntl
 --with-readline
 --enable-mbstring
+--disable-debug
