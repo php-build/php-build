@@ -1,0 +1,122 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "PHP\-BUILD" "5" "March 2012" "" ""
+.
+.SH "NAME"
+\fBphp\-build\fR \- Definition Format
+.
+.SH "SYNOPSIS"
+.
+.nf
+
+# Passes `\-\-with\-pear=$PREFIX/pear` to `configure`\.
+with_pear
+
+# Add/Delete flags passed to `configure`\.
+configure_option <FLAG> [<VALUE>]
+configure_option \-R <FLAG> [<VALUE>]
+configure_option \-D <FLAG>
+
+# Download and compile a PHP package from <URL>
+install_package <URL>
+
+# Download and compile XDebug version tarball\.
+install_xdebug <VERSION>
+
+# Use XDebug from <https://github\.com/derickr/xdebug>\. Development
+# versions of PHP need the latest XDebug from master\.
+install_xdebug_master
+
+install_pyrus [<URL>]
+.
+.fi
+.
+.SH "DESCRIPTION"
+php\-build definitions are Shell source files which get sourced by the \fBphp\-build\fR command\. Therefore you can put \fIeverything\fR in a definition file that\'s \fIvalid\fR Shell source code\.
+.
+.P
+php\-build defines some custom commands, which aid in building, downloading and compiling PHP tarballs and often needed add\-on features such as PEAR support and XDebug\.
+.
+.SH "BUILTIN COMMANDS"
+.
+.TP
+\fBinstall_package\fR \fIURL\fR
+Downloads the source tarball from \fIURL\fR, extracts it to \fB/var/tmp/php\-build/source\fR and compiles it to the \fIPREFIX\fR provided at the invocation of php\-build(1)\. \fB\.gz\fR \fIand\fR \fB\.bz2\fR tarballs are supported\.
+.
+.TP
+\fBconfigure_option\fR [\fB\-R\fR] \fIFLAG\fR [\fIVALUE\fR]
+Adds the \fIFLAG\fR to the list of options passed to PHP\'s \fBconfigure\fR\. When \fIVALUE\fR is present, then \fIFLAG\fR=\fIVALUE\fR is added to the list of configure options\. Replaces the value of the existing \fIFLAG\fR with a new \fIVALUE\fR when the \fB\-R\fR option is present\.
+.
+.TP
+\fBconfigure_option\fR \fB\-D\fR \fIFLAG\fR
+Deletes the \fIFLAG\fR from the list of configure options\.
+.
+.TP
+\fBwith_pear\fR
+The \fBpear\fR command is disabled by default in the configure options in favor of the new Pyrus Tool for PEAR\. To enable \fBpear\fR call this command before \fBinstall_package\fR\.
+.
+.TP
+\fBwith_openssl\fR
+Adds \fB\-\-with\-openssl\fR to the list of configure options\. Legacy command, which is left in for backwards compatibility with definitions written before \fB\-\-with\-openssl\fR was moved to the default configure options\.
+.
+.SH "ADDING COMMANDS"
+Definition commands can be added via \fIplugins\fR\. Plugins are, like definitions, Shell files which are automatically loaded from \fBshare/php\-build/plugins\.d\fR\.
+.
+.P
+Plugin files \fImust\fR have the extension \fB\.sh\fR\.
+.
+.P
+php\-build(1) displays a list of loaded plugins at startup\.
+.
+.P
+Due to how functions are handled in Shell, plugins can define new functions as well as \fIoverride\fR existing functions\. Though it\'s \fInot\fR recommended for plugin authors to override builtin definition commands\.
+.
+.P
+Plugins can use a set of environment variables to do actions on the built files, as well as all builtin commands\.
+.
+.SS "AVAILABLE VARIABLES"
+.
+.TP
+\fBDEFINITION\fR
+Contains the name of the requested definition, e\.g\. \fB5\.4\.0\fR\. When a file path was passed as definition, then this contains the path\'s basename\.
+.
+.TP
+\fBDEFINITION_PATH\fR
+The absolute path to the definition file which was sourced\.
+.
+.TP
+\fBPREFIX\fR
+The path where source files will be built into\.
+.
+.TP
+\fBTMP\fR
+Path for (persistent) temporary files\.
+.
+.TP
+\fBCONFIGURE_OPTIONS\fR
+Argument list passed to \fBconfigure\fR, separated by line feeds\.
+.
+.TP
+\fBPHP_BUILD_ROOT\fR
+Root of the php\-build(1) install, for example \fB/usr/local\fR\.
+.
+.TP
+\fBLOG_PATH\fR
+Path to the currently used log file\.
+.
+.SH "CORE PLUGINS"
+.
+.SS "PYRUS"
+Provides \fBinstall_pyrus\fR [\fIURL\fR] which downloads and installs the \fBpyrus\fR command for managing PEAR packages\. Each built PHP versions also gets its own Pyrus environment (not shared)\.
+.
+.SS "XDEBUG"
+.
+.TP
+\fBinstall_xdebug\fR \fIVERSION\fR
+Downloads the tarball for \fIVERSION\fR from the XDebug web site, installs it and enables it for the PHP version in \fIPREFIX\fR\.
+.
+.TP
+\fBinstall_xdebug_master\fR
+Checks out the XDebug from the Git Repository and installs it\.
+

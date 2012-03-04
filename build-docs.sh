@@ -15,8 +15,11 @@ if [ -z "$RONN_PATH" ] || [ ! -f "$RONN_PATH" ]; then
     fi
 fi
 
-echo "Building man-pages" >&2
-"$RONN_PATH" "man/php-build.1.ronn"
+for manpage in man/*.ronn
+do
+    echo "Building $manpage" >&2
+    "$RONN_PATH" "$manpage"
+done
 
 echo "Building README.md" >&2
 "$RONN_PATH" --markdown --pipe "man/php-build.1.ronn" > "README.md"

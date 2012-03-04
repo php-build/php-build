@@ -30,5 +30,6 @@ echo -n "  - Copying files..."
 cp -R "$DIR/"{bin,share} "$PREFIX/"
 
 cp "$DIR/man/php-build.1" "$PREFIX/share/man/man1/"
+cp "$DIR/man/php-build.5" "$PREFIX/share/man/man5/"
 
 echo " Done."

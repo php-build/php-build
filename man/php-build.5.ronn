@@ -1,0 +1,108 @@
+php-build(5) -- Definition Format
+=================================
+
+## SYNOPSIS
+
+    # Passes `--with-pear=$PREFIX/pear` to `configure`.
+    with_pear
+    
+    # Add/Delete flags passed to `configure`.
+    configure_option <FLAG> [<VALUE>]
+    configure_option -R <FLAG> [<VALUE>]
+    configure_option -D <FLAG>
+    
+    # Download and compile a PHP package from <URL>
+    install_package <URL>
+    
+    # Download and compile XDebug version tarball.
+    install_xdebug <VERSION>
+    
+    # Use XDebug from <https://github.com/derickr/xdebug>. Development
+    # versions of PHP need the latest XDebug from master.
+    install_xdebug_master
+    
+    install_pyrus [<URL>]
+
+## DESCRIPTION
+
+php-build definitions are Shell source files which get sourced by the `php-build`
+command. Therefore you can put _everything_ in a definition file that's _valid_
+Shell source code.
+
+php-build defines some custom commands, which aid in building, downloading
+and compiling PHP tarballs and often needed add-on features such as PEAR
+support and XDebug.
+
+## BUILTIN COMMANDS
+
+ * `install_package` <URL>:
+   Downloads the source tarball from <URL>, extracts it to
+   `/var/tmp/php-build/source` and compiles it to the <PREFIX>
+   provided at the invocation of php-build(1).
+   `.gz` _and_ `.bz2` tarballs are supported.
+ * `configure_option` [`-R`] <FLAG> [<VALUE>]:
+   Adds the <FLAG> to the list of options passed to PHP's `configure`.
+   When <VALUE> is present, then <FLAG>=<VALUE> is added to the list
+   of configure options.
+   Replaces the value of the existing <FLAG> with a new <VALUE> when 
+   the `-R` option is present.
+ * `configure_option` `-D` <FLAG>:
+   Deletes the <FLAG> from the list of configure options.
+ * `with_pear`:
+   The `pear` command is disabled by default in the configure options in
+   favor of the new Pyrus Tool for PEAR. To enable `pear` call this
+   command before `install_package`.
+ * `with_openssl`:
+   Adds `--with-openssl` to the list of configure options.
+   Legacy command, which is left in for backwards compatibility with definitions
+   written before `--with-openssl` was moved to the default configure options.
+
+## ADDING COMMANDS
+
+Definition commands can be added via _plugins_. Plugins are, like definitions, Shell
+files which are automatically loaded from `share/php-build/plugins.d`.
+
+Plugin files _must_ have the extension `.sh`.
+
+php-build(1) displays a list of loaded plugins at startup.
+
+Due to how functions are handled in Shell, plugins can define new functions as well
+as _override_ existing functions. Though it's _not_ recommended for plugin authors
+to override builtin definition commands.
+
+Plugins can use a set of environment variables to do actions on the built files,
+as well as all builtin commands.
+
+### AVAILABLE VARIABLES
+
+ * `DEFINITION`:
+   Contains the name of the requested definition, e.g. `5.4.0`. When a
+   file path was passed as definition, then this contains the path's basename.
+ * `DEFINITION_PATH`:
+   The absolute path to the definition file which was sourced.
+ * `PREFIX`:
+   The path where source files will be built into.
+ * `TMP`:
+   Path for (persistent) temporary files.
+ * `CONFIGURE_OPTIONS`:
+   Argument list passed to `configure`, separated by line feeds.
+ * `PHP_BUILD_ROOT`:
+   Root of the php-build(1) install, for example `/usr/local`.
+ * `LOG_PATH`:
+   Path to the currently used log file.
+
+## CORE PLUGINS
+
+### PYRUS
+
+Provides `install_pyrus` [<URL>] which downloads and installs
+the `pyrus` command for managing PEAR packages. Each built PHP
+versions also gets its own Pyrus environment (not shared).
+
+### XDEBUG
+
+ * `install_xdebug` <VERSION>:
+   Downloads the tarball for <VERSION> from the XDebug web site,
+   installs it and enables it for the PHP version in <PREFIX>.
+ * `install_xdebug_master`:
+   Checks out the XDebug from the Git Repository and installs it.

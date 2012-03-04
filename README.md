@@ -70,20 +70,11 @@ are looked up in `share/plugins.d`.
  * `pyrus`, Provides a `install_pyrus` command which downloads
    a `pyrus.phar` and sets up a Pyrus install local to this <var>prefix</var>
  * `xdebug`, Provides the `install_xdebug` <var>version</var> and
-   `install_xdebug_master` commands. Use `install_xdebug_master` 
+   `install_xdebug_master` commands. Use `install_xdebug_master`
    for building development versions of PHP and `install_xdebug`
    <var>version</var> for building stable releases.
 
-`php-build` ships with these definition commands by default:
-
- * `install_package` <var>url</var>, Downloads the source package from
-   the provided <var>url</var>, extract it and run the build process.
-   Please provide only <var>url</var>s to `.bz2` files for now!
- * `configure_option` `[-R]` `[-D]` <var>name</var> <var>value</var>, by default adds
-   the option with <var>name</var> to the argument list for `configure`. If a
-   <var>value</var> is passed, then it adds <var>name</var>=<var>value</var> to the argument list.
-   The `-D` flag removes the option <var>name</var> from the argument list, and
-   the flag `-R`, sets a new <var>value</var> for the existing option <var>name</var>.
+For more information about the definition file format see php-build(5).
 
 ### pear vs. pyrus
 

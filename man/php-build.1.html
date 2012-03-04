@@ -152,19 +152,7 @@ for building development versions of PHP and <code>install_xdebug</code>
 </ul>
 
 
-<p><code>php-build</code> ships with these definition commands by default:</p>
-
-<ul>
-<li><code>install_package</code> <var>url</var>, Downloads the source package from
-the provided <var>url</var>, extract it and run the build process.
-Please provide only <var>url</var>s to <code>.bz2</code> files for now!</li>
-<li><code>configure_option</code> <code>[-R]</code> <code>[-D]</code> <var>name</var> <var>value</var>, by default adds
-the option with <var>name</var> to the argument list for <code>configure</code>. If a
-<var>value</var> is passed, then it adds <var>name</var>=<var>value</var> to the argument list.
-The <code>-D</code> flag removes the option <var>name</var> from the argument list, and
-the flag <code>-R</code>, sets a new <var>value</var> for the existing option <var>name</var>.</li>
-</ul>
-
+<p>For more information about the definition file format see <span class="man-ref">php-build<span class="s">(5)</span></span>.</p>
 
 <h3 id="pear-vs-pyrus">pear vs. pyrus</h3>
 
@@ -209,7 +197,7 @@ lines which enable XDebug, in the generated <code>xdebug.ini</code>.</li>
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'></li>
-    <li class='tc'>February 2012</li>
+    <li class='tc'>March 2012</li>
     <li class='tr'>php-build(1)</li>
   </ol>
 
