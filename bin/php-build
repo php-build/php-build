@@ -98,6 +98,10 @@ PHP_DEFAULT_INI="php.ini-production"
 # These arguments are read from `share/php-build/default_configure_options`.
 CONFIGURE_OPTIONS=$(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_options")
 
+if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
+    CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
+fi
+
 # If `-i` or `--ini` is given as first argument, then
 # treat the second argument as `php.ini` file.
 if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
@@ -361,6 +365,17 @@ function with_pear {
     configure_option "--with-pear" "$PREFIX/pear"
 }
 
+function with_apxs2 {
+    local apxs="$1"
+    shift
+
+    if [ -z "$apxs2" ]; then
+        apxs="$PHP_BUILD_APXS"
+    fi
+
+    configure_option "--with-apxs2" "$apxs"
+}
+
 # Configure Stage
 # ---------------
 
@@ -428,6 +443,8 @@ function build_error {
 
 function cleanup_abort {
     rm -rf "$PREFIX"
+
+    make -C "$TMP/source/$DEFINITION" clean &> /dev/null
 }
 
 # Here the magic begins
