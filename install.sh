@@ -24,7 +24,6 @@ echo -n "  - Creating Directories..."
 echo " Done."
 
 chmod -R 0777 "$TMP_DIR"
-chmod -R 0777 "$LOG_DIR"
 
 echo -n "  - Copying files..."
 cp -R "$DIR/"{bin,share} "$PREFIX/"
