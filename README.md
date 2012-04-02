@@ -21,6 +21,13 @@ To install php-build to an other location than `/usr/local` set the
 If you don't have permissions to write to the prefix, then you 
 have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 
+If you only intend to use php-build via phpenv then you can
+install it locally as a plugin:
+
+    $ mkdir -p ~/.phpenv/plugins
+    $ cd ~/.phpenv/plugins
+    $ git clone git://github.com/humanshell/php-build.git
+
 [releases]: https://github.com/CHH/php-build/tags
 
 ## Changelog
