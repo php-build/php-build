@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>php-build by CHH</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>php-build</h1>
+        <h2>Builds PHP so that multiple versions can be used in parallel.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/CHH/php-build/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/CHH/php-build/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/CHH/php-build" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>php-build</h1>
+
+<p>php-build builds multiple PHP versions from source, and this <em>fully automatic</em>.</p>
+
+<h2>Who uses this?</h2>
+
+<ul>
+<li><a href="http://travis-ci.org">Travis CI</a></li>
+<li><em>Maybe you?</em></li>
+</ul><h2>Install</h2>
+
+<pre><code>% git clone git://github.com/CHH/php-build
+% cd php-build
+% sudo ./install.sh
+</code></pre>
+
+<h2>Usage</h2>
+
+<h3>Synopsis</h3>
+
+<pre><code>php-build --help
+php-build --definitions
+php-build [-i &lt;environment_or_inifile&gt;] &lt;definition&gt; &lt;prefix&gt;
+</code></pre>
+
+<p>Before you can build PHP you will need all necessary build dependencies. </p>
+
+<p>If you happen to use Ubuntu then this is done with one command:</p>
+
+<pre><code>% sudo apt-get build-deps php5-cli
+</code></pre>
+
+<p>Then run this to install 5.4.0 in development configuration:</p>
+
+<pre><code>% php-build -i development 5.4.0 ~/local/php/5.4.0
+</code></pre>
+
+<p>To get a list of all supported PHP versions pass the <code>--definitions</code> flag:</p>
+
+<pre><code>% php-build --definitions
+</code></pre>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
