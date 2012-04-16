@@ -75,7 +75,7 @@
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
 <p><code>php-build</code> <code>--definitions</code> <br />
-<code>php-build</code> [<code>-i</code>|<code>--ini</code> <var>env</var>] <var>definition</var> <var>prefix</var></p>
+<code>php-build</code> [<code>-i</code>|<code>--ini</code> <var>env</var>] [--pear] <var>definition</var> <var>prefix</var></p>
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
 
@@ -159,11 +159,8 @@ for building development versions of PHP and <code>install_xdebug</code>
 <p>Currently <a href="http://pear2.php.net/PEAR2_Pyrus">Pyrus</a> is provided
 as the default installer for PEAR packages in the shipped definitions.</p>
 
-<p>If you want to use the <code>pear</code> command for managing PEAR packages add
-<code>with_pear</code> before the call to <code>install_package</code>. You <strong>should remove</strong> the
-<code>install_pyrus</code> from the definition, otherwise the include paths
-will be messed up and installed executables will conflict as they both
-install them to <code>$PREFIX/bin</code>.</p>
+<p>To install the old "pear" tool alongside of Pyrus, add the <code>--pear</code> flag
+on the command line, right after the <code>--ini</code> switch. This is considered experimental!</p>
 
 <p>The <code>pear</code> command installs PHP source files to <code>$PREFIX/pear</code> and
 executables to <code>$PREFIX/bin</code>.</p>
@@ -197,7 +194,7 @@ lines which enable XDebug, in the generated <code>xdebug.ini</code>.</li>
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'></li>
-    <li class='tc'>March 2012</li>
+    <li class='tc'>April 2012</li>
     <li class='tr'>php-build(1)</li>
   </ol>
 

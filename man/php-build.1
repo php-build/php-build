@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "PHP\-BUILD" "1" "March 2012" "" ""
+.TH "PHP\-BUILD" "1" "April 2012" "" ""
 .
 .SH "NAME"
 \fBphp\-build\fR \- Builds PHP versions with their coexistence in mind\.
@@ -10,7 +10,7 @@
 \fBphp\-build\fR \fB\-\-definitions\fR
 .
 .br
-\fBphp\-build\fR [\fB\-i\fR|\fB\-\-ini\fR \fIenv\fR] \fIdefinition\fR \fIprefix\fR
+\fBphp\-build\fR [\fB\-i\fR|\fB\-\-ini\fR \fIenv\fR] [\-\-pear] \fIdefinition\fR \fIprefix\fR
 .
 .SH "DESCRIPTION"
 \fBphp\-build\fR builds common PHP versions so, that they can be used side by side in a development environment\.
@@ -89,7 +89,7 @@ For more information about the definition file format see php\-build(5)\.
 Currently Pyrus \fIhttp://pear2\.php\.net/PEAR2_Pyrus\fR is provided as the default installer for PEAR packages in the shipped definitions\.
 .
 .P
-If you want to use the \fBpear\fR command for managing PEAR packages add \fBwith_pear\fR before the call to \fBinstall_package\fR\. You \fBshould remove\fR the \fBinstall_pyrus\fR from the definition, otherwise the include paths will be messed up and installed executables will conflict as they both install them to \fB$PREFIX/bin\fR\.
+To install the old "pear" tool alongside of Pyrus, add the \fB\-\-pear\fR flag on the command line, right after the \fB\-\-ini\fR switch\. This is considered experimental!
 .
 .P
 The \fBpear\fR command installs PHP source files to \fB$PREFIX/pear\fR and executables to \fB$PREFIX/bin\fR\.

@@ -102,27 +102,6 @@ if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
 fi
 
-# If `-i` or `--ini` is given as first argument, then
-# treat the second argument as `php.ini` file.
-if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
-    # If an existing path is passed (and the path is a file)
-    # then use this file, otherwise use `php.ini-<value>`
-    # from the tarball.
-    if [ -f "$2" ]; then
-        PHP_DEFAULT_INI="$2"
-    else
-        PHP_DEFAULT_INI="php.ini-$2"
-    fi
-    shift
-    shift
-fi
-
-# This is the name of the definition we want to build.
-DEFINITION=$1
-
-# The built PHP version is placed in this directory.
-PREFIX=$2
-
 # Error Code to return if a defintion was not found.
 E_DEFINITION_NOT_FOUND=127
 
@@ -260,7 +239,7 @@ function build_package {
     local cwd="$(pwd)"
 
     if [ ! -d "$PREFIX" ]; then
-        mkdir "$PREFIX"
+        mkdir -p "$PREFIX"
     fi
 
     configure_package "$source_path"
@@ -457,12 +436,42 @@ init
 # Display the Usage message if no arguments are given.
 if [ -z $1 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     display_usage
-    exit 1
+    exit
 fi
 
 if [ "$1" = "--definitions" ]; then
     list_definitions
-    exit 0
+    exit
+fi
+
+# If `-i` or `--ini` is given as first argument, then
+# treat the second argument as `php.ini` file.
+if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
+    # If an existing path is passed (and the path is a file)
+    # then use this file, otherwise use `php.ini-<value>`
+    # from the tarball.
+    if [ -f "$2" ]; then
+        PHP_DEFAULT_INI="$2"
+    else
+        PHP_DEFAULT_INI="php.ini-$2"
+    fi
+    shift
+    shift
+fi
+
+if [ "$1" = "--pear" ]; then
+    ENABLE_PEAR=1
+    shift
+fi
+
+# This is the name of the definition we want to build.
+DEFINITION=$1
+
+# The built PHP version is placed in this directory.
+PREFIX=$2
+
+if [ "$ENABLE_PEAR" = "1" ]; then
+    with_pear
 fi
 
 # Generate the Path for the build log.

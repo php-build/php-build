@@ -3,7 +3,7 @@
 ## SYNOPSIS
 
 `php-build` `--definitions` <br>
-`php-build` [`-i`|`--ini` <env>] <definition> <prefix>
+`php-build` [`-i`|`--ini` <env>] [--pear] <definition> <prefix>
 
 ## DESCRIPTION
 
@@ -81,11 +81,8 @@ For more information about the definition file format see php-build(5).
 Currently [Pyrus](http://pear2.php.net/PEAR2_Pyrus) is provided
 as the default installer for PEAR packages in the shipped definitions.
 
-If you want to use the `pear` command for managing PEAR packages add
-`with_pear` before the call to `install_package`. You __should remove__ the 
-`install_pyrus` from the definition, otherwise the include paths
-will be messed up and installed executables will conflict as they both
-install them to `$PREFIX/bin`.
+To install the old "pear" tool alongside of Pyrus, add the `--pear` flag
+on the command line, right after the `--ini` switch. This is considered experimental!
 
 The `pear` command installs PHP source files to `$PREFIX/pear` and
 executables to `$PREFIX/bin`.

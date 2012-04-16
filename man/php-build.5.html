@@ -170,7 +170,9 @@ versions also gets its own Pyrus environment (not shared).</p>
 <dl>
 <dt><code>install_xdebug</code> <var>VERSION</var></dt><dd>Downloads the tarball for <var>VERSION</var> from the XDebug web site,
 installs it and enables it for the PHP version in <var>PREFIX</var>.</dd>
-<dt><code>install_xdebug_master</code></dt><dd>Checks out the XDebug from the Git Repository and installs it.</dd>
+<dt><code>install_xdebug_master</code> [<var>SHA1</var>]</dt><dd>Checks out the XDebug from the Git Repository and installs it. When
+a Git commit ID is passed as <var>SHA1</var> then this specific Commit ID is used
+instead of the current <code>HEAD</code>.</dd>
 </dl>
 
 
