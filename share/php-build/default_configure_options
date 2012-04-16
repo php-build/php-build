@@ -8,10 +8,8 @@
 --with-zlib
 --with-zlib-dir=/usr
 --with-kerberos
---with-imap-ssl
 --with-openssl
 --with-mcrypt=/usr
---with-pdo-sqlite
 --enable-soap
 --enable-xmlreader
 --with-xsl
@@ -26,6 +24,7 @@
 --with-mysql=mysqlnd
 --with-mysqli=mysqlnd
 --with-pdo-mysql=mysqlnd
+--with-pdo-sqlite
 --enable-pcntl
 --with-readline
 --enable-mbstring
