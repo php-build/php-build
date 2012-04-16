@@ -1,10 +1,14 @@
 #!/bin/sh
 
+VERSION="$1"
+
 if [ -z "$RONN_PATH" ]; then
-    RONN_PATH=$(which ronn)
+    ronn=$(which ronn)
+else
+    ronn="$RONN_PATH"
 fi
 
-if [ -z "$RONN_PATH" ] || [ ! -f "$RONN_PATH" ]; then
+if [ -z "$ronn" ] || [ ! -f "$ronn" ]; then
     echo "Seams like ronn is not installed." >&2
     read -p "Install ronn? (y/n) " INSTALL_RONN
 
@@ -15,10 +19,13 @@ if [ -z "$RONN_PATH" ] || [ ! -f "$RONN_PATH" ]; then
     fi
 fi
 
+export RONN_MANUAL="php-build"
+export RONN_ORGANIZATION="php-build $VERSION"
+
 for manpage in man/*.ronn
 do
     echo "Building $manpage" >&2
-    "$RONN_PATH" "$manpage"
+    "$ronn" "$manpage"
 done
 
 echo "Done" >&2
