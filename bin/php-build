@@ -254,6 +254,11 @@ function build_package {
     } > /dev/null
     cd "$cwd"
 
+    # Remove .dSYM extension from executables (OSX issue).
+    for bin in "$PREFIX/bin/"*.dSYM; do
+        mv "$bin" "${bin%*.dSYM}"
+    done
+
     if [ -n "$PHP_DEFAULT_INI" ]; then
         if [ -f "$source_path/$PHP_DEFAULT_INI" ]; then
             cp "$source_path/$PHP_DEFAULT_INI" "$PREFIX/etc/php.ini"
