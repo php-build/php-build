@@ -68,11 +68,11 @@ function realpath {
         return 1
     fi
 
-	while [ -n "$path" ]; do
-		cd "${path%/*}"
-		local name="${path##*/}"
-		path="$(readlink "$name" || true)"
-	done
+    while [ -n "$path" ]; do
+        cd "${path%/*}"
+        local name="${path##*/}"
+        path="$(readlink "$name" || true)"
+    done
 
     echo "$(pwd)"
     cd "$cwd"
@@ -305,7 +305,7 @@ function configure_option {
                 *) filtered="$filtered $option";;
             esac
         done
-        
+
         # Trim the leading whitespace added in the concatenation.
         filtered=$(echo "$filtered" | sed -e 's/[ ]*//')
 
@@ -389,7 +389,7 @@ function configure_package {
 --with-config-file-path="$PREFIX/etc" \
 --with-config-file-scan-dir="$PREFIX/etc/conf.d" \
 --prefix=$PREFIX"
-    
+
     log "Preparing" "$source_path"
 
     cd "$source_path"
@@ -417,10 +417,10 @@ function build_error {
         echo "BUILD ERROR"
         echo $(tail -n10 "$LOG_PATH")
         echo
-        echo "The full Log is available here ${LOG_PATH}"
+        echo "The full Log is available at '${LOG_PATH}'."
         echo
     } >&3
-    
+
     # Removes the prefix when the build fails.
     cleanup_abort
 }
