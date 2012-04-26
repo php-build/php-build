@@ -3,9 +3,9 @@ php-build -- Builds multiple versions of PHP.
 
 ## Install
 
-Either download a [Release Tarball][releases] or clone the Git Repository:
+Clone the Git Repository:
 
-    % git clone git://github.com/CHH/php-build
+    % git clone git://github.com/CHH/php-build.git
 
 Then go into the extracted/cloned directory and run:
 
@@ -21,13 +21,19 @@ To install php-build to an other location than `/usr/local` set the
 If you don't have permissions to write to the prefix, then you 
 have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 
-[releases]: https://github.com/CHH/php-build/tags
+If you only intend to use php-build via
+[phpenv](https://github.com/humanshell/phpenv) then you can install it locally
+as a plugin:
+
+    $ mkdir -p ~/.phpenv/plugins
+    $ cd ~/.phpenv/plugins
+    $ git clone git://github.com/humanshell/php-build.git
 
 ## Changelog
 
 ### v0.5.0
 
- * Added `--pear` flag to install the good old pear install alongside
+ * Added `--pear` flag to install the good old pear installer alongside
    of Pyrus.
  * Added 5.4.1RC1, 5.4.1RC2, 5.3.11RC1, and 5.3.11RC2 (loicfrering).
  * Removed a hack which renamed generated debug symbols on OSX.
@@ -44,3 +50,4 @@ have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
  * A particular revision can be passed to `install_xdebug_master`
    (loicfrering).
  * Added definition for 5.4.0 final (loicfrering).
+

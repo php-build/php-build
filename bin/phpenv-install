@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$PHPENV_DEBUG" ] && set -x
+
+# Provide phpenv completions
+if [ "$1" = "--complete" ]; then
+  exec php-build --definitions
+fi
+
+if [ -z "$PHPENV_ROOT" ]; then
+  PHPENV_ROOT="${HOME}/.phpenv"
+fi
+
+DEFINITION="$1"
+case "$DEFINITION" in
+"" | -* )
+  { echo "usage: phpenv install VERSION"
+    echo "       phpenv install /path/to/definition"
+    echo
+    echo "Available versions:"
+    php-build --definitions | sed 's/^/  /'
+    echo
+  } >&2
+  exit 1
+  ;;
+esac
+
+VERSION_NAME="${DEFINITION##*/}"
+PREFIX="${PHPENV_ROOT}/versions/${VERSION_NAME}"
+
+php-build "$DEFINITION" "$PREFIX"
+phpenv rehash
