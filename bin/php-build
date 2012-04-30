@@ -255,9 +255,12 @@ function build_package {
     cd "$cwd"
 
     # Remove .dSYM extension from executables (OSX issue).
-    for bin in "$PREFIX/bin/"*.dSYM; do
-        mv "$bin" "${bin%*.dSYM}"
-    done
+    if test -n "$(find $PREFIX/bin -maxdepth 1 -name '*.dSYM' -print -quit)"
+    then
+        for bin in "$PREFIX/bin/"*.dSYM; do
+            mv "$bin" "${bin%*.dSYM}"
+        done
+    fi
 
     if [ -n "$PHP_DEFAULT_INI" ]; then
         if [ -f "$source_path/$PHP_DEFAULT_INI" ]; then
