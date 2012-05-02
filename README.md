@@ -31,6 +31,14 @@ as a plugin:
 
 ## Changelog
 
+### v0.6.0
+
+ * php-build now works as plugin to
+   [humanshell/phpenv](http://github.com/humanshell/phpenv)
+(humanshell).
+ * Added support for 5.4.1, 5.3.11
+ * Better handling of `*.dSYM` executables (CHH, eriksencosta).
+
 ### v0.5.0
 
  * Added `--pear` flag to install the good old pear installer alongside
