@@ -92,6 +92,9 @@ TMP="/var/tmp/php-build"
 # `php.ini-production`.
 PHP_DEFAULT_INI="php.ini-production"
 
+# Initialize the builtin definition path.
+[ -z "$PHP_BUILD_DEFINITION_PATH" ] && PHP_BUILD_DEFINITION_PATH="$PHP_BUILD_ROOT/share/php-build/definitions"
+
 # Read the list of arguments for the call to `./configure`
 # in PHP's source.
 #
@@ -434,6 +437,24 @@ function cleanup_abort {
     make -C "$TMP/source/$DEFINITION" clean &> /dev/null
 }
 
+function find_definition {
+    local definition="$1"
+
+    # Check if the supplied argument is an existing file itself,
+    # to use definitions outside of the builtin definition path.
+    if [ -f "$definition" ]; then
+        echo "$definition"
+        return 0
+    fi
+
+    if [ -f "$PHP_BUILD_DEFINITION_PATH/$definition" ]; then
+        echo "$PHP_BUILD_DEFINITION_PATH/$definition"
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Here the magic begins
 # ---------------------
 
@@ -482,23 +503,15 @@ if [ "$ENABLE_PEAR" = "1" ]; then
     with_pear
 fi
 
-# Generate the Path for the build log.
-TIME="$(date "+%Y%m%d%H%M%S")"
-DEFINITION_PATH="$PHP_BUILD_ROOT/share/php-build/definitions/$DEFINITION"
-
-# Check if the requested Definition exists.
-if [ ! -f "$DEFINITION_PATH" ]; then
-    # Check if the supplied argument is an existing file itself,
-    # to use definitions outside of the builtin definition path.
-    if [ -f "$DEFINITION" ]; then
-        DEFINITION_PATH="$DEFINITION"
-        DEFINITION=$(basename "$DEFINITION")
-    else
-        log Error "Definition $DEFINITION not found."
-        exit $E_DEFINITION_NOT_FOUND
-    fi
+if ! find_definition "$DEFINITION" > /dev/null; then
+    log Error "Definition $DEFINITION not found."
+    exit $E_DEFINITION_NOT_FOUND
 fi
 
+DEFINITION_PATH="$(find_definition "$DEFINITION")"
+
+# Generate the Path for the build log.
+TIME="$(date "+%Y%m%d%H%M%S")"
 LOG_PATH="/tmp/php-build.$DEFINITION.$TIME.log"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
