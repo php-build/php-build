@@ -530,7 +530,6 @@ exec 4<> "$LOG_PATH"
 # examples.
 load_plugins "$PHP_BUILD_ROOT/share/php-build/plugins.d"
 
-
 log Info "$PHP_DEFAULT_INI gets used as php.ini"
 
 log Info "Building $DEFINITION into $PREFIX"
