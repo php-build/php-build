@@ -139,7 +139,7 @@ function log {
     local marker="$1"
     local text="$2"
 
-    echo "    [$marker]:  $text" >&3
+    echo "[$marker]: $text" >&3
 }
 
 # Uses uname to check if php-build is run on OSX.
@@ -233,7 +233,7 @@ function load_plugins {
     for plugin in "$1/"*.sh
     do
         source $plugin
-        echo "Loaded $(basename $plugin .sh) Plugin."
+        log "Info" "Loaded $(basename $plugin .sh) Plugin."
     done
 }
 
@@ -420,18 +420,23 @@ function configure_package {
 function build_error {
     {
         echo
-        echo "BUILD ERROR"
-        echo $(tail -n10 "$LOG_PATH")
+        echo "-----------------"
+        echo "|  BUILD ERROR  |"
+        echo "-----------------"
+        echo
+        echo "Here are the last 10 lines from the log:"
+        echo $(tail -n 10 "$LOG_PATH")
         echo
         echo "The full Log is available at '${LOG_PATH}'."
-        echo
     } >&3
 
     # Removes the prefix when the build fails.
-    cleanup_abort
+    cleanup_abort > /dev/null
 }
 
 function cleanup_abort {
+    log "Warn" "Aborting build."
+
     rm -rf "$PREFIX"
 
     make -C "$TMP/source/$DEFINITION" clean &> /dev/null
@@ -518,22 +523,23 @@ LOG_PATH="/tmp/php-build.$DEFINITION.$TIME.log"
 # to the Log file.
 exec 4<> "$LOG_PATH"
 
+[ "$ENABLE_PEAR" = "1" ] && log Warning "Installing Pear alongside of Pyrus is still experimental."
+
 # Load all definition plugins. Plugins register functions
 # for use whithin definitions. See the xdebug and pyrus plugins for
 # examples.
 load_plugins "$PHP_BUILD_ROOT/share/php-build/plugins.d"
 
-echo "$PHP_DEFAULT_INI gets used as php.ini"
 
-echo
-echo "Building $DEFINITION into $PREFIX"
-echo
+log Info "$PHP_DEFAULT_INI gets used as php.ini"
+
+log Info "Building $DEFINITION into $PREFIX"
 
 # Handle script termination with the `cleanup_abort`.
 trap cleanup_abort SIGINT SIGTERM
 
 # Handle Script Errors with `build_error`.
-trap build_error ERR EXIT
+trap build_error ERR
 
 # Source the definition file
 source "$DEFINITION_PATH"
@@ -544,7 +550,6 @@ trigger_after_install 2>&4
 
 # Unbind the error handler.
 trap - ERR
-trap - EXIT
 
 # Display a notice if build warnings got logged.
 if [ -n $LOG_PATH ]; then
@@ -557,3 +562,4 @@ log "Success" "Built $DEFINITION successfully."
 
 trap - SIGINT
 trap - SIGTERM
+
