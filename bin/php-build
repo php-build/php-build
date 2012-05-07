@@ -115,7 +115,13 @@ function display_usage {
 }
 
 function display_version {
-    echo "php-build {{VERSION}}"
+    local version="{{VERSION}}"
+
+    if [ "$version" = "{{VERSION}}" ]; then
+        local version="dev-master"
+    fi
+
+    echo "php-build $version"
 }
 
 # Init the directories on first run.
@@ -474,6 +480,11 @@ init
 # Display the Usage message if no arguments are given.
 if [ -z $1 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     display_usage
+    exit
+fi
+
+if [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
+    display_version
     exit
 fi
 
