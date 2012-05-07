@@ -28,7 +28,7 @@ set -e
 # [shocco](https://github.com/rtomayko/shocco).
 #
 #/ php-build, Compile and Install PHP
-#/ Version: v0.7.0dev
+#/ Version: {{VERSION}}
 #/
 #/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
 #/
@@ -112,6 +112,10 @@ E_DEFINITION_NOT_FOUND=127
 # and displays it on STDERR.
 function display_usage {
     grep '^#/' <"$0" | cut -c4- >&3
+}
+
+function display_version {
+    echo "php-build {{VERSION}}"
 }
 
 # Init the directories on first run.
@@ -531,13 +535,12 @@ exec 4<> "$LOG_PATH"
 load_plugins "$PHP_BUILD_ROOT/share/php-build/plugins.d"
 
 log Info "$PHP_DEFAULT_INI gets used as php.ini"
-
 log Info "Building $DEFINITION into $PREFIX"
 
-# Handle script termination with the `cleanup_abort`.
+# Handle script termination with.
 trap cleanup_abort SIGINT SIGTERM
 
-# Handle Script Errors with `build_error`.
+# Handle Script Errors.
 trap build_error ERR
 
 # Source the definition file
