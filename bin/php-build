@@ -115,13 +115,7 @@ function display_usage {
 }
 
 function display_version {
-    local version="{{VERSION}}"
-
-    if [ "$version" = "{{VERSION}}" ]; then
-        local version="dev-master"
-    fi
-
-    echo "php-build $version"
+    echo "php-build {{VERSION}}"
 }
 
 # Init the directories on first run.
