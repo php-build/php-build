@@ -31,6 +31,10 @@ as a plugin:
 
 ## Changelog
 
+### v0.6.1
+
+ * Added support for 5.4.3, 5.3.13
+
 ### v0.6.0
 
  * php-build now works as plugin to
