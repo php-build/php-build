@@ -31,6 +31,12 @@ as a plugin:
 
 ## Changelog
 
+
+### v0.6.2
+
+ * Fixed bug #57: Automatic enabling of extension does not work with
+   `pecl` command.
+
 ### v0.6.1
 
  * Added support for 5.4.3, 5.3.13

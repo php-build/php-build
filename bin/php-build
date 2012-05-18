@@ -359,6 +359,10 @@ function with_pear {
     configure_option "--with-pear" "$PREFIX/pear"
 }
 
+function pear_setup {
+    "$PREFIX/bin/pear" config-set php_ini "$PREFIX/etc/php.ini"
+}
+
 function with_apxs2 {
     local apxs="$1"
     shift
@@ -554,6 +558,10 @@ source "$DEFINITION_PATH"
 # Run executables placed in `share/php-build/after-install.d`
 #
 trigger_after_install 2>&4
+
+if [ "$ENABLE_PEAR" = "1" ]; then
+    pear_setup
+fi
 
 # Unbind the error handler.
 trap - ERR
