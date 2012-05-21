@@ -278,6 +278,10 @@ function build_package {
             fi
         fi
     fi
+    if [ -f "$PREFIX/etc/php.ini" ]; then
+        sed -i -E 's/^(extension_dir)/; \1/g' "$PREFIX/etc/php.ini"
+    fi
+
 }
 
 # Definition commands
