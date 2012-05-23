@@ -244,6 +244,9 @@ function load_plugins {
 function build_package {
     local source_path=$1
     local cwd="$(pwd)"
+    if [ -z $1 ]; then
+      local source_path="$TMP/source/$DEFINITION"
+    fi
 
     if [ ! -d "$PREFIX" ]; then
         mkdir -p "$PREFIX"
@@ -297,7 +300,9 @@ function install_package {
 
     {
         download $url
-        build_package "$TMP/source/$DEFINITION"
+        cd "$TMP/source/$DEFINITION"
+        build_package
+        cd - > /dev/null
     } >&4 2>&1
 }
 
