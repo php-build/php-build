@@ -418,7 +418,13 @@ function configure_package {
 
     # Set the lib dir to `lib64` on **x86_64**
     # systems.
-    if [ "$(uname -p)" = "x86_64" ]; then
+    local append_default_libdir='yes'
+    for option in $CONFIGURE_OPTIONS; do
+      case "$option" in
+        "--with-libdir"*) append_default_libdir='no' ;;
+      esac
+    done
+    if [ "$(uname -p)" = "x86_64" ] && [ "${append_default_libdir}" = 'yes' ]; then
         argv="$argv --with-libdir=lib64"
     fi
 
