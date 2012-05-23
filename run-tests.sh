@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-CONFIG="$1"
 TIME="$(date "+%Y%m%d%H%M%S")"
 DEFINITIONS="$(./bin/php-build --definitions)"
 STABLE_DEFINITIONS="5.3.13 5.4.3"
 
 BUILD_PREFIX="/tmp/php-build-test-$TIME"
 BUILD_LIST=
+FAILED=
 
 if ! which "bats" > /dev/null; then
     echo "You need http://github.com/sstephenson/bats installed." >&2
@@ -21,16 +21,9 @@ case "$CONFIG" in
         BUILD_LIST="$STABLE_DEFINITIONS"
         ;;
     *)
-        if echo "$DEFINITIONS" | grep "$CONFIG" > /dev/null; then
-            BUILD_LIST="$CONFIG"
-        else
-            echo "Config '$CONFIG' not found." >&2
-            exit 1
-        fi
+        BUILD_LIST="$@"
         ;;
 esac
-
-STATUS=0
 
 for definition in $BUILD_LIST; do
     echo -n "Building '$definition'..."
@@ -46,12 +39,14 @@ for definition in $BUILD_LIST; do
         done
     else
         echo "FAIL"
-        STATUS=1
+        FAILED="$FAILED $definition"
     fi
 done
 
-if [ "$STATUS" -eq 0 ]; then
+if [ -z "$FAILED" ]; then
     rm -rf "$BUILD_PREFIX"
+else
+    echo "Build fail."
+    echo "Failed Definitions:$FAILED"
+    exit 1
 fi
-
-exit $STATUS
