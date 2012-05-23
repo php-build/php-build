@@ -8,12 +8,16 @@ BUILD_PREFIX="/tmp/php-build-test-$TIME"
 BUILD_LIST=
 FAILED=
 
+usage() {
+    echo "Usage: ./run-tests.sh all|stable|<definition>,..."
+}
+
 if ! which "bats" > /dev/null; then
     echo "You need http://github.com/sstephenson/bats installed." >&2
     exit 1
 fi
 
-case "$CONFIG" in
+case "$1" in
     all)
         BUILD_LIST="$DEFINITIONS"
         ;;
@@ -21,6 +25,10 @@ case "$CONFIG" in
         BUILD_LIST="$STABLE_DEFINITIONS"
         ;;
     *)
+        if [ $# -eq 0 ]; then
+            usage
+            exit 1
+        fi
         BUILD_LIST="$@"
         ;;
 esac
