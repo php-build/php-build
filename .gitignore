@@ -1,3 +1,4 @@
+.vagrant
 tmp/
 var/
 !share/php-build/after-install.d/.empty
