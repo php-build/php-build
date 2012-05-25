@@ -42,8 +42,8 @@ as a plugin:
  * Updated XDebug in all definitions to `v2.2.0`.
  * Added a `Vagrantfile` for setting up an Ubuntu 10.10 environment for
    testing php-build.
- * Added a simple automatic testing system using [bats][]. See
-   `run-tests.sh`. There are 3 configurations:
+ * Added a simple automated testing system using [bats][] (see
+   `run-tests.sh`). There are 3 configurations:
    * `all`: Builds all builtin definitions and runs the test suite on
      each of them.
    * `stable`: Builds the most recent versions of the 5.3 and 5.4
