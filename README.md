@@ -34,7 +34,6 @@ as a plugin:
 ### v0.7.0
 
  * Added support for 5.3.3, 5.3.12, 5.4.2 (loicfrering)
- * Version is now `dev-master` when cloned from the `master` branch.
  * Commenting out the `extension_dir` in old `php.ini` files so the
    default extension dir is used. (sanemat)
  * Honor the `--lib-dir` which was defined in the definition file by the
