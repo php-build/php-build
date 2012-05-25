@@ -31,6 +31,27 @@ as a plugin:
 
 ## Changelog
 
+### v0.7.0
+
+ * Commenting out the `extension_dir` in old `php.ini` files so the
+   default extension dir is used. (sanemat)
+ * Honor the `--lib-dir` which was defined in the definition file by the
+   user (#61). (grota)
+ * Added support for patching releases by separating the
+   download/extract step from the build step (#60). (grota)
+ * Updated XDebug in all definitions to `v2.2.0`.
+ * Added a `Vagrantfile` for setting up an Ubuntu 10.10 environment for
+   testing php-build.
+ * Added a simple automatic testing system using [bats][]. See
+   `run-tests.sh`. There are 3 configurations:
+   * `all`: Builds all builtin definitions and runs the test suite on
+     each of them.
+   * `stable`: Builds the most recent versions of the 5.3 and 5.4
+     series.
+   * Supply a definition name and it builds only the definition and runs
+     the test suite on it.
+
+[bats]: https://github.com/sstephenson/bats
 
 ### v0.6.2
 
