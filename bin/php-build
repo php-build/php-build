@@ -378,7 +378,7 @@ function with_apxs2 {
     local apxs="$1"
     shift
 
-    if [ -z "$apxs2" ]; then
+    if [ -z "$apxs" ]; then
         apxs="$PHP_BUILD_APXS"
     fi
 
