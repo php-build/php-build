@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # **php-build** is a utility for building various versions
 # of **PHP** for using them side by side with each other.
 #
