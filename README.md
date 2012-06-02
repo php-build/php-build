@@ -27,7 +27,7 @@ as a plugin:
 
     $ mkdir -p ~/.phpenv/plugins
     $ cd ~/.phpenv/plugins
-    $ git clone git://github.com/humanshell/php-build.git
+    $ git clone git://github.com/CHH/php-build.git
 
 ## Changelog
 
