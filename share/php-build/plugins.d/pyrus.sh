@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 download_pyrus() {
     local pyrus_url="$1"
