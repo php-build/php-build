@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # PHP.next Development releases depend on current XDebug development
 # snapshots.
