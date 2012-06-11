@@ -285,7 +285,8 @@ function build_package {
     # Comment out 'extension_dir' in old default php.ini files (PHP 5.2). In newer
     # ones (>= 5.3) this is already the default.
     if [ -f "$PREFIX/etc/php.ini" ]; then
-        sed -E -i -e 's/^(extension_dir)/; \1/g' "$PREFIX/etc/php.ini"
+        sed -i.bak -e 's/^\(extension_dir\)/; \1/g' "$PREFIX/etc/php.ini"
+        rm "$PREFIX/etc/php.ini.bak"
     fi
 }
 
