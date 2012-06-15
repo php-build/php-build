@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 TIME="$(date "+%Y%m%d%H%M%S")"
+
 DEFINITIONS="$(./bin/php-build --definitions)"
-STABLE_DEFINITIONS="5.3.13 5.4.3"
+STABLE_DEFINITIONS="5.3.14 5.4.4"
 
 BUILD_PREFIX="/tmp/php-build-test-$TIME"
 BUILD_LIST=
@@ -32,6 +33,9 @@ case "$1" in
         BUILD_LIST="$@"
         ;;
 esac
+
+echo "Testing definitions $BUILD_LIST"
+echo
 
 for definition in $BUILD_LIST; do
     echo -n "Building '$definition'..."
