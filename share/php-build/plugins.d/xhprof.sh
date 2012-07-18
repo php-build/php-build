@@ -6,17 +6,17 @@ function install_xhprof_master {
     local revision=$1
 
     if [ -d "$source_dir" ] && [ -d "$source_dir/.git" ]; then
-        log "XHProf" "Updating XHProf from Git Master"
+        log "xhprof" "Updating xhprof from Git Master"
         cd "$source_dir"
         git pull origin master > /dev/null
         cd "$cwd"
     else
-        log "XHProf" "Fetching from Git Master"
+        log "xhprof" "Fetching from Git Master"
         git clone git://github.com/facebook/xhprof.git "$source_dir" > /dev/null
     fi
 
     if [ -n "$revision" ]; then
-        log "XHProf" "Checkout specified revision: $revision"
+        log "xhprof" "Checkout specified revision: $revision"
         cd "$source_dir"
         git reset --hard $revision
         cd "$cwd"
@@ -34,9 +34,9 @@ function install_xhprof {
         return 1
     fi
 
-    log "XHProf" "Downloading $package_url"
+    log "xhprof" "Downloading $package_url"
 
-    # We cache the tarballs for XHProf versions in `packages/`.
+    # We cache the tarballs for xhprof versions in `packages/`.
     if [ ! -f "$TMP/packages/xhprof-$version.tgz" ]; then
         wget -qP "$TMP/packages" "$package_url"
     fi
@@ -58,7 +58,7 @@ function _build_xhprof {
     local source_dir="$1"
     local cwd=$(pwd)
 
-    log "XHProf" "Compiling in $source_dir"
+    log "xhprof" "Compiling in $source_dir"
 
     cd "$source_dir/extension"
 
@@ -83,17 +83,14 @@ function _build_xhprof {
     local extension_dir=$("$PREFIX/bin/php" -r "echo ini_get('extension_dir');")
 
     if [ ! -f "$xhprof_ini" ]; then
-        log "XHProf" "Installing XHProf configuration in $xhprof_ini"
+        log "xhprof" "Installing xhprof configuration in $xhprof_ini"
 
-        # Comment out the lines in the xhprof.ini when the env variable
-        # is set to something to "no"
-        local conf_line_prefix=
-        echo "$conf_line_prefix extension=\"$extension_dir/xhprof.so\"" > $xhprof_ini
-        echo "$conf_line_prefix xhprof.output_dir=\"/var/tmp/xhprof\"" >> $xhprof_ini
+        echo "extension=\"$extension_dir/xhprof.so\"" > $xhprof_ini
+        echo "xhprof.output_dir=\"/var/tmp/xhprof\"" >> $xhprof_ini
 
     fi
 
-    log XHProf "Cleaning up."
+    log "xhprof" "Cleaning up."
     make clean > /dev/null
 
     cd "$cwd" > /dev/null
