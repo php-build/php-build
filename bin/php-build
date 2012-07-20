@@ -28,7 +28,7 @@ set -e
 # [shocco](https://github.com/rtomayko/shocco).
 #
 #/ php-build, Compile and Install PHP
-#/ Version: v0.8.0
+#/ Version: {{VERSION}}
 #/
 #/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
 #/
@@ -115,7 +115,7 @@ function display_usage {
 }
 
 function display_version {
-    echo "php-build v0.8.0"
+    echo "php-build v{{VERSION}}"
 }
 
 # Init the directories on first run.
