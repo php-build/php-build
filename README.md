@@ -23,6 +23,12 @@ have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 
 ## Changelog
 
+### v0.8.0
+
+ * Added support for 5.3.14, 5.3.15, 5.4.4, 5.4.5 (CHH)
+ * Fixed Linux support regarding `sed` arguments (hnw)
+ * Various bug fixes (sanemat, Milly)
+
 ### v0.7.0
 
  * Added support for 5.3.3, 5.3.12, 5.4.2 (loicfrering)
