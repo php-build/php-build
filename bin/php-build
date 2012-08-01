@@ -436,6 +436,11 @@ function configure_package {
         argv="$argv --with-libdir=lib64"
     fi
 
+    # Create configure file, because source does not have this.
+    if [ ! -f "./configure" ]; then
+      ./buildconf > /dev/null
+    fi
+
     ./configure $argv > /dev/null
 
     cd "$backup_pwd"
