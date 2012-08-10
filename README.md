@@ -1,6 +1,8 @@
 php-build -- Builds multiple versions of PHP.
 =============================================
 
+_Do you like php-build? You can buy me a beer by [Gittipp-ing](http://gittip.com/CHH) me._
+
 ## Install
 
 Clone the Git Repository:
