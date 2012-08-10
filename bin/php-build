@@ -164,6 +164,7 @@ function is_osx {
 function download {
     local url=$1
     local package_file="$TMP/packages/$(basename $url)"
+    local archive_type=${package_file##*.}
     local temp_package="$TMP/$(basename $url)"
 
     if [ -d "$TMP/source/$DEFINITION" ]; then
@@ -186,11 +187,6 @@ function download {
     fi
 
     mkdir "$TMP/source/$DEFINITION"
-
-    # The PHP tarballs have one directory, which is named
-    # `php-<something undeterminable>`, so skip this directory
-    # on extraction.
-    local archive_type=${package_file##*.}
 
     "extract_$archive_type" "$package_file" "$TMP/source/$DEFINITION"
 }
