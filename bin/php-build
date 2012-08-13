@@ -449,7 +449,7 @@ function build_error {
         echo "Here are the last 10 lines from the log:"
         echo
         echo "-----------------------------------------"
-        echo $(tail -n 10 "$LOG_PATH")
+        echo "$(tail -n 10 "$LOG_PATH")"
         echo "-----------------------------------------"
         echo
         echo "The full Log is available at '${LOG_PATH}'."
