@@ -432,6 +432,13 @@ function configure_package {
         argv="$argv --with-libdir=lib64"
     fi
 
+    # Avoid installing PHP binary as "php.dSYM" on MacOSX 10.7 and 10.8.
+    # PHP 5.2 and 5.3 has the problem.
+    # See https://github.com/php/php-src/pull/135
+    if is_osx; then
+        export ac_cv_exeext=''
+    fi
+
     ./configure $argv > /dev/null
 
     cd "$backup_pwd"
