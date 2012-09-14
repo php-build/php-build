@@ -3,7 +3,7 @@
 TIME="$(date "+%Y%m%d%H%M%S")"
 
 DEFINITIONS="$(./bin/php-build --definitions)"
-STABLE_DEFINITIONS="5.3.16 5.4.6"
+STABLE_DEFINITIONS="5.3.17 5.4.7"
 
 BUILD_PREFIX="/tmp/php-build-test-$TIME"
 BUILD_LIST=
