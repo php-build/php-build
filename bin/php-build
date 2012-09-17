@@ -191,6 +191,39 @@ function download {
     "extract_$archive_type" "$package_file" "$TMP/source/$DEFINITION"
 }
 
+# Downloads a PHP Source Tarball from GitHub and extracts it
+# to `$TMP/source/$DEFINITION`.
+function download_from_github {
+    local branch=$1
+    local package_file="$TMP/packages/$branch.tar.gz"
+    local url="https://github.com/php/php-src/tarball/$branch"
+    local temp_package="$TMP/$branch.tar.gz"
+
+    if [ -d "$TMP/source/$DEFINITION" ]; then
+        log "Skipping" "Already downloaded and extracted $url"
+        return
+    fi
+
+    log "Downloading" "$url"
+
+    # Remove the temp file if one exists.
+    if [ -f "$temp_package" ]; then
+        rm "$temp_package"
+    fi
+
+    # Do not download a package when it's already downloaded.
+    if [ ! -f "$package_file" ]; then
+        wget -qP "$TMP" "$url" -O $temp_package > /dev/null
+        cp "$temp_package" "$TMP/packages"
+        rm "$temp_package"
+    fi
+
+    mkdir "$TMP/source/$DEFINITION"
+
+    extract_gz "$package_file" "$TMP/source/$DEFINITION"
+
+}
+
 function extract_gz {
     tar -x -z --strip-components 1 -f "$1" -C "$2"
 }
@@ -303,6 +336,20 @@ function install_package {
     } >&4 2>&1
 }
 
+# ### install_package_from_github
+#
+# Downloads and builds the PHP tarball from the given branch/tag on GitHub.
+function install_package_from_github {
+    local branch=$1
+
+    {
+        download_from_github $branch
+        cd "$TMP/source/$DEFINITION"
+        build_package
+        cd - > /dev/null
+    } >&4 2>&1
+}
+
 # ### configure_option
 #
 # This function sets and unsets arguments for `configure`. Pass it
@@ -391,6 +438,10 @@ function with_apxs2 {
 function configure_package {
     local source_path=$1
     local backup_pwd=$(pwd)
+
+    if [ ! -f ./cofigure ]; then
+        ./buildconf
+    fi
 
     # Mac OSX stores some libraries (for example `libpng`)
     # in `/usr/X11/lib` instead of `/usr/lib`.
