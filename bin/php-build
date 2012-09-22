@@ -200,8 +200,8 @@ function download_from_github {
     local temp_package="$TMP/$branch.tar.gz"
 
     if [ -d "$TMP/source/$DEFINITION" ]; then
-        log "Skipping" "Already downloaded and extracted $url"
-        return
+        log "Removing" "Already downloaded and extracted $url"
+        rm -rf "$TMP/source/$DEFINITION"
     fi
 
     log "Downloading" "$url"
@@ -211,17 +211,13 @@ function download_from_github {
         rm "$temp_package"
     fi
 
-    # Do not download a package when it's already downloaded.
-    if [ ! -f "$package_file" ]; then
-        wget -qP "$TMP" "$url" -O $temp_package > /dev/null
-        cp "$temp_package" "$TMP/packages"
-        rm "$temp_package"
-    fi
+    wget -qP "$TMP" "$url" -O $temp_package > /dev/null
+    cp "$temp_package" "$TMP/packages"
+    rm "$temp_package"
 
     mkdir "$TMP/source/$DEFINITION"
 
     extract_gz "$package_file" "$TMP/source/$DEFINITION"
-
 }
 
 function extract_gz {
