@@ -435,7 +435,7 @@ function configure_package {
     local source_path=$1
     local backup_pwd=$(pwd)
 
-    if [ ! -f ./cofigure ]; then
+    if [ ! -f ./configure ]; then
         ./buildconf
     fi
 
