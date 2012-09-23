@@ -335,7 +335,7 @@ function install_package {
 
 # ### install_package_from_github
 #
-# Downloads and builds the PHP tarball from the given branch/tag on GitHub.
+# Downloads and builds the PHP tarball from the given repo and branch/tag on GitHub.
 function install_package_from_github {
     local repo=$1
     local branch=$2
