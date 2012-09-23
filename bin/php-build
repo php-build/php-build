@@ -194,9 +194,10 @@ function download {
 # Downloads a PHP Source Tarball from GitHub and extracts it
 # to `$TMP/source/$DEFINITION`.
 function download_from_github {
-    local branch=$1
+    local repo=$1
+    local branch=$2
     local package_file="$TMP/packages/$branch.tar.gz"
-    local url="https://github.com/php/php-src/tarball/$branch"
+    local url="https://github.com/$repo/tarball/$branch"
     local temp_package="$TMP/$branch.tar.gz"
 
     if [ -d "$TMP/source/$DEFINITION" ]; then
@@ -336,10 +337,11 @@ function install_package {
 #
 # Downloads and builds the PHP tarball from the given branch/tag on GitHub.
 function install_package_from_github {
-    local branch=$1
+    local repo=$1
+    local branch=$2
 
     {
-        download_from_github $branch
+        download_from_github $repo $branch
         cd "$TMP/source/$DEFINITION"
         build_package
         cd - > /dev/null
