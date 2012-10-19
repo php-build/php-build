@@ -514,7 +514,9 @@ function build_error {
     } >&3
 
     # Removes the prefix when the build fails.
-    cleanup_abort > /dev/null
+    if [ -z "$PHP_BUILD_DEBUG" ]; then
+        cleanup_abort > /dev/null
+    fi
 }
 
 function cleanup_abort {
