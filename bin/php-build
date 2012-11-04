@@ -415,7 +415,7 @@ function with_pear {
 }
 
 function pear_setup {
-    "$PREFIX/bin/pear" config-set php_ini "$PREFIX/etc/php.ini"
+    "$PREFIX/bin/pear" config-set php_ini "$PREFIX/etc/php.ini" system
 }
 
 function with_apxs2 {
