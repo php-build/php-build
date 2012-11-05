@@ -414,8 +414,9 @@ function with_pear {
     configure_option "--with-pear" "$PREFIX/pear"
 }
 
-function pear_setup {
+pear_setup() {
     "$PREFIX/bin/pear" config-set php_ini "$PREFIX/etc/php.ini" system
+    "$PREFIX/bin/pear" config-set auto_discover 1
 }
 
 function with_apxs2 {
