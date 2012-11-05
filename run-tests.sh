@@ -3,7 +3,7 @@
 TIME="$(date "+%Y%m%d%H%M%S")"
 
 DEFINITIONS="$(./bin/php-build --definitions)"
-STABLE_DEFINITIONS="5.3.17 5.4.7"
+STABLE_DEFINITIONS="5.3.18 5.4.8"
 
 BUILD_PREFIX="/tmp/php-build-test-$TIME"
 BUILD_LIST=
@@ -47,6 +47,7 @@ for definition in $BUILD_LIST; do
         echo "Running Tests..."
 
         for t in tests/*.bats; do
+            echo "Running $t..."
             bats "$t"
         done
     else
