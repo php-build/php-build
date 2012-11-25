@@ -1,6 +1,5 @@
 env:
     - DEFINITIONS=stable
-    - DEFINITIONS=all
 
 script: ./run-tests.sh $DEFINITIONS
 
