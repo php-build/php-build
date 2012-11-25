@@ -1,0 +1,6 @@
+script: ./run-tests.sh stable
+
+before_script:
+    - git clone http://github.com/sstephenson/bats
+    - bats/install.sh $HOME
+    - export PATH=$HOME/bin:$HOME/libexec:$PATH
