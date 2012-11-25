@@ -1,4 +1,7 @@
-script: ./run-tests.sh stable
+env:
+    - DEFINITIONS=stable
+
+script: ./run-tests.sh $DEFINITIONS
 
 before_script:
     - git clone http://github.com/sstephenson/bats
