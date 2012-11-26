@@ -45,11 +45,7 @@ for definition in $BUILD_LIST; do
         export TEST_PREFIX="$BUILD_PREFIX/$definition"
 
         echo "Running Tests..."
-
-        for t in tests/*.bats; do
-            echo "Running $t..."
-            bats "$t"
-        done
+        bats "tests/"
     else
         echo "FAIL"
         FAILED="$FAILED $definition"
