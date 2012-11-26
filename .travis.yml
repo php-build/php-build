@@ -1,0 +1,14 @@
+env:
+    - DEFINITIONS=stable
+
+script: ./run-tests.sh $DEFINITIONS
+
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get build-dep php5-cli
+    - sudo apt-get install -qq git-core libmcrypt-dev
+
+before_script:
+    - git clone http://github.com/sstephenson/bats
+    - bats/install.sh $HOME
+    - export PATH=$HOME/bin:$HOME/libexec:$PATH

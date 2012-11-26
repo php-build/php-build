@@ -5,6 +5,8 @@ _Do you like php-build? You can buy me a beer by [Gittipp-ing](http://gittip.com
 
 [contributors]: https://github.com/CHH/php-build/graphs/contributors
 
+Master: [![Build Status](https://secure.travis-ci.org/CHH/php-build.png?branch=master)](https://travis-ci.org/CHH/php-build)
+
 ## Install
 
 Clone the Git Repository:
