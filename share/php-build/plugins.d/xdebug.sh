@@ -14,7 +14,7 @@ function install_xdebug_master {
         cd "$cwd"
     else
         log "XDebug" "Fetching from Git Master"
-        git clone git://github.com/derickr/xdebug.git "$source_dir" > /dev/null
+        git clone git://github.com/xdebug/xdebug.git "$source_dir" > /dev/null
     fi
 
     if [ -n "$revision" ]; then
