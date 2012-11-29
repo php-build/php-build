@@ -1,5 +1,6 @@
 env:
-    - DEFINITIONS=stable
+    - DEFINITIONS=5.3.19
+    - DEFINITIONS=5.4.9
 
 script: ./run-tests.sh $DEFINITIONS
 
@@ -12,3 +13,4 @@ before_script:
     - git clone http://github.com/sstephenson/bats
     - bats/install.sh $HOME
     - export PATH=$HOME/bin:$HOME/libexec:$PATH
+    - bats --version
