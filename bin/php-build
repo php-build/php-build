@@ -132,6 +132,10 @@ function init {
         mkdir "$TMP/source"
     fi
 
+    if [ ! -d "$PHP_BUILD_ROOT/share/php-build/before-install.d" ]; then
+        mkdir -p "$PHP_BUILD_ROOT/share/php-build/before-install.d"
+    fi
+
     if [ ! -d "$PHP_BUILD_ROOT/share/php-build/after-install.d" ]; then
         mkdir -p "$PHP_BUILD_ROOT/share/php-build/after-install.d"
     fi
@@ -240,6 +244,21 @@ function list_definitions {
     } | sort
 }
 
+function trigger_before_install {
+    export PHP_BUILD_ROOT
+    export PREFIX
+
+    local triggers_dir="$PHP_BUILD_ROOT/share/php-build/before-install.d/"
+    local triggers=$(ls "$triggers_dir")
+
+    if [ -n "$triggers" ]; then
+        for trigger in "$triggers_dir"*; do
+            log "Before Install Trigger" "$(basename $trigger)"
+            "$trigger" 2>&4
+        done
+    fi
+}
+
 function trigger_after_install {
     export PHP_BUILD_ROOT
     export PREFIX
@@ -279,6 +298,8 @@ function build_package {
     fi
 
     configure_package "$source_path"
+
+    trigger_before_install 2>&4
 
     log "Compiling" "$source_path"
 
