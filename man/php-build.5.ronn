@@ -43,7 +43,7 @@ support and XDebug.
    `/var/tmp/php-build/source` and compiles it to the <PREFIX>
    provided at the invocation of php-build(1).
    `.gz` _and_ `.bz2` tarballs are supported.
- * `install_package_from_github <BRANCH> [<REPO>]`:
+ * `install_package_from_github` <BRANCH> [<REPO>]:
    Downloads tarball from given branch from the Github Repo <REPO>. <REPO>
    defaults to `php/php-src`.
  * `configure_option` [`-R`] <FLAG> [<VALUE>]:
