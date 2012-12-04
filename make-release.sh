@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 VERSION="$1"
 
 if [ -z "$VERSION" ]; then
@@ -7,7 +9,38 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-./build-docs.sh "$VERSION"
+echo "Releasing $VERSION"
+echo "==="
+echo
 
-# Replace {{VERSION}} with the version passed as argument:
-sed -e "s/{{VERSION}}/$VERSION/" -i '' "bin/php-build"
+echo "--> Creating release branch... "
+
+{
+git branch "release/$VERSION" master
+git checkout "release/$VERSION"
+} > /dev/null
+
+echo "Done"
+
+echo "---> Building documentation... "
+./build-docs.sh "$VERSION" > /dev/null
+echo "Done"
+
+echo "---> Updating version number to \"$VERSION\"... "
+sed -E -e "s/(PHP_BUILD_VERSION=\")(.+)(\")/\1$VERSION\3/" -i '' bin/php-build
+echo "Done"
+
+echo "---> Staging changed files... "
+git add bin/
+git add man/
+echo "Done"
+
+git commit -m "Release $VERSION"
+
+echo "---> Creating tag \"v$VERSION\"... "
+git tag -a "v$VERSION" -m "Release $VERSION" > /dev/null
+echo "Done"
+
+echo
+echo "Successfully released $VERSION"
+
