@@ -101,9 +101,9 @@ as well as all builtin commands.
 
 ### PYRUS
 
-Provides `install_pyrus` [<URL>] which downloads and installs
-the `pyrus` command for managing PEAR packages. Each built PHP
-versions also gets its own Pyrus environment (not shared).
+ * `install_pyrus` [<URL>]:
+   Downloads and installs the `pyrus` command for managing PEAR packages.
+   Each built PHP versions also gets its own Pyrus environment (not shared).
 
 ### XDEBUG
 
