@@ -13,7 +13,10 @@ php-build(5) -- Definition Format
     
     # Download and compile a PHP package from <URL>
     install_package <URL>
-    
+
+    # Checkout branch from Git repository
+    install_package_from_github master
+
     # Download and compile XDebug version tarball.
     install_xdebug <VERSION>
     
@@ -40,6 +43,9 @@ support and XDebug.
    `/var/tmp/php-build/source` and compiles it to the <PREFIX>
    provided at the invocation of php-build(1).
    `.gz` _and_ `.bz2` tarballs are supported.
+ * `install_package_from_github <BRANCH> [<REPO>]`:
+   Downloads tarball from given branch from the Github Repo <REPO>. <REPO>
+   defaults to `php/php-src`.
  * `configure_option` [`-R`] <FLAG> [<VALUE>]:
    Adds the <FLAG> to the list of options passed to PHP's `configure`.
    When <VALUE> is present, then <FLAG>=<VALUE> is added to the list
