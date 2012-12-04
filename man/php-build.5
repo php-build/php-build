@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "PHP\-BUILD" "5" "March 2012" "php-build v0.8.0" "php-build"
+.TH "PHP\-BUILD" "5" "December 2012" "php-build 0.9.0-dev" "php-build"
 .
 .SH "NAME"
 \fBphp\-build\fR \- Definition Format
@@ -20,6 +20,9 @@ configure_option \-D <FLAG>
 
 # Download and compile a PHP package from <URL>
 install_package <URL>
+
+# Checkout branch from Git repository
+install_package_from_github master
 
 # Download and compile XDebug version tarball\.
 install_xdebug <VERSION>
@@ -43,6 +46,10 @@ php\-build defines some custom commands, which aid in building, downloading and 
 .TP
 \fBinstall_package\fR \fIURL\fR
 Downloads the source tarball from \fIURL\fR, extracts it to \fB/var/tmp/php\-build/source\fR and compiles it to the \fIPREFIX\fR provided at the invocation of php\-build(1)\. \fB\.gz\fR \fIand\fR \fB\.bz2\fR tarballs are supported\.
+.
+.TP
+\fBinstall_package_from_github\fR \fIBRANCH\fR [\fIREPO\fR]
+Downloads tarball from given branch from the Github Repo \fIREPO\fR\. \fIREPO\fR defaults to \fBphp/php\-src\fR\.
 .
 .TP
 \fBconfigure_option\fR [\fB\-R\fR] \fIFLAG\fR [\fIVALUE\fR]
@@ -108,7 +115,10 @@ Path to the currently used log file\.
 .SH "CORE PLUGINS"
 .
 .SS "PYRUS"
-Provides \fBinstall_pyrus\fR [\fIURL\fR] which downloads and installs the \fBpyrus\fR command for managing PEAR packages\. Each built PHP versions also gets its own Pyrus environment (not shared)\.
+.
+.TP
+\fBinstall_pyrus\fR [\fIURL\fR]
+Downloads and installs the \fBpyrus\fR command for managing PEAR packages\. Each built PHP versions also gets its own Pyrus environment (not shared)\.
 .
 .SS "XDEBUG"
 .
