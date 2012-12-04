@@ -13,7 +13,7 @@ echo "Releasing $VERSION"
 echo "==="
 echo
 
-echo "--> Creating release branch... "
+echo "---> Creating release branch... "
 
 {
 git branch "release/$VERSION" master
@@ -22,21 +22,25 @@ git checkout "release/$VERSION"
 
 echo "Done"
 
+echo
 echo "---> Building documentation... "
 ./build-docs.sh "$VERSION" > /dev/null
 echo "Done"
 
+echo
 echo "---> Updating version number to \"$VERSION\"... "
 sed -E -e "s/(PHP_BUILD_VERSION=\")(.+)(\")/\1$VERSION\3/" -i '' bin/php-build
+./bin/php-build --version
 echo "Done"
 
+echo
 echo "---> Staging changed files... "
 git add bin/
 git add man/
+git commit -m "Release $VERSION"
 echo "Done"
 
-git commit -m "Release $VERSION"
-
+echo
 echo "---> Creating tag \"v$VERSION\"... "
 git tag -a "v$VERSION" -m "Release $VERSION" > /dev/null
 echo "Done"
