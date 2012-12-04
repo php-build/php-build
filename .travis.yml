@@ -1,8 +1,8 @@
 env:
-    - DEFINITIONS=5.3.19
-    - DEFINITIONS=5.4.9
+    - DEFINITION=5.3.19
+    - DEFINITION=5.4.9
 
-script: ./run-tests.sh $DEFINITIONS
+script: ./run-tests.sh $DEFINITION
 
 before_install:
     - sudo apt-get update -qq
