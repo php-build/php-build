@@ -105,6 +105,8 @@ if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
 fi
 
+PHP_BUILD_VERSION="0.9.0-dev"
+
 # Error Code to return if a defintion was not found.
 E_DEFINITION_NOT_FOUND=127
 
@@ -115,7 +117,7 @@ function display_usage {
 }
 
 function display_version {
-    echo "php-build v{{VERSION}}"
+    echo "php-build v$PHP_BUILD_VERSION"
 }
 
 # Init the directories on first run.
