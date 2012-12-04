@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
+# Update this when a new stable version comes around
+STABLE_DEFINITIONS="5.3.19 5.4.9"
+
 TIME="$(date "+%Y%m%d%H%M%S")"
 
 DEFINITIONS="$(./bin/php-build --definitions)"
-STABLE_DEFINITIONS="5.3.19 5.4.9"
 
 BUILD_PREFIX="/tmp/php-build-test-$TIME"
 BUILD_LIST=
@@ -19,9 +21,6 @@ if ! which "bats" > /dev/null; then
 fi
 
 case "$1" in
-    all)
-        BUILD_LIST="$DEFINITIONS"
-        ;;
     stable)
         BUILD_LIST="$STABLE_DEFINITIONS"
         ;;
