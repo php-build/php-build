@@ -1,0 +1,118 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "PHP\-BUILD" "1" "April 2012" "php-build " "php-build"
+.
+.SH "NAME"
+\fBphp\-build\fR \- Builds PHP versions with their coexistence in mind\.
+.
+.SH "SYNOPSIS"
+\fBphp\-build\fR \fB\-\-definitions\fR
+.
+.br
+\fBphp\-build\fR [\fB\-i\fR|\fB\-\-ini\fR \fIenv\fR] [\-\-pear] \fIdefinition\fR \fIprefix\fR
+.
+.SH "DESCRIPTION"
+\fBphp\-build\fR builds common PHP versions so, that they can be used side by side in a development environment\.
+.
+.P
+\fBphp\-build\fR works with written \fBdefinitions\fR for each PHP version which you want to build\. These definitions typically include directives, which tell where to download the source package, which XDebug version to use (if any) or add/remove/replace specific build options\.
+.
+.P
+To list all available definitions pass the \fB\-\-definitions\fR flag\. Definitions are looked up in \fBshare/php\-build/definitions\fR\.
+.
+.P
+To build a definition pass it as the \fIdefinition\fR argument and the path where you want to place the compiled artifacts as \fIprefix\fR argument\.
+.
+.P
+The \fIdefinition\fR argument either expects a definition name as listed by \fB\-\-definitions\fR, or a path to the definition file you want to use\.
+.
+.P
+\fBImportant:\fR You \fIcannot\fR move the \fIprefix\fR folder afterwards\. All paths are written \fIabsolute\fR to all generated configs and executables!
+.
+.P
+For example to build PHP 5\.4\.0beta2 into your \fB~/local\fR folder with development configuration:
+.
+.P
+\fB$ php\-build \-\-ini development 5\.4\.0beta2 ~/local/5\.4\.0beta2\fR
+.
+.P
+Here is a quick overview of what is stored where:
+.
+.IP "\(bu" 4
+\fBbin/\fR, Contains the PHP executables and all executables installed via \fBpear\fR or \fBpyrus\fR\.
+.
+.IP "\(bu" 4
+\fBbin/php\fR, The PHP Executable
+.
+.IP "\(bu" 4
+\fBbin/pyrus\fR, a Pyrus executable, which installs packages \fIlocal\fR to this PHP version\.
+.
+.IP "\(bu" 4
+\fBbin/pear\fR, a PEAR executable, which installs packages \fIlocal\fR to this PHP version\.
+.
+.IP "\(bu" 4
+\fBetc/php\.ini\fR
+.
+.IP "\(bu" 4
+\fBetc/conf\.d/\fR, PHP is configured to look for additional \fB\.ini\fR files in this directory\. Place your extension\'s config files or your config overrides here\.
+.
+.IP "\(bu" 4
+\fBpear/\fR, here are PHP source files of PEAR packages installed via \fBpear\fR located\.
+.
+.IP "\(bu" 4
+\fBshare/pyrus/\.pear/php\fR, here are the source files of PEAR packages located which were installed via \fBpyrus\fR\. This is configured as Include Path\.
+.
+.IP "" 0
+.
+.SS "Definitions"
+Definitions are the \fIblueprints\fR for building PHP versions\. Definitions are Shell Scripts, which call some predefined functions\. Definitions are stored in \fBshare/php\-build/definitions\fR\. \fBphp\-build\fR ships with definitions for common PHP releases starting with PHP 5\.3\. You can take a look at these to get a feel for them\.
+.
+.P
+\fBphp\-build\fR defines utility functions for building a PHP source tarball and manipulating config files\. \fBphp\-build\fR supports \fBplugins\fR which provide additional functions for usage within definitions\. Plugins must have the extension \fB\.sh\fR and are looked up in \fBshare/plugins\.d\fR\.
+.
+.P
+\fBphp\-build\fR ships with these plugins:
+.
+.IP "\(bu" 4
+\fBpyrus\fR, Provides a \fBinstall_pyrus\fR command which downloads a \fBpyrus\.phar\fR and sets up a Pyrus install local to this \fIprefix\fR
+.
+.IP "\(bu" 4
+\fBxdebug\fR, Provides the \fBinstall_xdebug\fR \fIversion\fR and \fBinstall_xdebug_master\fR commands\. Use \fBinstall_xdebug_master\fR for building development versions of PHP and \fBinstall_xdebug\fR \fIversion\fR for building stable releases\.
+.
+.IP "" 0
+.
+.P
+For more information about the definition file format see php\-build(5)\.
+.
+.SS "pear vs\. pyrus"
+Currently Pyrus \fIhttp://pear2\.php\.net/PEAR2_Pyrus\fR is provided as the default installer for PEAR packages in the shipped definitions\.
+.
+.P
+To install the old "pear" tool alongside of Pyrus, add the \fB\-\-pear\fR flag on the command line, right after the \fB\-\-ini\fR switch\. This is considered experimental!
+.
+.P
+The \fBpear\fR command installs PHP source files to \fB$PREFIX/pear\fR and executables to \fB$PREFIX/bin\fR\.
+.
+.SH "OPTIONS"
+.
+.TP
+\fB\-\-definitions\fR
+Lists all definitions, which are available to build\.
+.
+.TP
+\fB\-i\fR \fIenv\fR, \fB\-\-ini\fR \fIenv\fR
+Tells \fBphp\-build\fR to use the \fBphp\.ini\fR\-\fIenv\fR from the PHP source archive\. Typically you would use either \fBproduction\fR or \fBdevelopment\fR\. Creates an empty \fBphp\.ini\fR by default\.
+.
+.SH "ENVIRONMENT"
+.
+.IP "\(bu" 4
+\fBPHP_BUILD_DEBUG\fR, set this to \fByes\fR to trigger a \fBset \-x\fR call\. This echo\'s all issued shell commands of the script\.
+.
+.IP "\(bu" 4
+\fBPHP_BUILD_XDEBUG_ENABLE\fR, set to \fBoff\fR to comment out the lines which enable XDebug, in the generated \fBxdebug\.ini\fR\.
+.
+.IP "" 0
+.
+.SH "COPYRIGHT"
+php\-build is Copyright (C) 2011 Christoph Hochstrasser \fIhttp://christophh\.net\fR\.
