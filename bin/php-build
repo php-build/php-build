@@ -105,7 +105,7 @@ if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
 fi
 
-PHP_BUILD_VERSION="0.9.0-dev"
+PHP_BUILD_VERSION="0.9.0-beta3"
 
 # Error Code to return if a defintion was not found.
 E_DEFINITION_NOT_FOUND=127
