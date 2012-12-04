@@ -1,5 +1,30 @@
 #!/bin/sh
 
+TEMP_PAGES_DIR=/var/tmp/php-build-gh-pages
+GIT_REPO="git@github.com:CHH/php-build"
+
+update_gh_pages() {
+    if [ -d "$TEMP_PAGES_DIR" ]; then
+        local cwd="$(pwd)"
+        cd "$TEMP_PAGES_DIR"
+        git pull --ff origin gh-pages
+        cd "$cwd"
+    else
+        git clone "$GIT_REPO" -b gh-pages "$TEMP_PAGES_DIR"
+    fi
+
+    cp -R man/ "$TEMP_PAGES_DIR/man"
+
+    local cwd="$(pwd)"
+    cd "$TEMP_PAGES_DIR"
+
+    git add --all "$TEMP_PAGES_DIR/man"
+    git commit -m "Update man pages"
+
+    git push origin gh-pages
+    cd "$cwd"
+}
+
 VERSION="$1"
 
 if [ -z "$RONN_PATH" ]; then
@@ -24,8 +49,15 @@ export RONN_ORGANIZATION="php-build $VERSION"
 
 for manpage in man/*.ronn
 do
-    echo "Building $manpage" >&2
+    echo "Building $manpage... " >&2
     "$ronn" "$manpage"
+    echo "Done" >&2
 done
 
-echo "Done" >&2
+if [ -z "$NO_GITHUB_PAGES" ]; then
+    echo
+    echo "Updating online man pages... " >&2
+    update_gh_pages
+    echo "Done" >&2
+fi
+
