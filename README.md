@@ -36,6 +36,7 @@ have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 [rogeriopradoj]: http://github.com/rogeriopradoj
 [loicfrering]: http://github.com/loicfrering
 [usecide]: http://github.com/usecide
+[hnw]: http://github.com/hnw
 
 ### v0.9.0, 2013/01/01
 
