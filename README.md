@@ -29,6 +29,37 @@ have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 
 ## Changelog
 
+[jtakakura]: http://github.com/jtakakura
+[CHH]: http://github.com/CHH
+[yuya-takeyama]: http://github.com/yuya-takeyama
+[henriquemoody]: http://github.com/henriquemoody
+[rogeriopradoj]: http://github.com/rogeriopradoj
+[loicfrering]: http://github.com/loicfrering
+[usecide]: http://github.com/usecide
+
+### v0.9.0, 2013/01/01
+
+* Add XHProf and APC plugins ([jtakakura][])
+* #74: Fix man installation ([yuya-takeyama][])
+* #76: Fixed a legibility issue reading the error message
+  ([henriquemoody][])
+* Add 5.3.16 and 5.4.6 ([loicfrering][])
+* Avoid installing PHP executable as "php.DSYM" on OSX 10.7 and 10.8
+  ([hnw][])
+* Add 5.3.17, 5.4.7 ([CHH][])
+* Add `install_package_from_github` for building PHP from Github master
+  ([yuya-takeyama][])
+* Add 5.5snapshot ([yuya-takeyama][])
+* Add 5.3.18, 5.4.8 ([loicfrering][])
+* Enable `auto_discover` setting of PEAR by default ([CHH][])
+* Run php-build's test suite on Travis CI ([rogeriopradoj][])
+* Add 5.3.19RC1, 5.4.9RC1, 5.5.0alpha1 ([CHH][])
+* Add 5.3.19, 5.4.9 ([loicfrering][])
+* Add before-install scripts ([usecide][])
+* Add 5.3.20RC1, 5.4.10RC1 ([CHH][])
+* Add 5.5.0alpha2 ([CHH][])
+* #99: Add 5.3.20, 5.4.10 ([rogeriopradoj][])
+
 ### v0.8.0, 2012/07/20
 
  * Added support for 5.3.14, 5.3.15, 5.4.4, 5.4.5 (CHH)
