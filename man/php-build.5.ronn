@@ -5,12 +5,12 @@ php-build(5) -- Definition Format
 
     # Passes `--with-pear=$PREFIX/pear` to `configure`.
     with_pear
-    
+
     # Add/Delete flags passed to `configure`.
     configure_option <FLAG> [<VALUE>]
     configure_option -R <FLAG> [<VALUE>]
     configure_option -D <FLAG>
-    
+
     # Download and compile a PHP package from <URL>
     install_package <URL>
 
@@ -19,11 +19,11 @@ php-build(5) -- Definition Format
 
     # Download and compile XDebug version tarball.
     install_xdebug <VERSION>
-    
+
     # Use XDebug from <https://github.com/derickr/xdebug>. Development
     # versions of PHP need the latest XDebug from master.
     install_xdebug_master
-    
+
     install_pyrus [<URL>]
 
 ## DESCRIPTION
@@ -50,7 +50,7 @@ support and XDebug.
    Adds the <FLAG> to the list of options passed to PHP's `configure`.
    When <VALUE> is present, then <FLAG>=<VALUE> is added to the list
    of configure options.
-   Replaces the value of the existing <FLAG> with a new <VALUE> when 
+   Replaces the value of the existing <FLAG> with a new <VALUE> when
    the `-R` option is present.
  * `configure_option` `-D` <FLAG>:
    Deletes the <FLAG> from the list of configure options.

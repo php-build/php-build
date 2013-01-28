@@ -44,11 +44,11 @@ Here is a quick overview of what is stored where:
  * `bin/pear`, a PEAR executable, which installs packages _local_ to this PHP version.
  * `etc/php.ini`
  * `etc/conf.d/`, PHP is configured to look for additional
-   `.ini` files in this directory. Place your extension's 
+   `.ini` files in this directory. Place your extension's
    config files or your config overrides here.
  * `pear/`, here are PHP source files of PEAR packages installed
    via `pear` located.
- * `share/pyrus/.pear/php`, here are the source files of PEAR packages located 
+ * `share/pyrus/.pear/php`, here are the source files of PEAR packages located
    which were installed via `pyrus`. This is configured as Include Path.
 
 ### Definitions
@@ -62,7 +62,7 @@ take a look at these to get a feel for them.
 `php-build` defines utility functions for building a PHP source tarball
 and manipulating config files. `php-build` supports
 **plugins** which provide additional functions for usage within
-definitions. Plugins must have the extension `.sh` and 
+definitions. Plugins must have the extension `.sh` and
 are looked up in `share/plugins.d`.
 
 `php-build` ships with these plugins:

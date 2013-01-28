@@ -24,7 +24,7 @@
 # fail once a command invocation itself fails.
 set -e
 
-# This is the usage message, like it's done in 
+# This is the usage message, like it's done in
 # [shocco](https://github.com/rtomayko/shocco).
 #
 #/ php-build, Compile and Install PHP

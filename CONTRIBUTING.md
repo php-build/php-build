@@ -12,7 +12,7 @@ The script can be invoked like this:
     % ./run-tests.sh <DEFINITION>,...
 
 There is also a special target for testing php-build, `stable`. The
-`stable` target tests the latest stable release of the active PHP branches. 
+`stable` target tests the latest stable release of the active PHP branches.
 At the time of the writing these are `5.4.9` and `5.3.19`.
 
 [Bats]: https://github.com/sstephenson/bats
