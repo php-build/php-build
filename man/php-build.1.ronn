@@ -101,8 +101,10 @@ executables to `$PREFIX/bin`.
 
  * `PHP_BUILD_DEBUG`, set this to `yes` to trigger a `set -x`
    call. This echo's all issued shell commands of the script.
- * `PHP_BUILD_XDEBUG_ENABLE`, set to `off` to comment out the
+ * `PHP_BUILD_XDEBUG_ENABLE=on|off` (default: `on`), set to `off` to comment out the
    lines which enable XDebug, in the generated `xdebug.ini`.
+ * `PHP_BUILD_CONFIGURE_OPTS`, list of additional configure options.
+ * `PHP_BUILD_ZTS_ENABLE=on|off` (default: `off`), enables Zend Thread Safety for builds
 
 ## COPYRIGHT
 

@@ -105,6 +105,11 @@ if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
 fi
 
+# Enable Zend Thread Safety by setting this value to "yes"
+if [ -z "$PHP_BUILD_ZTS_ENABLE" ]; then
+    PHP_BUILD_ZTS_ENABLE=off
+fi
+
 PHP_BUILD_VERSION="0.9.0"
 
 # Error Code to return if a defintion was not found.
@@ -463,6 +468,8 @@ function configure_package {
     local source_path=$1
     local backup_pwd=$(pwd)
 
+    cd "$source_path"
+
     if [ ! -f ./configure ]; then
         ./buildconf
     fi
@@ -480,6 +487,11 @@ function configure_package {
         configure_option -R "--with-png-dir" "/usr/X11"
     fi
 
+    if [ "$PHP_BUILD_ZTS_ENABLE" == "on" ]; then
+        configure_option "--enable-maintainer-zts"
+        log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
+    fi
+
     # Add the config-file-path, config-file-scan-dir aswell as the
     # prefix to the build options, these cannot be changed by definitions.
     local argv="$CONFIGURE_OPTIONS \
@@ -488,8 +500,6 @@ function configure_package {
 --prefix=$PREFIX"
 
     log "Preparing" "$source_path"
-
-    cd "$source_path"
 
     if [ ! -d "$PREFIX/etc/conf.d" ]; then
         mkdir -p "$PREFIX/etc/conf.d"
