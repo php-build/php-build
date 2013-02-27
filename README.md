@@ -1,7 +1,7 @@
 php-build — Builds multiple versions of PHP.
 =============================================
 
-_Do you like php-build? You can buy me a beer by [Gittipp-ing](http://gittip.com/CHH). Consider also Gittipp-ing one of the awesome [contributors]._ 
+_Do you like php-build? You can buy me a beer by [Gittipp-ing](http://gittip.com/CHH). Consider also Gittipp-ing one of the awesome [contributors]._
 
 [contributors]: https://github.com/CHH/php-build/graphs/contributors
 
@@ -17,14 +17,14 @@ Then go into the extracted/cloned directory and run:
 
     % ./install.sh
 
-This installs php-build to default prefix which is `/usr/local`. 
+This installs php-build to default prefix which is `/usr/local`.
 
 To install php-build to an other location than `/usr/local` set the
 `PREFIX` environment variable:
 
     % PREFIX=$HOME/local ./install.sh
 
-If you don't have permissions to write to the prefix, then you 
+If you don't have permissions to write to the prefix, then you
 have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 
 ## Changelog

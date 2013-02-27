@@ -1,4 +1,3 @@
-
 configure_option "--enable-fastcgi"
 
 configure_option -R "--with-mysql"
