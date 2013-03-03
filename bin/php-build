@@ -261,7 +261,7 @@ function trigger_before_install {
     if [ -n "$triggers" ]; then
         for trigger in "$triggers_dir"*; do
             log "Before Install Trigger" "$(basename $trigger)"
-            "$trigger" 2>&4
+            /usr/bin/env PATH="$PREFIX/bin:$PATH" "$trigger" 2>&4
         done
     fi
 }
@@ -276,7 +276,7 @@ function trigger_after_install {
     if [ -n "$triggers" ]; then
         for trigger in "$triggers_dir"*; do
             log "After Install Trigger" "$(basename $trigger)"
-            "$trigger" 2>&4
+            /usr/bin/env PATH="$PREFIX/bin:$PATH" "$trigger" 2>&4
         done
     fi
 }
@@ -494,10 +494,10 @@ function configure_package {
 
     # Add the config-file-path, config-file-scan-dir aswell as the
     # prefix to the build options, these cannot be changed by definitions.
-    local argv="$CONFIGURE_OPTIONS \
---with-config-file-path="$PREFIX/etc" \
+    local argv="--with-config-file-path="$PREFIX/etc" \
 --with-config-file-scan-dir="$PREFIX/etc/conf.d" \
---prefix=$PREFIX"
+--prefix=$PREFIX \
+$CONFIGURE_OPTIONS"
 
     log "Preparing" "$source_path"
 
