@@ -148,6 +148,38 @@ function init {
     fi
 }
 
+# Credits to Sam Stephenson
+function http() {
+    local method="$1"
+    local url="$2"
+    [ -n "$url" ] || return 1
+
+    if type curl &>/dev/null; then
+        "http_${method}_curl" "$url"
+    elif type wget &>/dev/null; then
+        "http_${method}_wget" "$url"
+    else
+        echo "error: please install \`curl\` or \`wget\` and try again" >&2
+        exit 1
+    fi
+}
+
+function http_head_curl() {
+    curl -qsILf "$1" >&4 2>&1
+}
+
+function http_get_curl() {
+    curl -qsSLf "$1"
+}
+
+function http_head_wget() {
+    wget -q --spider "$1" >&4 2>&1
+}
+
+function http_get_wget() {
+    wget -nv -O- "$1"
+}
+
 # Logs a given log text with a [marker] to
 # STDERR.
 function log {
@@ -192,7 +224,7 @@ function download {
 
     # Do not download a package when it's already downloaded.
     if [ ! -f "$package_file" ]; then
-        wget -qP "$TMP" "$url" > /dev/null
+        http get "$url" > "$temp_package"
         cp "$temp_package" "$TMP/packages"
         rm "$temp_package"
     fi
