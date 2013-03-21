@@ -628,6 +628,11 @@ DEFINITION=$1
 # The built PHP version is placed in this directory.
 PREFIX=$2
 
+if [ -z "$PREFIX" ]; then
+    display_usage
+    exit 1
+fi
+
 if [ "$ENABLE_PEAR" = "1" ]; then
     with_pear
 fi
