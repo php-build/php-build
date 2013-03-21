@@ -41,7 +41,7 @@ function install_xdebug {
 
     # We cache the tarballs for XDebug versions in `packages/`.
     if [ ! -f "$TMP/packages/xdebug-$version.tgz" ]; then
-        wget -qP "$TMP/packages" "$package_url"
+        http get "$package_url" > "$TMP/packages/xdebug-$version.tgz"
     fi
 
     # Each tarball gets extracted to `source/xdebug-$version`.

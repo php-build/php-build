@@ -10,7 +10,7 @@ download_pyrus() {
     log "Pyrus" "Downloading from $pyrus_url"
 
     if [ ! -f "$TMP/packages/pyrus.phar" ]; then
-        wget -qP "$TMP/packages" $pyrus_url
+        http get $pyrus_url > "$TMP/packages/pyrus.phar"
     fi
 }
 
