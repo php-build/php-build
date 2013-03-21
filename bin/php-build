@@ -255,7 +255,7 @@ function download_from_github {
         rm "$temp_package"
     fi
 
-    wget -qP "$TMP" "$url" -O $temp_package > /dev/null
+    http get "$url" > $temp_package
     cp "$temp_package" "$TMP/packages"
     rm "$temp_package"
 
