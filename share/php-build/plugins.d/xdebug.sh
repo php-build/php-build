@@ -78,7 +78,7 @@ function _build_xdebug {
 
     # Zend extensions are not looked up in PHP's extension dir, so
     # we need to find the absolute path for the extension_dir.
-    local extension_dir=$("$PREFIX/bin/php" -r "echo ini_get('extension_dir');")
+    local extension_dir=$("$PREFIX/bin/php-config" --extension-dir)
 
     if [ -z "$PHP_BUILD_XDEBUG_ENABLE" ]; then
         PHP_BUILD_XDEBUG_ENABLE=yes
