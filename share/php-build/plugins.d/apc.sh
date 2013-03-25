@@ -52,12 +52,10 @@ function _build_apc {
 
     local apc_ini="$PREFIX/etc/conf.d/apc.ini"
 
-    local extension_dir=$("$PREFIX/bin/php" -r "echo ini_get('extension_dir');")
-
     if [ ! -f "$apc_ini" ]; then
         log "APC" "Installing APC configuration in $apc_ini"
 
-        echo "extension=\"$extension_dir/apc.so\"" > $apc_ini
+        echo "extension=\"apc.so\"" > $apc_ini
 
     fi
 
