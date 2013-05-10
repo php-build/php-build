@@ -85,7 +85,7 @@ function realpath {
 # is treated as the base for the `share/` and `tmp/`
 # folders of php-build.
 PHP_BUILD_ROOT="$(realpath "$0")/.."
-TMP="$(dirname $(mktemp --dry-run 2>/dev/null || echo "/var/tmp"))/php-build"
+TMP="$(dirname $(mktemp --dry-run 2>/dev/null || echo "/var/tmp/tmp_dir"))/php-build"
 
 # This file gets copied to `$PREFIX/etc/php.ini` once
 # the build is complete. This is by default the PHP tarball's
