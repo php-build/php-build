@@ -21,6 +21,20 @@ to go.
 
 ## Install
 
+It's up to you: use the [`install.sh`](https://raw.github.com/rogeriopradoj/php-build-plugin-composer/master/install.sh) script, or make installation by hand.
+
+### Install via `install.sh`
+
+    $ wget -O install.sh http://git.io/Hqr8pQ || curl -o install.sh http://git.io/Hqr8pQ && ./install.sh
+
+If necessary, `install.sh` can receive an environment variable `PREFIX`, to use
+in case of your php-build is installed in a directory different than `/usr/local/`. E.g.:
+    
+    $ PREFIX=/path_to_another_directory ./install.sh
+
+
+### Install by hand
+
 **First of all**, download the plugin (e.g. to your home directory, `~`):
 
 - Either via `wget`:
@@ -68,3 +82,13 @@ link `share/php-build/after-install.d/composer.sh` to
 
 *Note 2:* If you don't have permissions to write to that directory, run
 the commands as superuser, either via `su -c` or via `sudo`.
+
+## Changelog
+
+### 0.0.2 - 2013-05-12
+
+- Includes `install.sh` script.
+
+### 0.0.1 - 2013-03-14
+
+- First release.
