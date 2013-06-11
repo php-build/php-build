@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$RBENV_DEBUG" ] && set -x
+
+# Provide rbenv completions
+if [ "$1" = "--complete" ]; then
+  exec php-build --definitions
+fi
+
+if [ -z "$RBENV_ROOT" ]; then
+  RBENV_ROOT="${HOME}/.phpenv"
+fi
+
+DEFINITION="$1"
+case "$DEFINITION" in
+"" | -* )
+  { echo "usage: phpenv install VERSION"
+    echo
+    echo "Available versions:"
+    php-build --definitions | sed 's/^/ /'
+    echo
+  } >&2
+  exit 1
+  ;;
+esac
+
+VERSION_NAME="${DEFINITION##*/}"
+PREFIX="${RBENV_ROOT}/versions/${VERSION_NAME}"
+
+php-build "$DEFINITION" "$PREFIX"
+phpenv rehash
