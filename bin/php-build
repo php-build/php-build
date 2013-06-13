@@ -110,7 +110,7 @@ if [ -z "$PHP_BUILD_ZTS_ENABLE" ]; then
     PHP_BUILD_ZTS_ENABLE=off
 fi
 
-PHP_BUILD_VERSION="0.10.0"
+PHP_BUILD_VERSION="0.11.0dev"
 
 # Error Code to return if a defintion was not found.
 E_DEFINITION_NOT_FOUND=127
