@@ -37,6 +37,21 @@ have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 [loicfrering]: http://github.com/loicfrering
 [usecide]: http://github.com/usecide
 [hnw]: http://github.com/hnw
+[slashmili]: https://github.com/slashmili
+
+### v0.10.0, 2013/06/14
+
+* Add `rbenv-install` for `phpenv` ([hnw][])
+* Add 5.5.0alpha3, 5.5.0alpha4, 5.5.0alpha5, 5.5.0alpha6, 5.5.0beta1, 5.5.0beta2, 5.5.0beta3, 5.5.0beta4
+  5.5.0RC1, 5.5.0RC2, 5.5.0RC3 ([loicfrering][], [CHH][])
+* Add 5.3.20, 5.3.21, 5.3.22, 5.3.23, 5.3.24, 5.3.25, 5.3.26 ([rogeriopradoj][], [loicfrering][], [CHH][])
+* Add 5.4.11, 5.4.12, 5.4.13, 5.4.14, 5.4.15, 5.4.16 ([rogeriopradoj][], [loicfrering][], [CHH][])
+* Add `PHP_BUILD_ZTS_ENABLE` environment variable to build PHP with ZTS
+* Fixed [#118](https://github.com/CHH/php-build/pull/118): Install apache module into user's libexec dir ([hnw][])
+* Fixed [#117](https://github.com/CHH/php-build/pull/117): Use "php-config" instead of "php" to get extension_dir path ([hnw][])
+* Fixed [#116](https://github.com/CHH/php-build/pull/116): Fix extension's path to relative one in apc.ini ([hnw][])
+* Fixed [#113](https://github.com/CHH/php-build/pull/113): Find TMP dir based on OS default path ([slashmili][])
+* Fixed [#109](https://github.com/CHH/php-build/pull/109): Cannot change config-file-path flag as it's hard coded ([CHH][])
 
 ### v0.9.0, 2013/01/01
 
