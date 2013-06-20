@@ -302,6 +302,8 @@ function trigger_after_install {
     export PHP_BUILD_ROOT
     export PREFIX
 
+    after_install "$PREFIX"
+
     local triggers_dir="$PHP_BUILD_ROOT/share/php-build/after-install.d/"
     local triggers=$(ls "$triggers_dir")
 
@@ -311,6 +313,14 @@ function trigger_after_install {
             /usr/bin/env PATH="$PREFIX/bin:$PATH" "$trigger" 2>&4
         done
     fi
+}
+
+# after_install(BUILD_DIR)
+#
+# Gets called after install has finished.
+# Implement this function in your definitions.
+function after_install() {
+    local stub=1
 }
 
 function load_plugins {
