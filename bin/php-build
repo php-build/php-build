@@ -302,7 +302,7 @@ function trigger_after_install {
     export PHP_BUILD_ROOT
     export PREFIX
 
-    after_install "$PREFIX"
+    after_install "$PREFIX" 2>&4
 
     local triggers_dir="$PHP_BUILD_ROOT/share/php-build/after-install.d/"
     local triggers=$(ls "$triggers_dir")
