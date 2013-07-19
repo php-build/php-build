@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Update this when a new stable version comes around
-STABLE_DEFINITIONS="5.3.26 5.4.16 5.5.1"
+STABLE_DEFINITIONS="5.3.27 5.4.17 5.5.1"
 
 TIME="$(date "+%Y%m%d%H%M%S")"
 
@@ -36,6 +36,8 @@ esac
 echo "Testing definitions $BUILD_LIST"
 echo
 
+while true; do echo "..."; sleep 60; done & #https://github.com/CHH/php-build/issues/134
+
 for definition in $BUILD_LIST; do
     echo -n "Building '$definition'..."
     if ./bin/php-build --pear "$definition" "$BUILD_PREFIX/$definition" &> /dev/null; then
@@ -50,6 +52,8 @@ for definition in $BUILD_LIST; do
         FAILED="$FAILED $definition"
     fi
 done
+
+kill %1 #https://github.com/CHH/php-build/issues/134
 
 if [ -z "$FAILED" ]; then
     rm -rf "$BUILD_PREFIX"
