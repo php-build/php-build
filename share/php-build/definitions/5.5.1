@@ -1,0 +1,18 @@
+after_install() {
+    log Info "Enabling Opcache..."
+
+    local build_dir="$1"
+    local ext_dir=$("$build_dir/bin/php-config" --extension-dir)
+
+    if [ ! -f "$ext_dir/opcache.so" ]; then
+        log Info "Aborting: opcache.so not found"
+        return 0
+    fi
+
+    echo "zend_extension=$ext_dir/opcache.so" >> "$build_dir/etc/php.ini"
+    log Info "Done"
+}
+
+install_package "http://www.php.net/distributions/php-5.5.1.tar.bz2"
+install_pyrus
+install_xdebug "2.2.3"
