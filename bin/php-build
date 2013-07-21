@@ -105,6 +105,10 @@ if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
 fi
 
+if [ -n "$CONFIGURE_OPTS" ]; then
+    CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $CONFIGURE_OPTS"
+fi
+
 # Enable Zend Thread Safety by setting this value to "yes"
 if [ -z "$PHP_BUILD_ZTS_ENABLE" ]; then
     PHP_BUILD_ZTS_ENABLE=off
