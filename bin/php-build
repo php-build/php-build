@@ -641,6 +641,20 @@ function find_definition {
     fi
 }
 
+function enable_builtin_opcache {
+    log Info "Enabling Opcache..."
+
+    local ext_dir=$("$PREFIX/bin/php-config" --extension-dir)
+
+    if [ ! -f "$ext_dir/opcache.so" ]; then
+        log Info "Aborting: opcache.so not found"
+        return 0
+    fi
+
+    echo "zend_extension=$ext_dir/opcache.so" >> "$PREFIX/etc/php.ini"
+    log Info "Done"
+}
+
 # Here the magic begins
 # ---------------------
 
