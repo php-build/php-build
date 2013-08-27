@@ -30,3 +30,4 @@
 --enable-mbstring
 --disable-debug
 --enable-fpm
+--enable-bcmath
