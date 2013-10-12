@@ -1,3 +1,4 @@
-install_package_from_github master
+install_package "http://snaps.php.net/php5.5-latest.tar.bz2"
 install_pyrus
-install_xdebug_master
+install_xdebug "2.2.3"
+enable_builtin_opcache
