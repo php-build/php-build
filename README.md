@@ -85,6 +85,8 @@ the commands as superuser, either via `su -c` or via `sudo`.
 
 ## Changelog
 
+### 1.1.0-dev - not released
+
 ### 1.0.0 - 2013-12-29
 
 - Self update composer.phar if it is already is TMP.
