@@ -87,7 +87,8 @@ the commands as superuser, either via `su -c` or via `sudo`.
 
 ### 1.0.0 - not released
 
-- Self update composer.phar if it is already is TMP
+- Self update composer.phar if it is already is TMP.
+- Create `CONTRIBUTE.md` and [How to contribute](#how-to-contribute) section.
 
 ### 0.0.2 - 2013-05-12
 
@@ -97,6 +98,9 @@ the commands as superuser, either via `su -c` or via `sudo`.
 
 - First release.
 
+## How to contribute
+
+Please see [CONTRIBUTE.md](CONTRIBUTE.md).
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/rogeriopradoj/php-build-plugin-composer/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
