@@ -85,6 +85,10 @@ the commands as superuser, either via `su -c` or via `sudo`.
 
 ## Changelog
 
+### 1.0.0 - not released
+
+- Self update composer.phar if it is already is TMP
+
 ### 0.0.2 - 2013-05-12
 
 - Includes `install.sh` script.
