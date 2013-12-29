@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 TMP="/var/tmp/php-build"
+PHP="/usr/bin/env php"
 
 download_composer() {
     local composer_url="$1"
@@ -9,10 +10,12 @@ download_composer() {
         composer_url="http://getcomposer.org/composer.phar"
     fi
 
-    echo "Composer" "Downloading from $composer_url" >&3
-
     if [ ! -f "$TMP/packages/composer.phar" ]; then
+        echo "Composer" "Downloading from $composer_url" >&3
         wget -P "$TMP/packages" $composer_url
+    else
+        echo "Composer" "self updating in $TMP/packages/composer.phar" >&3
+        $PHP $TMP/packages/composer.phar self-update
     fi
 }
 
