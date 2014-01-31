@@ -658,56 +658,101 @@ function enable_builtin_opcache {
 # Here the magic begins
 # ---------------------
 
-# Set up the directories needed for the source
-# and the downloaded packages.
+# Set up the directories needed for the source and the downloaded packages.
 init
 
-# Display the Usage message if no arguments are given.
-if [ -z $1 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    display_usage
-    exit
-fi
+# if no arguments then show usage and exit
+test "$#" = 0 && display_usage && exit 0 # this is not an error
 
-if [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
-    display_version
-    exit
-fi
+#
+# defaults
+#
+DEFINITION=
+ENABLE_PEAR=
+PREFIX=
 
-if [ "$1" = "--definitions" ]; then
-    list_definitions
-    exit
-fi
+#
+# parse arguments
+#
+#   For --opt=val handling, example:
+#
+#       # options
+#       --fizz)     FIZZ="$2"
+#       --fizz=*)   FIZZ=${1#*=} # Delete everything up till "="
+#
+#       # both will work
+#       $ cmd --fizz=buzz
+#       $ cmd --fizz buzz
+#
+while test "$#" != 0; do
+    case "$1" in
 
-# If `-i` or `--ini` is given as first argument, then
-# treat the second argument as `php.ini` file.
-if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
-    # If an existing path is passed (and the path is a file)
-    # then use this file, otherwise use `php.ini-<value>`
-    # from the tarball.
-    if [ -f "$2" ]; then
-        PHP_DEFAULT_INI="$2"
-    else
-        PHP_DEFAULT_INI="php.ini-$2"
-    fi
+        --definitions)  list_definitions; exit 0 ;;
+        --pear)         ENABLE_PEAR=1 ;;
+        --ini|-i)
+
+            # ini value argument is required
+            if [ -z "$2" ]; then
+                echo "$0: missing argument for '$1'" >&3 && display_usage && exit 1
+            fi
+
+            # If an existing path is passed (and the path is a file) then use
+            # this file, otherwise use `php.ini-<value>` from the tarball.
+            if [ -f "$2" ]; then
+                PHP_DEFAULT_INI="$2"
+            else
+                PHP_DEFAULT_INI="php.ini-$2"
+            fi
+
+            shift
+
+            ;;
+
+        # standard options
+
+        --version|v)    display_version;    exit 0 ;;
+        --help|-h)      display_usage;      exit 0 ;;
+
+        # standard terminates
+
+        --) shift; break ;; # terminate loop; end of options list
+
+        # unkown options
+
+        -*) echo "$0: Unknown option '$1'" >&3 && display_usage && exit 1 ;;
+
+        # "switch-less" arguments
+        #
+        # Allow *definition* and *prefix* arguments without switches i.e.
+        # instead of `--switch <value>` allow `<value>`
+
+        *)
+
+            if [ -z "$DEFINITION" ]; then # 1st no switch argument
+                DEFINITION="$1" # this is the name of the definition we want to build
+            elif [ -z "$PREFIX" ]; then # 2nd no switch argument
+                PREFIX="$1" # the built PHP version is placed in this directory
+            else
+
+                # unkown arguments
+
+                echo "$0: Unknown argument '$1'" >&3 && display_usage && exit 1
+
+            fi
+
+            ;;
+    esac
     shift
-    shift
-fi
+done
 
-if [ "$1" = "--pear" ]; then
-    ENABLE_PEAR=1
-    shift
-fi
+#
+# arguments validation
+#
 
-# This is the name of the definition we want to build.
-DEFINITION=$1
+[ -z "$DEFINITION" ] && echo "$0: definition is required" >&3 && display_usage && exit 1
+[ -z "$PREFIX" ] && echo "$0: prefix is required" >&3 && display_usage && exit 1
 
-# The built PHP version is placed in this directory.
-PREFIX=$2
-
-if [ -z "$PREFIX" ]; then
-    display_usage
-    exit 1
-fi
+#
 
 if [ "$ENABLE_PEAR" = "1" ]; then
     with_pear
@@ -770,4 +815,3 @@ log "Success" "Built $DEFINITION successfully."
 
 trap - SIGINT
 trap - SIGTERM
-
