@@ -727,10 +727,7 @@ while test "$#" != 0; do
 
         -*) echo "$0: Unknown option '$1'" >&3 && display_usage && exit 1 ;;
 
-        # "switch-less" arguments
-        #
-        # Allow *definition* and *prefix* arguments without switches i.e.
-        # instead of `--switch <value>` allow `<value>`
+        # arguments
 
         *)
 
