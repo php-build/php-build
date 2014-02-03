@@ -716,7 +716,7 @@ while test "$#" != 0; do
 
         # standard options
 
-        --version|v)    display_version;    exit 0 ;;
+        --version|-v)   display_version;    exit 0 ;;
         --help|-h)      display_usage;      exit 0 ;;
 
         # standard terminates
