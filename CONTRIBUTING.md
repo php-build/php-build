@@ -25,8 +25,8 @@ this series as a base, for example `5.5.0RC1`.
 
 Create a file named `5.5.0` in `share/php-build/definitions`. Then let's
 get the URL for the tarball. Usually tarballs for stable versions are
-located at `http://www.php.net/distributions/php-<version>.tar.bz2`, in
-our case this would be `http://www.php.net/distributions/php-5.5.0.tar.bz2`.
+located at `http://museum.php.net/php5/php-<version>.tar.bz2`, in
+our case this would be `http://museum.php.net/php5/php-5.5.0.tar.bz2`.
 
 Make sure to always use path ending with `.bz2`, it's the best format
 that's supported by php-build.
@@ -38,7 +38,7 @@ into the definition.
 So far our whole definition will look like this:
 
     # share/php-build/definitions/5.5.0
-    install_package "http://www.php.net/distributions/php-5.5.0.tar.bz2"
+    install_package "http://museum.php.net/php5/php-5.5.0.tar.bz2"
     install_pyrus
     install_xdebug_master # or install_xdebug "<VERSION>"
 
