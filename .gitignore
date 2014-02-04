@@ -1,5 +1,9 @@
 .vagrant
 tmp/
 var/
+
+share/php-build/before-install.d/*
+!share/php-build/before-install.d/.empty
+
+share/php-build/after-install.d/*
 !share/php-build/after-install.d/.empty
-share/php-build/after-install.d
