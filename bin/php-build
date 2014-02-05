@@ -689,7 +689,7 @@ while test "$#" != 0; do
 
             # ini value argument is required
             if [ -z "$2" ]; then
-                echo "$0: missing argument for '$1'" >&3 && display_usage && exit 1
+                echo "$0: missing argument for '$1'" >&3 && exit 1
             fi
 
             # If an existing path is passed (and the path is a file) then use
@@ -715,7 +715,7 @@ while test "$#" != 0; do
 
         # unkown options
 
-        -*) echo "$0: Unknown option '$1'" >&3 && display_usage && exit 1 ;;
+        -*) echo "$0: Unknown option '$1'" >&3 && exit 1 ;;
 
         # arguments
 
@@ -729,7 +729,7 @@ while test "$#" != 0; do
 
                 # unkown arguments
 
-                echo "$0: Unknown argument '$1'" >&3 && display_usage && exit 1
+                echo "$0: Unknown argument '$1'" >&3 && exit 1
 
             fi
 
@@ -742,8 +742,8 @@ done
 # arguments validation
 #
 
-[ -z "$DEFINITION" ] && echo "$0: definition is required" >&3 && display_usage && exit 1
-[ -z "$PREFIX" ] && echo "$0: prefix is required" >&3 && display_usage && exit 1
+test -z "$DEFINITION" && echo "$0: definition is required" >&3 && exit 1
+test -z "$PREFIX" && echo "$0: prefix is required" >&3 && exit 1
 
 #
 
