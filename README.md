@@ -7,6 +7,10 @@ _Do you like php-build? You can buy me a beer by [Gittipp-ing](http://gittip.com
 
 Master: [![Build Status](https://secure.travis-ci.org/CHH/php-build.png?branch=master)](https://travis-ci.org/CHH/php-build)
 
+## Support
+
+Raise a GitHub issue or join the #php-build channel on Freenode.
+
 ## Install
 
 Clone the Git Repository:
