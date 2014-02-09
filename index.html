@@ -28,25 +28,30 @@
 
     <div class="container">
       <section id="main_content">
-        <h1>php-build</h1>
+        <h1>
+<a name="php-build" class="anchor" href="#php-build"><span class="octicon octicon-link"></span></a>php-build</h1>
 
 <p>php-build builds multiple PHP versions from source, and this <em>fully automatic</em>.</p>
 
-<h2>Who uses this?</h2>
+<h2>
+<a name="who-uses-this" class="anchor" href="#who-uses-this"><span class="octicon octicon-link"></span></a>Who uses this?</h2>
 
 <ul>
 <li><a href="http://travis-ci.org">Travis CI</a></li>
 <li><em>Maybe you?</em></li>
-</ul><h2>Install</h2>
+</ul><h2>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
 
 <pre><code>% git clone git://github.com/CHH/php-build
 % cd php-build
 % sudo ./install.sh
 </code></pre>
 
-<h2>Usage</h2>
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<h3>Synopsis</h3>
+<h3>
+<a name="synopsis" class="anchor" href="#synopsis"><span class="octicon octicon-link"></span></a>Synopsis</h3>
 
 <pre><code>php-build --help
 php-build --definitions
@@ -60,9 +65,9 @@ php-build [-i &lt;environment_or_inifile&gt;] &lt;definition&gt; &lt;prefix&gt;
 <pre><code>% sudo apt-get build-dep php5-cli
 </code></pre>
 
-<p>Then run this to install PHP 5.4.2 in development configuration:</p>
+<p>Then run this to install PHP 5.5.9 in development configuration:</p>
 
-<pre><code>% php-build -i development 5.4.2 ~/local/php/5.4.2
+<pre><code>% php-build -i development 5.5.9 ~/local/php/5.5.9
 </code></pre>
 
 <p>To get a list of all supported PHP versions pass the <code>--definitions</code> flag:</p>
@@ -74,14 +79,22 @@ php-build [-i &lt;environment_or_inifile&gt;] &lt;definition&gt; &lt;prefix&gt;
 Pass the <code>--pear</code> flag to enable the legacy Pear installer alongside of Pyrus for enhanced
 compatibility with legacy Pear packages:</p>
 
-<pre><code>% php-build -i development --pear 5.4.2 ~/local/php/5.4.2
+<pre><code>% php-build -i development --pear 5.5.9 ~/local/php/5.5.9
 </code></pre>
 
-<h2>License</h2>
+<h2>
+<a name="meet-the-core-team" class="anchor" href="#meet-the-core-team"><span class="octicon octicon-link"></span></a>Meet the core team</h2>
+
+<ul>
+<li><a href="https://github.com/loicfrering">Loïc Frering</a></li>
+<li><a href="https://github.com/rogeriopradoj">Rogerio Prado de Jesus</a></li>
+<li><a href="https://github.com/CHH">Christoph Hochstrasser</a></li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>The MIT License</p>
 
-<p>Copyright (c) 2012 Christoph Hochstrasser</p>
+<p>Copyright (c) 2014 Christoph Hochstrasser</p>
 
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
