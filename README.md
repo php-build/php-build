@@ -34,7 +34,7 @@ have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 ## Contributing
 
 For contributing instructions see [CONTRIBUTING.md](CONTRIBUTING.md). Development is also discussed on the IRC channel
-#php-build on Freenode and on the [php-build developers](https://groups.google.com/forum/#!forum/php-build-developers) Google Group.
+\#php-build on Freenode and on the [php-build developers](https://groups.google.com/forum/#!forum/php-build-developers) Google Group.
 
 ## Changelog
 
