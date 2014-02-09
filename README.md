@@ -36,6 +36,12 @@ have to run `install.sh` as superuser, either via `su -c` or via `sudo`.
 For contributing instructions see [CONTRIBUTING.md](CONTRIBUTING.md). Development is also discussed on the IRC channel
 \#php-build on Freenode and on the [php-build developers](https://groups.google.com/forum/#!forum/php-build-developers) Google Group.
 
+All contributions will be reviewed and merged by the core team, consisting of:
+
+* [Rogerio Prado de Jesus](https://github.com/rogeriopradoj)
+* [Loïc Frering](https://github.com/loicfrering)
+* [Christoph Hochstrasser](https://github.com/CHH)
+
 ## Changelog
 
 [jtakakura]: http://github.com/jtakakura
