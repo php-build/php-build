@@ -99,7 +99,7 @@ PHP_DEFAULT_INI="php.ini-production"
 # in PHP's source.
 #
 # These arguments are read from `share/php-build/default_configure_options`.
-CONFIGURE_OPTIONS=$(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_options")
+CONFIGURE_OPTIONS=$(eval echo $(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_options"))
 
 if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
