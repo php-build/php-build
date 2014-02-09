@@ -95,7 +95,13 @@ function _build_xdebug {
             conf_line_prefix=";"
         fi
 
-        echo "$conf_line_prefix zend_extension=\"$extension_dir/xdebug.so\"" > $xdebug_ini
+        # change zend_extension directive whether php 5.2 or not
+        if [ `echo "$PREFIX" | grep '5.2'` ]; then
+            echo "$conf_line_prefix zend_extension_ts=\"$extension_dir/xdebug.so\"" > $xdebug_ini
+        else
+            echo "$conf_line_prefix zend_extension=\"$extension_dir/xdebug.so\"" > $xdebug_ini
+        fi
+
         echo "$conf_line_prefix html_errors=on" >> $xdebug_ini
     fi
 
