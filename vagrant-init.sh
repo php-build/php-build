@@ -8,7 +8,7 @@ apt-get -y build-dep php5-cli
 apt-get -y install git-core
 apt-get -y install libmcrypt-dev
 
-git clone http://github.com/sstephenson/bats
+git clone https://github.com/sstephenson/bats.git
 cd bats
 ./install.sh /usr/local
 
