@@ -1,7 +1,8 @@
 env:
     - DEFINITION=5.3.28
-    - DEFINITION=5.4.27
-    - DEFINITION=5.5.11
+    - DEFINITION=5.4.28
+    - DEFINITION=5.5.12
+    - DEFINITION=5.6.0beta2
 
 script: ./run-tests.sh $DEFINITION
 
