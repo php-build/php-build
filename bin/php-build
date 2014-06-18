@@ -358,6 +358,10 @@ function build_package {
 
     cd "$source_path"
     {
+        if [ -n $APXS ]; then
+            _LIBEXECDIR=`$APXS -q LIBEXECDIR`
+            sed -i"" -e "s|LIBEXECDIR='\$(INSTALL_ROOT)$_LIBEXECDIR'|LIBEXECDIR=$PREFIX/libexec|" $TMP/source/$DEFINITION/Makefile
+        fi
         make
         make install
         make clean
@@ -500,6 +504,7 @@ function with_apxs2 {
     if [ -z "$apxs" ]; then
         apxs="$PHP_BUILD_APXS"
     fi
+    APXS="$apxs"
 
     configure_option "--with-apxs2" "$apxs"
 }
