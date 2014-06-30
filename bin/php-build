@@ -500,6 +500,7 @@ function with_apxs2 {
     if [ -z "$apxs" ]; then
         apxs="$PHP_BUILD_APXS"
     fi
+    APXS_PATH="$apxs"
 
     configure_option "--with-apxs2" "$apxs"
 }
@@ -587,6 +588,11 @@ $CONFIGURE_OPTIONS"
 --- 105 ----
 ! INSTALL_IT = \$(mkinstalldirs) '$PREFIX/libexec/apache2' && \$(mkinstalldirs) '\$(INSTALL_ROOT)/private/etc/apache2' && /usr/sbin/apxs -S LIBEXECDIR='$PREFIX/libexec/apache2' -S SYSCONFDIR='\$(INSTALL_ROOT)/private/etc/apache2' -i -a -n php5 libs/libphp5.so
 EOF
+
+    if [ -n "$APXS_PATH" ]; then
+        _LIBEXECDIR=`$APXS_PATH -q LIBEXECDIR`
+        sed -i"" -e "s|LIBEXECDIR='\$(INSTALL_ROOT)$_LIBEXECDIR'|LIBEXECDIR=$PREFIX/libexec|" "$source_path/Makefile"
+    fi
 
     cd "$backup_pwd"
 }
