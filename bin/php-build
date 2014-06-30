@@ -354,14 +354,15 @@ function build_package {
 
     trigger_before_install 2>&4
 
+    if [ -n "$APXS" ]; then
+        _LIBEXECDIR=`$APXS -q LIBEXECDIR`
+        sed -i"" -e "s|LIBEXECDIR='\$(INSTALL_ROOT)$_LIBEXECDIR'|LIBEXECDIR=$PREFIX/libexec|" $source_path/Makefile
+    fi
+
     log "Compiling" "$source_path"
 
     cd "$source_path"
     {
-        if [ -n $APXS ]; then
-            _LIBEXECDIR=`$APXS -q LIBEXECDIR`
-            sed -i"" -e "s|LIBEXECDIR='\$(INSTALL_ROOT)$_LIBEXECDIR'|LIBEXECDIR=$PREFIX/libexec|" $TMP/source/$DEFINITION/Makefile
-        fi
         make
         make install
         make clean
