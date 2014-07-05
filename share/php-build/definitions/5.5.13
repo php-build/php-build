@@ -1,4 +1,4 @@
-install_package "http://www.php.net/distributions/php-5.5.13.tar.bz2"
+install_package "http://php.net/distributions/php-5.5.13.tar.bz2"
 install_pyrus
 install_xdebug "2.2.5"
 enable_builtin_opcache

@@ -12,7 +12,7 @@ The script can be invoked like this:
     % ./run-tests.sh <DEFINITION>,...
 
 There is also a special target for testing php-build, `stable`. The
-`stable` target tests the latest stable release of the active PHP branches. 
+`stable` target tests the latest stable release of the active PHP branches.
 At the time of the writing these are `5.4.9` and `5.3.19`.
 
 [Bats]: https://github.com/sstephenson/bats
@@ -25,8 +25,8 @@ this series as a base, for example `5.5.0RC1`.
 
 Create a file named `5.5.0` in `share/php-build/definitions`. Then let's
 get the URL for the tarball. Usually tarballs for stable versions are
-located at `http://www.php.net/distributions/php-<version>.tar.bz2`, in
-our case this would be `http://www.php.net/distributions/php-5.5.0.tar.bz2`.
+located at `http://php.net/distributions/php-<version>.tar.bz2`, in
+our case this would be `http://php.net/distributions/php-5.5.0.tar.bz2`.
 
 Make sure to always use path ending with `.bz2`, it's the best format
 that's supported by php-build.
@@ -38,7 +38,7 @@ into the definition.
 So far our whole definition will look like this:
 
     # share/php-build/definitions/5.5.0
-    install_package "http://www.php.net/distributions/php-5.5.0.tar.bz2"
+    install_package "http://php.net/distributions/php-5.5.0.tar.bz2"
     install_pyrus
     install_xdebug_master # or install_xdebug "<VERSION>"
 
