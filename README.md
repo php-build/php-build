@@ -29,7 +29,7 @@ Now you can use php-build as phpenv plugin, as follows:
 
 The built version will be installed into ``$HOME/.phpenv/versions/<definition>``.
 
-### Use phpenv only
+### Use php-build only
 
 Clone the Git Repository:
 
