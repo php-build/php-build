@@ -2,15 +2,17 @@
 Composer Plugin for php-build
 =============================
 
+[en](README.md) | [pt_BR](README_pt_BR.md)
+
 ## What is this?
 
 This small script hooks into [php-build](https://github.com/CHH/php-build) 
-and automatically installs [Composer](http://getcomposer.org/) on each Build,
+and automatically installs [Composer](https://getcomposer.org/) on each Build,
 so you don't have to.
 
 ## What is it good for?
 
-Ideal for using [Composer and their awesome features](http://getcomposer.org)
+Ideal for using [Composer and their awesome features](https://getcomposer.org/)
 with multiple PHP Versions. The idea comes from
 [CHH's phpunit plugin](https://github.com/CHH/php-build-plugin-phpunit).
 
@@ -108,6 +110,8 @@ the commands as superuser, either via `su -c` or via `sudo`.
 ### 1.1.0-dev - not released
 
 - Fix install instructions (because of changes in GitHub certificate)
+- Create [`README_pt_BR.md`](README_pt_BR.md), translation into Brazilian
+  Portuguese
 
 ### 1.0.0 - 2013-12-29
 
