@@ -32,7 +32,7 @@ rm -rf php-build-plugin-composer-master master.tar.gz
 
 # try to download plugin via wget, or via curl, or via git clone
 # otherwise, warn the user
-((wget https://github.com/rogeriopradoj/php-build-plugin-composer/archive/master.tar.gz && tar -vzxf master.tar.gz) 2>/dev/null) || ((curl -LO https://github.com/rogeriopradoj/php-build-plugin-composer/archive/master.tar.gz && tar -vzxf master.tar.gz) 2>/dev/null) || ((git clone https://github.com/rogeriopradoj/php-build-plugin-composer.git php-build-plugin-composer-master) 2>/dev/null) || (echo ""; echo "***ERROR***: You do not have either wget, neither curl or git installed on your system to download the needed files."; echo "Please, check that, and after, try to install this plugin again."; exit;)
+((wget https://github.com/rogeriopradoj/php-build-plugin-composer/archive/master.tar.gz --no-check-certificate && tar -vzxf master.tar.gz) 2>/dev/null) || ((curl -LO https://github.com/rogeriopradoj/php-build-plugin-composer/archive/master.tar.gz && tar -vzxf master.tar.gz) 2>/dev/null) || ((git clone https://github.com/rogeriopradoj/php-build-plugin-composer.git php-build-plugin-composer-master) 2>/dev/null) || (echo ""; echo "***ERROR***: You do not have either wget, neither curl or git installed on your system to download the needed files."; echo "Please, check that, and after, try to install this plugin again."; exit;)
 echo " Done."
 
 echo -n "  - Making the plugin executable..."
