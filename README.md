@@ -21,17 +21,23 @@ to go.
 
 ## Install
 
-It's up to you: use the [`install.sh`](https://raw.github.com/rogeriopradoj/php-build-plugin-composer/master/install.sh) script, or make installation by hand.
+It's up to you:
 
-### Install via `install.sh`
+- [use the `install.sh` script](#install-via-installsh-all-in-one);
+- or [make installation by hand](#install-by-hand).
 
-    $ wget -O install.sh http://git.io/Hqr8pQ || curl -o install.sh http://git.io/Hqr8pQ && ./install.sh
+### Install via [`install.sh`](https://raw.github.com/rogeriopradoj/php-build-plugin-composer/master/install.sh), all in one!
+
+```shell
+$ CURRENT_DIR=`(pwd)` && cd `(mktemp -d -t php-build-plugin-composer)` && wget -O install.sh --no-check-certificate http://git.io/Hqr8pQ || curl -Lo install.sh http://git.io/Hqr8pQ && chmod +x install.sh && ./install.sh && cd $CURRENT_DIR
+```
 
 If necessary, `install.sh` can receive an environment variable `PREFIX`, to use
 in case of your php-build is installed in a directory different than `/usr/local/`. E.g.:
     
-    $ PREFIX=/path_to_another_directory ./install.sh
-
+```shell
+$ PREFIX=/path_to_another_directory ./install.sh
+```
 
 ### Install by hand
 
@@ -39,29 +45,39 @@ in case of your php-build is installed in a directory different than `/usr/local
 
 - Either via `wget`:
 
-        $ cd ~
-        $ rm -rf php-build-plugin-composer-master master.tar.gz
-        $ wget https://github.com/rogeriopradoj/php-build-plugin-composer/archive/master.tar.gz
-        $ tar -vzxf master.tar.gz
+```shell
+# as a normal account user, $
+
+cd ~
+rm -rf php-build-plugin-composer-master master.tar.gz
+wget https://github.com/rogeriopradoj/php-build-plugin-composer/archive/master.tar.gz --no-check-certificate
+tar -vzxf master.tar.gz
+```
 
 - Or via `curl`:
 
-        $ cd ~
-        $ rm -rf php-build-plugin-composer-master master.tar.gz
-        $ curl -LO https://github.com/rogeriopradoj/php-build-plugin-composer/archive/master.tar.gz
-        $ tar -vzxf master.tar.gz
+```shell
+$ cd ~
+$ rm -rf php-build-plugin-composer-master master.tar.gz
+$ curl -LO https://github.com/rogeriopradoj/php-build-plugin-composer/archive/master.tar.gz
+$ tar -vzxf master.tar.gz
+```
 
 - Or via `git clone`:
 
-        $ cd ~ 
-        $ rm -rf php-build-plugin-composer-master master.tar.gz
-        $ git clone https://github.com/rogeriopradoj/php-build-plugin-composer.git php-build-plugin-composer-master
+```shell
+$ cd ~
+$ rm -rf php-build-plugin-composer-master master.tar.gz
+$ git clone https://github.com/rogeriopradoj/php-build-plugin-composer.git php-build-plugin-composer-master
+```
 
 **Secondly**, ensure that the `composer.sh` in `share/php-build/after-install.d/` is
 executable, e.g.:
 
-    $ cd ~/php-build-plugin-composer-master
-    $ chmod +x share/php-build/after-install.d/composer.sh
+```shell
+$ cd ~/php-build-plugin-composer-master
+$ chmod +x share/php-build/after-install.d/composer.sh
+```
 
 **Finally**, copy the `share` directory into your `php-build` installation, or
 link `share/php-build/after-install.d/composer.sh` to
@@ -69,13 +85,17 @@ link `share/php-build/after-install.d/composer.sh` to
 
 - Copying way
 
-        $ cd ~/php-build-plugin-composer-master
-        $ cp -r share /usr/local
+```shell
+$ cd ~/php-build-plugin-composer-master
+$ cp -r share /usr/local
+```
 
 - Linking way
-        
-        $ cd /usr/local/share/php-build/after-install.d
-        $ ln -s ~/php-build-plugin-composer-master/share/php-build/after-install.d/composer.sh
+   
+```shell
+$ cd /usr/local/share/php-build/after-install.d
+$ ln -s ~/php-build-plugin-composer-master/share/php-build/after-install.d/composer.sh
+```
 
 *Note 1:* Both examples above are supposing you have installed
 `php-build` in default location, `/usr/local`. If not, change accordingly.
@@ -86,6 +106,8 @@ the commands as superuser, either via `su -c` or via `sudo`.
 ## Changelog
 
 ### 1.1.0-dev - not released
+
+- Fix install instructions (because of changes in GitHub certificate)
 
 ### 1.0.0 - 2013-12-29
 
@@ -103,6 +125,3 @@ the commands as superuser, either via `su -c` or via `sudo`.
 ## How to contribute
 
 Please see [CONTRIBUTE.md](CONTRIBUTE.md).
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/rogeriopradoj/php-build-plugin-composer/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
