@@ -13,6 +13,24 @@ Raise a GitHub issue or join the #php-build channel on Freenode.
 
 ## Install
 
+### Use with [phpenv](https://github.com/CHH/phpenv)
+
+Locate your phpenv directory:
+
+    % ls $HOME/.phpenv
+
+Clone the Git repository into phpenv plugins directory:
+
+    % git clone git://github.com/CHH/php-build.git $HOME/.phpenv/plugins/php-build
+
+Now you can use php-build as phpenv plugin, as follows:
+
+    % phpenv install <definition>
+
+The built version will be installed into ``$HOME/.phpenv/versions/<definition>``.
+
+### Use php-build only
+
 Clone the Git Repository:
 
     % git clone git://github.com/CHH/php-build.git
