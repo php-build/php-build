@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#
+# This shell scriplet is meant to be included by other shell scripts
+# to set up some variables and a few helper shell functions.
 
 function install_apc {
     local version=$1
@@ -64,4 +67,3 @@ function _build_apc {
 
     cd "$cwd" > /dev/null
 }
-

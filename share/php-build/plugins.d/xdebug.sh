@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+#
+# This shell scriplet is meant to be included by other shell scripts
+# to set up some variables and a few helper shell functions.
 
-# PHP.next Development releases depend on current XDebug development
-# snapshots.
+# PHP.next Development releases depend on current XDebug development snapshots
 function install_xdebug_master {
     local source_dir="$TMP/source/xdebug-master"
     local cwd=$(pwd)
