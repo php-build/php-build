@@ -42,10 +42,6 @@ So far our whole definition will look like this:
     install_pyrus
     install_xdebug_master # or install_xdebug "<VERSION>"
 
-Remember to make the file executable, like this:
-
-    % chmod +x share/php-build/definitions/5.5.0
-
 Since this is a new stable version, let's update the versions for the
 `stable` target of the test runner. Open `run-tests.sh` in your text
 editor of choice, and then replace the list of versions in the
