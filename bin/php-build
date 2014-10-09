@@ -211,8 +211,12 @@ function is_osx {
 function download {
     local url=$1
     local package_file="$TMP/packages/$(basename $url)"
-    local archive_type=${package_file##*.}
+    local archive_type=$2
     local temp_package="$TMP/$(basename $url)"
+
+    if [ -z $archive_type ]; then
+        archive_type=${package_file##*.}
+    fi
 
     if [ -d "$TMP/source/$DEFINITION" ]; then
         log "Skipping" "Already downloaded and extracted $url"
@@ -398,9 +402,10 @@ function build_package {
 # Downloads and builds the PHP tarball from the given URL.
 function install_package {
     local url=$1
+    local archive_type=$2
 
     {
-        download $url
+        download $url $archive_type
         cd "$TMP/source/$DEFINITION"
         build_package
         cd - > /dev/null
