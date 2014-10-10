@@ -24,7 +24,7 @@
 # fail once a command invocation itself fails.
 set -e
 
-# This is the usage message, like it's done in 
+# This is the usage message, like it's done in
 # [shocco](https://github.com/rtomayko/shocco).
 #
 #/ php-build, Compile and Install PHP
@@ -169,7 +169,7 @@ function http() {
 }
 
 function http_head_curl() {
-    curl -qsILf "$1" >&4 2>&1
+    curl -qsILf "$1"
 }
 
 function http_get_curl() {
@@ -177,7 +177,7 @@ function http_get_curl() {
 }
 
 function http_head_wget() {
-    wget -q --spider "$1" >&4 2>&1
+    wget -q --server-response --spider "$1" 2>&1
 }
 
 function http_get_wget() {
@@ -210,9 +210,10 @@ function is_osx {
 # to `$TMP/source/$DEFINITION`.
 function download {
     local url=$1
-    local package_file="$TMP/packages/$(basename $url)"
+    local basename=$(download_filename $url)
+    local package_file="$TMP/packages/$basename"
     local archive_type=$2
-    local temp_package="$TMP/$(basename $url)"
+    local temp_package="$TMP/$basename"
 
     if [ -z $archive_type ]; then
         archive_type=${package_file##*.}
@@ -240,6 +241,20 @@ function download {
     mkdir "$TMP/source/$DEFINITION"
 
     "extract_$archive_type" "$package_file" "$TMP/source/$DEFINITION"
+}
+
+function download_filename {
+    local url=$1
+
+    # Try to get "filename" in Content-Disposition header; strip quotes and newlines
+    local filename=$(http head $url | grep -o -E 'filename=.*$' | sed -e 's/filename=//' -e 's/\"//g' | tr -d '\r\n')
+
+    # If header was empty use basename
+    if [ -z $filename ]; then
+        filename=$(basename $url)
+    fi
+
+    echo $filename
 }
 
 # Downloads a PHP Source Tarball from GitHub and extracts it
