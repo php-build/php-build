@@ -17,33 +17,29 @@
 # [rb]: https://github.com/sstephenson/ruby-build
 # [pb]: https://github.com/CHH/php-build
 
-# Usage
-# -----
-
 # The most important line in every shell script. Basically this says: This script should
 # fail once a command invocation itself fails.
 set -e
 
-# This is the usage message, like it's done in 
-# [shocco](https://github.com/rtomayko/shocco).
+#/ usage: php-build [options] <definition> <prefix>
+#/
+#/   <definition>       What release should be used, as well as release-specific
+#/                      configuration.  This is either the name of a builtin
+#/                      definition file (as listed with --definitions) or a path
+#/                      to definition file.
+#/   <prefix>           All built executables, configs and libraries are placed
+#/                      in this directory.  It's created if it doesn't exist.
+#/
+#/   --definitions      Lists all available definitions and exit
+#/   -h|--help          Display this help and exit
+#/   -i|--ini <env>     php.ini to use.  If <env> is a file then this file is
+#/                      used, otherwise php.ini-<env> from the source
+#/                      distribution is used.  Defaults to production.
+#/   --pear             Install PEAR alongside of Pyrus (experimental)
+#/   -v|--version       Display version information and exit
+#/
 #
-#/ php-build, Compile and Install PHP
-#/ Version: {{VERSION}}
-#/
-#/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
-#/
-#/ Arguments:
-#/   definition:    What release should be used, as well as release-specific
-#/                  configuration. This is either the name of a builtin definition
-#/                  file (as listed with `--definitions`) or a path to defintion file.
-#/   prefix:        All built Executables, Configs and Libs are placed in this
-#/                  directory. It's created if it doesn't exist.
-#/
-#/ Options:
-#/   --definitions: Lists all available definitions
-#/   --ini|i:       Specifies which php.ini-<environment> from the
-#/                  source distribution is used as default php.ini
-#/
+# Usage message done like [shocco](https://github.com/rtomayko/shocco)
 
 # Set the `PHP_BUILD_DEBUG` environment variable to
 # `yes` to trigger the `set -x` call, which in turn
@@ -663,56 +659,98 @@ function enable_builtin_opcache {
 # Here the magic begins
 # ---------------------
 
-# Set up the directories needed for the source
-# and the downloaded packages.
+# Set up the directories needed for the source and the downloaded packages.
 init
 
-# Display the Usage message if no arguments are given.
-if [ -z $1 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    display_usage
-    exit
-fi
+# if no arguments then show usage and exit
+test "$#" = 0 && display_usage && exit 0 # this is not an error
 
-if [ "$1" = "-v" ] || [ "$1" = "--version" ]; then
-    display_version
-    exit
-fi
+#
+# defaults
+#
+DEFINITION=
+ENABLE_PEAR=
+PREFIX=
 
-if [ "$1" = "--definitions" ]; then
-    list_definitions
-    exit
-fi
+#
+# parse arguments
+#
+#   For --opt=val handling, example:
+#
+#       # options
+#       --fizz)     FIZZ="$2"
+#       --fizz=*)   FIZZ=${1#*=} # Delete everything up till "="
+#
+#       # both will work
+#       $ cmd --fizz=buzz
+#       $ cmd --fizz buzz
+#
+while test "$#" != 0; do
+    case "$1" in
 
-# If `-i` or `--ini` is given as first argument, then
-# treat the second argument as `php.ini` file.
-if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
-    # If an existing path is passed (and the path is a file)
-    # then use this file, otherwise use `php.ini-<value>`
-    # from the tarball.
-    if [ -f "$2" ]; then
-        PHP_DEFAULT_INI="$2"
-    else
-        PHP_DEFAULT_INI="php.ini-$2"
-    fi
+        --definitions)  list_definitions; exit 0 ;;
+        --pear)         ENABLE_PEAR=1 ;;
+        --ini|-i)
+
+            # ini value argument is required
+            if [ -z "$2" ]; then
+                echo "$0: missing argument for '$1'" >&3 && exit 1
+            fi
+
+            # If an existing path is passed (and the path is a file) then use
+            # this file, otherwise use `php.ini-<value>` from the tarball.
+            if [ -f "$2" ]; then
+                PHP_DEFAULT_INI="$2"
+            else
+                PHP_DEFAULT_INI="php.ini-$2"
+            fi
+
+            shift
+
+            ;;
+
+        # standard options
+
+        --version|-v)   display_version;    exit 0 ;;
+        --help|-h)      display_usage;      exit 0 ;;
+
+        # standard terminates
+
+        --) shift; break ;; # terminate loop; end of options list
+
+        # unkown options
+
+        -*) echo "$0: Unknown option '$1'" >&3 && exit 1 ;;
+
+        # arguments
+
+        *)
+
+            if [ -z "$DEFINITION" ]; then # 1st no switch argument
+                DEFINITION="$1" # this is the name of the definition we want to build
+            elif [ -z "$PREFIX" ]; then # 2nd no switch argument
+                PREFIX="$1" # the built PHP version is placed in this directory
+            else
+
+                # unkown arguments
+
+                echo "$0: Unknown argument '$1'" >&3 && exit 1
+
+            fi
+
+            ;;
+    esac
     shift
-    shift
-fi
+done
 
-if [ "$1" = "--pear" ]; then
-    ENABLE_PEAR=1
-    shift
-fi
+#
+# arguments validation
+#
 
-# This is the name of the definition we want to build.
-DEFINITION=$1
+test -z "$DEFINITION" && echo "$0: definition is required" >&3 && exit 1
+test -z "$PREFIX" && echo "$0: prefix is required" >&3 && exit 1
 
-# The built PHP version is placed in this directory.
-PREFIX=$2
-
-if [ -z "$PREFIX" ]; then
-    display_usage
-    exit 1
-fi
+#
 
 if [ "$ENABLE_PEAR" = "1" ]; then
     with_pear
@@ -775,4 +813,3 @@ log "Success" "Built $DEFINITION successfully."
 
 trap - SIGINT
 trap - SIGTERM
-
