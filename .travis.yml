@@ -16,3 +16,6 @@ before_script:
     - bats/install.sh $HOME
     - export PATH=$HOME/bin:$HOME/libexec:$PATH
     - bats --version
+
+after_failure:
+    - sudo cat $(ls -r /tmp/php-build*.log | head -n 1)
