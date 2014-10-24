@@ -1,4 +1,5 @@
 env:
+    - DEFINITION=5.2.17
     - DEFINITION=5.3.29
     - DEFINITION=5.4.34
     - DEFINITION=5.5.18
@@ -19,3 +20,7 @@ before_script:
 
 after_failure:
     - sudo cat $(ls -r /tmp/php-build*.log | head -n 1)
+
+matrix:
+    allow_failures:
+        - env: DEFINITION=5.2.17
