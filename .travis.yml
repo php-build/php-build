@@ -1,5 +1,6 @@
 env:
-    - DEFINITION=5.2.17
+    - DEFINITION=5.2.17 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
+    - DEFINITION=5.3.3 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
     - DEFINITION=5.3.29
     - DEFINITION=5.4.34
     - DEFINITION=5.5.18
@@ -10,7 +11,7 @@ script: ./run-tests.sh $DEFINITION
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get build-dep php5-cli
-    - sudo apt-get install -qq git-core libmcrypt-dev
+    - sudo apt-get install -qq git-core libmcrypt-dev libjpeg-dev libreadline-dev
 
 before_script:
     - git clone http://github.com/sstephenson/bats
@@ -20,7 +21,3 @@ before_script:
 
 after_failure:
     - sudo cat $(ls -r /tmp/php-build*.log | head -n 1)
-
-matrix:
-    allow_failures:
-        - env: DEFINITION=5.2.17

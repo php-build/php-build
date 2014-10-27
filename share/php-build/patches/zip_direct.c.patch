@@ -1,0 +1,13 @@
+Wrong in ordering of arguments.
+PHP 5.3.6 the whole function call was removed
+--- a/ext/zip/lib/zip_dirent.c
++++ b/ext/zip/lib/zip_dirent.c
+@@ -475,7 +475,7 @@
+ {
+     struct tm tm;
+ 
+-    memset(&tm, sizeof(tm), 0);
++    memset(&tm, 0, sizeof(tm));
+     
+     /* let mktime decide if DST is in effect */
+     tm.tm_isdst = -1;

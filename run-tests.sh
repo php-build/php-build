@@ -45,6 +45,9 @@ for definition in $BUILD_LIST; do
 
         export TEST_PREFIX="$BUILD_PREFIX/$definition"
 
+        grep -e 'install_pyrus' "share/php-build/definitions/$definition" > /dev/null
+        export INSTALL_PYRUS=$?
+
         echo "Running Tests..."
         bats "tests/"
     else
