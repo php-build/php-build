@@ -101,6 +101,9 @@ PHP_DEFAULT_INI="php.ini-production"
 # These arguments are read from `share/php-build/default_configure_options`.
 CONFIGURE_OPTIONS=$(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_options")
 
+# Patches to be applied at the source
+PATCH_FILES=""
+
 if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
 fi
@@ -373,6 +376,8 @@ function build_package {
 
     trigger_before_install 2>&4
 
+    apply_patches "$source_path" 2>&4
+
     log "Compiling" "$source_path"
 
     cd "$source_path"
@@ -406,6 +411,20 @@ function build_package {
     if [ -f "$PREFIX/etc/php.ini" ]; then
         sed -i.bak -e 's/^\(extension_dir\)/; \1/g' "$PREFIX/etc/php.ini"
         rm "$PREFIX/etc/php.ini.bak"
+    fi
+}
+
+# Apply patch files
+function apply_patches {
+    local source_path=$1
+    local patches_dir=$PHP_BUILD_ROOT/share/php-build/patches
+
+    if [ -n "$PATCH_FILES" ]; then
+        log "Info" "Applying patches: $PATCH_FILES"
+        for patch in $PATCH_FILES; do
+            local patch_file="$patches_dir/$patch"
+            patch -d "$source_path" -N -p1 -s < $patch_file || true
+        done
     fi
 }
 
@@ -483,6 +502,17 @@ function configure_option {
 
     if [ -n "$2" ]; then
         CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS=$2"
+    fi
+}
+
+# ### patch_file
+#
+# Add a patch to internal patch list
+function patch_file {
+    if [ -n "$PATCH_FILES" ]; then
+        PATCH_FILES="$PATCH_FILES $1"
+    else
+        PATCH_FILES="$1"
     fi
 }
 
