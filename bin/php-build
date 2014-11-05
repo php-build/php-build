@@ -419,13 +419,11 @@ function build_package {
 # Apply patch files
 function apply_patches {
     local source_path=$1
-    local patches_dir=$PHP_BUILD_ROOT/share/php-build/patches
 
     if [ -n "$PATCH_FILES" ]; then
         log "Info" "Applying patches: $PATCH_FILES"
         for patch in $PATCH_FILES; do
-            local patch_file="$patches_dir/$patch"
-            patch -d "$source_path" -N -p1 -s < $patch_file || true
+            patch -d "$source_path" -N -p1 -s < $patch || true
         done
     fi
 }
@@ -530,10 +528,17 @@ function configure_option {
 #
 # Add a patch to internal patch list
 function patch_file {
+    local patches_dir="$PHP_BUILD_ROOT/share/php-build/patches"
+    local patch="$patches_dir/$1"
+
+    if [ -f "$1" ]; then
+        local patch="$1"
+    fi
+
     if [ -n "$PATCH_FILES" ]; then
-        PATCH_FILES="$PATCH_FILES $1"
+        PATCH_FILES="$PATCH_FILES $patch"
     else
-        PATCH_FILES="$1"
+        PATCH_FILES="$patch"
     fi
 }
 
@@ -791,9 +796,10 @@ fi
 
 DEFINITION_PATH="$(find_definition "$DEFINITION")"
 
+LOG_NAME="$(basename "$DEFINITION_PATH")"
 # Generate the Path for the build log.
 TIME="$(date "+%Y%m%d%H%M%S")"
-LOG_PATH="/tmp/php-build.$DEFINITION.$TIME.log"
+LOG_PATH="/tmp/php-build.$LOG_NAME.$TIME.log"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
 # to the Log file.
