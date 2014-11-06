@@ -36,7 +36,7 @@ esac
 echo "Testing definitions $BUILD_LIST"
 echo
 
-while true; do echo "..."; sleep 60; done & #https://github.com/CHH/php-build/issues/134
+[ -n "$TRAVIS" ] && while true; do echo "..."; sleep 60; done & #https://github.com/CHH/php-build/issues/134
 
 for definition in $BUILD_LIST; do
     echo -n "Building '$definition'..."
@@ -56,7 +56,7 @@ for definition in $BUILD_LIST; do
     fi
 done
 
-kill %1 #https://github.com/CHH/php-build/issues/134
+[ -n "$TRAVIS" ] && kill %1 #https://github.com/CHH/php-build/issues/134
 
 if [ -z "$FAILED" ]; then
     rm -rf "$BUILD_PREFIX"
