@@ -1,3 +1,0 @@
-install_package "http://downloads.php.net/stas/old/php-5.4.0beta2.tar.bz2"
-install_pyrus
-install_xdebug "2.2.5"
