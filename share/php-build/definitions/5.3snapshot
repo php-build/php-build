@@ -1,3 +1,0 @@
-install_package "http://snaps.php.net/php5.3-latest.tar.bz2"
-install_pyrus
-install_xdebug "2.2.5"
