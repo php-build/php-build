@@ -1,5 +1,4 @@
 env:
-    - DEFINITION=5.2.17 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
     - DEFINITION=5.3.3 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
     - DEFINITION=5.3.29
     - DEFINITION=5.4.35
