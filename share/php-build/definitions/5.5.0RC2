@@ -1,3 +1,0 @@
-install_package "http://downloads.php.net/dsp/php-5.5.0RC2.tar.bz2"
-install_pyrus
-install_xdebug_master
