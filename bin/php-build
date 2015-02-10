@@ -104,6 +104,8 @@ CONFIGURE_OPTIONS=$(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_optio
 # Patches to be applied at the source
 PATCH_FILES=""
 
+[ -z "$PHPBUILD_INSTALL_EXTENSION" ] && PHPBUILD_INSTALL_EXTENSION=""
+
 if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
 fi
@@ -426,6 +428,25 @@ function apply_patches {
             patch -d "$source_path" -N -p1 -s < $patch_file || true
         done
     fi
+}
+
+# Install extensions
+function install_extensions {
+    ## handle extensions that should be installed by defined environment variable
+    ## variable must be in the format: extension_name=version extension_name=version
+    for extension_def in $PHPBUILD_INSTALL_EXTENSION; do
+        local extension=$(echo $extension_def | cut -d"=" -f1)
+        local version=$(echo $extension_def | cut -d"=" -f2)
+        local first_char=$(echo $version | cut -c1 )
+
+        # if first character of version is an "@" it's meant to be a revision
+        if [ $first_char = "@" ]; then
+            local version=$(echo $version | cut -c"2-")
+            install_extension_source $extension "$version"
+        else
+            install_extension $extension $version
+        fi
+    done
 }
 
 # Definition commands
@@ -780,6 +801,10 @@ exec 4<> "$LOG_PATH"
 
 [ "$ENABLE_PEAR" = "1" ] && log Warning "Installing Pear alongside of Pyrus is still experimental."
 
+# Load extension plugin
+source "$PHP_BUILD_ROOT/share/php-build/extension/extension.sh"
+log Info "Loaded extension plugin"
+
 # Load all definition plugins. Plugins register functions
 # for use whithin definitions. See the xdebug and pyrus plugins for
 # examples.
@@ -804,6 +829,9 @@ trigger_after_install 2>&4
 if [ "$ENABLE_PEAR" = "1" ]; then
     pear_setup
 fi
+
+# Installed extensions defined by environment variable
+install_extensions 2>&4
 
 # Unbind the error handler.
 trap - ERR
