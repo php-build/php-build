@@ -56,18 +56,24 @@ function _download_extension {
     local after_install=$6
     local package_url=$(eval echo $url)
     local package_name="$name-$version"
+    local source_dir=$(eval basename ${url%.*})
 
      # We cache the tarballs for APC versions in `packages/`.
     if [ ! -f "$TMP/packages/$name-$version.tgz" ]; then
         http get "$package_url" > "$TMP/packages/$package_name.tgz"
     fi
 
-    # Each tarball gets extracted to `source/apcu-$version`.
+    # Each tarball gets extracted to `source/$name-$version`.
     if [ -d "$TMP/source/$package_name" ]; then
         rm -rf "$TMP/source/$package_name"
     fi
 
     tar -xzf "$TMP/packages/$package_name.tgz" -C "$TMP/source"
+
+    # change the directory name for APC since it expands with an uppercase filename
+    if [[ ! -d $TMP/source/$package_name && -d $TMP/source/$source_dir ]]; then
+      mv $TMP/source/$source_dir $TMP/source/$package_name
+    fi
 
     [[ -f "$TMP/source/package.xml" ]] && rm "$TMP/source/package.xml"
     [[ -f "$TMP/source/package2.xml" ]] && rm "$TMP/source/package2.xml"
@@ -126,7 +132,7 @@ function _build_extension {
             $configure_args > /dev/null
 
         make > /dev/null
-	make install > /dev/null
+        make install > /dev/null
     } >&4 2>&1
 
     local extension_home="$PREFIX/share/$name"
