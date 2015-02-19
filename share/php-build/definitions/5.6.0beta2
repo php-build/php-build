@@ -1,4 +1,0 @@
-install_package "http://downloads.php.net/tyrael/php-5.6.0beta2.tar.bz2"
-install_pyrus
-install_xdebug "2.2.7"
-enable_builtin_opcache
