@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "PHP\-BUILD" "1" "January 2013" "php-build " "php-build"
+.TH "PHP\-BUILD" "1" "February 2015" "php-build " "php-build"
 .
 .SH "NAME"
 \fBphp\-build\fR \- Builds PHP versions with their coexistence in mind\.
@@ -117,6 +117,9 @@ Tells \fBphp\-build\fR to use the \fBphp\.ini\fR\-\fIenv\fR from the PHP source 
 .
 .IP "\(bu" 4
 \fBPHP_BUILD_ZTS_ENABLE=on|off\fR (default: \fBoff\fR), enables Zend Thread Safety for builds
+.
+.IP "\(bu" 4
+\fBPHPBUILD_INSTALL_EXTENSION="<extname>=<version> <extname>=<version>"\fR to install optional php extensions\. Refer to extension/definition for available extension ready to install\.
 .
 .IP "" 0
 .

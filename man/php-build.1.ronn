@@ -105,6 +105,8 @@ executables to `$PREFIX/bin`.
    lines which enable XDebug, in the generated `xdebug.ini`.
  * `PHP_BUILD_CONFIGURE_OPTS`, list of additional configure options.
  * `PHP_BUILD_ZTS_ENABLE=on|off` (default: `off`), enables Zend Thread Safety for builds
+ * `PHPBUILD_INSTALL_EXTENSION="<extname>=<version> <extname>=<version>"` to install optional php extensions. Refer to extension/definition for available extension ready to install.
+
 
 ## COPYRIGHT
 
