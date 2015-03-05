@@ -58,6 +58,7 @@
     <a href="#DESCRIPTION">DESCRIPTION</a>
     <a href="#OPTIONS">OPTIONS</a>
     <a href="#ENVIRONMENT">ENVIRONMENT</a>
+    <a href="#EXTENSION">EXTENSION</a>
     <a href="#COPYRIGHT">COPYRIGHT</a>
   </div>
 
@@ -185,7 +186,18 @@ call. This echo's all issued shell commands of the script.</li>
 lines which enable XDebug, in the generated <code>xdebug.ini</code>.</li>
 <li><code>PHP_BUILD_CONFIGURE_OPTS</code>, list of additional configure options.</li>
 <li><code>PHP_BUILD_ZTS_ENABLE=on|off</code> (default: <code>off</code>), enables Zend Thread Safety for builds</li>
-<li><code>PHPBUILD_INSTALL_EXTENSION="&lt;extname>=&lt;version> &lt;extname>=&lt;version>"</code> to install optional php extensions. Refer to extension/definition for available extension ready to install.</li>
+<li><code>PHPBUILD_INSTALL_EXTENSION</code> see <a href="#EXTENSION" title="EXTENSION" data-bare-link="true">EXTENSION</a> section.</li>
+</ul>
+
+
+<h2 id="EXTENSION">EXTENSION</h2>
+
+<p>To install php extension, you have to define <code>PHPBUILD_INSTALL_EXTENSION</code> before execute php-build. The following are example use cases to use this environment variable</p>
+
+<ul>
+<li><code>PHPBUILD_INSTALL_EXTENSION="apcu=4.0.7 imagick=3.1.2"</code> install ACPU version 4.0.7 and install imagick version 3.1.2</li>
+<li><code>PHPBUILD_INSTALL_EXTENSION="uprofiler=@"</code> install uprofiler from source using master branch</li>
+<li><code>PHPBUILD_INSTALL_EXTENSION="uprofiler=@851da15"</code> install uprofiler from source using commit sha1 '851da15'</li>
 </ul>
 
 
@@ -197,7 +209,7 @@ lines which enable XDebug, in the generated <code>xdebug.ini</code>.</li>
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'>php-build </li>
-    <li class='tc'>February 2015</li>
+    <li class='tc'>March 2015</li>
     <li class='tr'>php-build(1)</li>
   </ol>
 
