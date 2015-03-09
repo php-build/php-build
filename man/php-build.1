@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "PHP\-BUILD" "1" "January 2013" "php-build " "php-build"
+.TH "PHP\-BUILD" "1" "March 2015" "php-build " "php-build"
 .
 .SH "NAME"
 \fBphp\-build\fR \- Builds PHP versions with their coexistence in mind\.
@@ -117,6 +117,23 @@ Tells \fBphp\-build\fR to use the \fBphp\.ini\fR\-\fIenv\fR from the PHP source 
 .
 .IP "\(bu" 4
 \fBPHP_BUILD_ZTS_ENABLE=on|off\fR (default: \fBoff\fR), enables Zend Thread Safety for builds
+.
+.IP "\(bu" 4
+\fBPHPBUILD_INSTALL_EXTENSION\fR see \fIEXTENSION\fR section\.
+.
+.IP "" 0
+.
+.SH "EXTENSION"
+To install php extension, you have to define \fBPHPBUILD_INSTALL_EXTENSION\fR before execute php\-build\. The following are example use cases to use this environment variable
+.
+.IP "\(bu" 4
+\fBPHPBUILD_INSTALL_EXTENSION="apcu=4\.0\.7 imagick=3\.1\.2"\fR install ACPU version 4\.0\.7 and install imagick version 3\.1\.2
+.
+.IP "\(bu" 4
+\fBPHPBUILD_INSTALL_EXTENSION="uprofiler=@"\fR install uprofiler from source using master branch
+.
+.IP "\(bu" 4
+\fBPHPBUILD_INSTALL_EXTENSION="uprofiler=@851da15"\fR install uprofiler from source using commit sha1 \'851da15\'
 .
 .IP "" 0
 .

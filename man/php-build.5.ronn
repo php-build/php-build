@@ -114,3 +114,4 @@ as well as all builtin commands.
    Checks out the XDebug from the Git Repository and installs it. When
    a Git commit ID is passed as <SHA1> then this specific Commit ID is used
    instead of the current `HEAD`.
+

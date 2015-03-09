@@ -105,6 +105,17 @@ executables to `$PREFIX/bin`.
    lines which enable XDebug, in the generated `xdebug.ini`.
  * `PHP_BUILD_CONFIGURE_OPTS`, list of additional configure options.
  * `PHP_BUILD_ZTS_ENABLE=on|off` (default: `off`), enables Zend Thread Safety for builds
+ * `PHPBUILD_INSTALL_EXTENSION` see [EXTENSION] section.
+
+## EXTENSION
+
+To install php extension, you have to define `PHPBUILD_INSTALL_EXTENSION` before execute php-build. The following are example use cases to use this environment variable
+
+ * `PHPBUILD_INSTALL_EXTENSION="apcu=4.0.7 imagick=3.1.2"` install ACPU version 4.0.7 and install imagick version 3.1.2
+ * `PHPBUILD_INSTALL_EXTENSION="uprofiler=@"` install uprofiler from source using master branch
+ * `PHPBUILD_INSTALL_EXTENSION="uprofiler=@851da15"` install uprofiler from source using commit sha1 '851da15'
+
+
 
 ## COPYRIGHT
 
