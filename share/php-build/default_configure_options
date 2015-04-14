@@ -36,3 +36,4 @@
 --enable-intl
 --enable-opcache
 --enable-apcu
+--enable-redis
