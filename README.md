@@ -61,6 +61,7 @@ For contributing instructions see [CONTRIBUTING.md](CONTRIBUTING.md). Developmen
 
 All contributions will be reviewed and merged by the core team, consisting of:
 
+* [Graham Campbell](https://github.com/GrahamCampbell)
 * [Rogerio Prado de Jesus](https://github.com/rogeriopradoj)
 * [Loïc Frering](https://github.com/loicfrering)
 * [Christoph Hochstrasser](https://github.com/CHH)
