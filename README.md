@@ -1,4 +1,4 @@
-php-build [![Build Status](https://secure.travis-ci.org/CHH/php-build.png?branch=master)](https://travis-ci.org/CHH/php-build)
+php-build [![Build Status](https://secure.travis-ci.org/php-build/php-build.png?branch=master)](https://travis-ci.org/php-build/php-build)
 ==========================
 
 *Do you like php-build? You can buy me a beer by [Gittipp-ing].  Consider also
@@ -9,7 +9,7 @@ by side with each other.  The overall structure is loosly borrowed from Sam
 Stephenson's [ruby-build].
 
 [ruby-build]: https://github.com/sstephenson/ruby-build
-[contributors]: https://github.com/CHH/php-build/graphs/contributors
+[contributors]: https://github.com/php-build/php-build/graphs/contributors
 [Gittipp-ing]: http://gittip.com/CHH
 
 ## Support
@@ -26,7 +26,7 @@ Locate your phpenv directory:
 
 Clone the Git repository into phpenv plugins directory:
 
-    % git clone git://github.com/CHH/php-build.git $HOME/.phpenv/plugins/php-build
+    % git clone git://github.com/php-build/php-build.git $HOME/.phpenv/plugins/php-build
 
 Now you can use php-build as phpenv plugin, as follows:
 
@@ -38,7 +38,7 @@ The built version will be installed into ``$HOME/.phpenv/versions/<definition>``
 
 Clone the Git Repository:
 
-    % git clone git://github.com/CHH/php-build.git
+    % git clone git://github.com/php-build/php-build.git
 
 Then go into the extracted/cloned directory and run:
 
