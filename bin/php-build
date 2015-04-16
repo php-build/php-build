@@ -17,33 +17,30 @@
 # [rb]: https://github.com/sstephenson/ruby-build
 # [pb]: https://github.com/CHH/php-build
 
-# Usage
-# -----
-
-# The most important line in every shell script. Basically this says: This script should
-# fail once a command invocation itself fails.
+# The most important line in every shell script. Basically this says: This
+# script should fail once a command invocation itself fails.
 set -e
 
-# This is the usage message, like it's done in
-# [shocco](https://github.com/rtomayko/shocco).
+#/ usage: php-build [options] <definition> <prefix>
+#/
+#/   <definition>       What release should be used, as well as release-specific
+#/                      configuration. This is either the name of a builtin
+#/                      definition file (as listed with --definitions) or a path
+#/                      to the definition file.
+#/   <prefix>           All built executables, configurations and libraries are
+#/                      placed in this directory. It's created if it doesn't
+#/                      exist.
+#/
+#/   --definitions      Lists all available definitions and exit
+#/   -h|--help          Display this help and exit
+#/   -i|--ini <env>     php.ini to use. If <env> is a file then this file is
+#/                      used, otherwise php.ini-<env> from the source
+#/                      distribution is used. Defaults to "production".
+#/   --pear             Install PEAR alongside of Pyrus (experimental)
+#/   -v|--version       Display version information and exit
+#/
 #
-#/ php-build, Compile and Install PHP
-#/ Version: {{VERSION}}
-#/
-#/ Usage: php-build [--definitions] [--ini|i <environment>] [<definition>] [<prefix>]
-#/
-#/ Arguments:
-#/   definition:    What release should be used, as well as release-specific
-#/                  configuration. This is either the name of a builtin definition
-#/                  file (as listed with `--definitions`) or a path to defintion file.
-#/   prefix:        All built Executables, Configs and Libs are placed in this
-#/                  directory. It's created if it doesn't exist.
-#/
-#/ Options:
-#/   --definitions: Lists all available definitions
-#/   --ini|i:       Specifies which php.ini-<environment> from the
-#/                  source distribution is used as default php.ini
-#/
+# Usage message done like [shocco](https://github.com/rtomayko/shocco)
 
 # Set the `PHP_BUILD_DEBUG` environment variable to
 # `yes` to trigger the `set -x` call, which in turn
