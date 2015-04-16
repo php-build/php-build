@@ -31,3 +31,11 @@
 --disable-debug
 --enable-fpm
 --enable-bcmath
+--enable-calendar
+--with-pgsql
+--with-pdo-pgsql
+--enable-intl
+--enable-opcache
+--enable-apcu
+--with-redis
+--with-iconv
