@@ -32,8 +32,10 @@
 --enable-fpm
 --enable-bcmath
 --enable-calendar
+--with-pgsql
 --with-pdo-pgsql
 --enable-intl
 --enable-opcache
 --enable-apcu
---enable-redis
+--with-redis
+--with-iconv
