@@ -694,8 +694,6 @@ function build_error {
 function cleanup_abort {
     log "Warn" "Aborting build."
 
-    rm -rf "$PREFIX"
-
     make -C "$TMP/source/$DEFINITION" clean &> /dev/null
 }
 
