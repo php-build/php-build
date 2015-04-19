@@ -11,12 +11,14 @@ fi
 echo "Installing php-build in $PREFIX"
 
 BIN_DIR="$PREFIX/bin"
+SHARE_DIR="$PREFIX/share"
 MAN_DIR="$PREFIX/share/man"
 
 echo -n "  - Creating Directories..."
 
 [ ! -d "$BIN_DIR" ]          && mkdir -p "$BIN_DIR"
 [ ! -d "$MAN_DIR" ]          && mkdir -p "$MAN_DIR"
+[ ! -d "$SHARE_DIR" ]        && mkdir -p "$SHARE_DIR"
 [ ! -d "$MAN_DIR/man1" ]     && mkdir -p "$MAN_DIR/man1"
 [ ! -d "$MAN_DIR/man5" ]     && mkdir -p "$MAN_DIR/man5"
 
