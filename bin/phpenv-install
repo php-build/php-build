@@ -11,11 +11,17 @@ if [ -z "$PHPENV_ROOT" ]; then
   PHPENV_ROOT="${HOME}/.phpenv"
 fi
 
+ENVIRONMENT="production"
+if [[ "$1" == '--ini' ]] || [[ "$1" == '-i' ]]; then
+  ENVIRONMENT="$2"
+  shift 2
+fi
+
 DEFINITION="$1"
 case "$DEFINITION" in
 "" | -* )
-  { echo "usage: phpenv install VERSION"
-    echo "       phpenv install /path/to/definition"
+  { echo "usage: phpenv install [--ini|-i <environment>] VERSION"
+    echo "       phpenv install [--ini|-i <environment>] /path/to/definition"
     echo
     echo "Available versions:"
     php-build --definitions | sed 's/^/  /'
@@ -28,5 +34,5 @@ esac
 VERSION_NAME="${DEFINITION##*/}"
 PREFIX="${PHPENV_ROOT}/versions/${VERSION_NAME}"
 
-php-build "$DEFINITION" "$PREFIX"
+php-build --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX"
 phpenv rehash
