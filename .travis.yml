@@ -4,7 +4,7 @@ env:
     - DEFINITION=5.3.29
     - DEFINITION=5.4.41
     - DEFINITION=5.5.24
-    - DEFINITION=5.6.8
+    - DEFINITION=5.6.9
 
 script: ./run-tests.sh $DEFINITION
 
