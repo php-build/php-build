@@ -21,6 +21,7 @@ DEFINITION="$1"
 case "$DEFINITION" in
 "" | -* )
   { echo "usage: phpenv install [--ini|-i <environment>] VERSION"
+    echo "       phpenv install [--ini|-i <environment>] /path/to/definition"
     echo
     echo "Available versions:"
     php-build --definitions | sed 's/^/ /'
