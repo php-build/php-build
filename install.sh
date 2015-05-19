@@ -11,26 +11,25 @@ fi
 echo "Installing php-build in $PREFIX"
 
 BIN_DIR="$PREFIX/bin"
+SHARE_DIR="$PREFIX/share"
 MAN_DIR="$PREFIX/share/man"
-TMP_DIR="/tmp/php-build"
 
-echo -n "  - Creating Directories..."
+echo -n "  - creating directories..."
 
 [ ! -d "$BIN_DIR" ]          && mkdir -p "$BIN_DIR"
 [ ! -d "$MAN_DIR" ]          && mkdir -p "$MAN_DIR"
+[ ! -d "$SHARE_DIR" ]        && mkdir -p "$SHARE_DIR"
 [ ! -d "$MAN_DIR/man1" ]     && mkdir -p "$MAN_DIR/man1"
 [ ! -d "$MAN_DIR/man5" ]     && mkdir -p "$MAN_DIR/man5"
-[ ! -d "$TMP_DIR/packages" ] && mkdir -p "$TMP_DIR/packages"
-[ ! -d "$TMP_DIR/source" ]   && mkdir -p "$TMP_DIR/source"
 
-echo " Done."
+echo " done."
 
-chmod -R 0777 "$TMP_DIR"
+echo -n "  - copying files..."
 
-echo -n "  - Copying files..."
-cp -R "$DIR/"{bin,share} "$PREFIX/"
-
+cp -r "$DIR/"{bin,share} "$PREFIX/"
 cp "$DIR/man/php-build.1" "$MAN_DIR/man1/"
 cp "$DIR/man/php-build.5" "$MAN_DIR/man5/"
 
-echo " Done."
+echo " done."
+
+echo "Done."
