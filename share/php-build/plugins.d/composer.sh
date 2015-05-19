@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#
+# This shell scriplet is meant to be included by other shell scripts
+# to set up some variables and a few helper shell functions.
+#
 
 PHP="/usr/bin/env php"
 
@@ -7,7 +11,7 @@ install_composer() {
     copy_composer_phar
 
     log Composer "Installing executable in $PREFIX/bin/composer"
-    
+
     mv "$PREFIX/bin/composer.phar" "$PREFIX/bin/composer"
 
     chmod +x "$PREFIX/bin/composer"
