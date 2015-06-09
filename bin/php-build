@@ -1,21 +1,4 @@
 #!/usr/bin/env bash
-# **php-build** is a utility for building various versions
-# of **PHP** for using them side by side with each other.
-#
-# The overall structure is loosly borrowed from Sam Stephenson's [ruby-build][rb].
-#
-# Installing is currently done by checking out the [php-build][pb] Repository:
-#
-#     git clone git://github.com/CHH/php-build.git
-#     cd php-build
-#     ./bin/php-build --definitions
-#
-# Optionally there's a `install.sh` script supplied with php-build, which installs
-# php-build to the location of a `PREFIX` environment variable, which defaults to
-# `/usr/local`.
-#
-# [rb]: https://github.com/sstephenson/ruby-build
-# [pb]: https://github.com/CHH/php-build
 
 # The most important line in every shell script. Basically this says: This
 # script should fail once a command invocation itself fails.
