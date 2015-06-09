@@ -1,5 +1,4 @@
-Contributing to php-build
-=========================
+# Contributing to php-build
 
 ## Running the tests
 
