@@ -37,9 +37,8 @@ fi
 # visible error messages.
 exec 3<&2
 
-# Simpe function for resolving a
-# relative path to an absolute one
-function realpath {
+# Simple function for resolving a relative path to an absolute one
+function realpath() {
     local path="$1"
     local cwd="$(pwd)"
 
@@ -104,18 +103,17 @@ PHP_BUILD_VERSION="0.11.0dev"
 # Error Code to return if a defintion was not found.
 E_DEFINITION_NOT_FOUND=127
 
-# Processes the Help front matter of the script
-# and displays it on STDERR.
-function display_usage {
+# Processes the Help front matter of the script and displays it on STDERR
+function display_usage() {
     grep '^#/' <"$0" | cut -c4- >&3
 }
 
-function display_version {
+function display_version() {
     echo "php-build v$PHP_BUILD_VERSION"
 }
 
-# Init the directories on first run.
-function init {
+# Init the directories on first run
+function init() {
     if [ ! -d "$TMP" ]; then
         mkdir -p "$TMP"
     fi
@@ -169,9 +167,8 @@ function http_get_wget() {
     wget -nv -O- "$1"
 }
 
-# Logs a given log text with a [marker] to
-# STDERR.
-function log {
+# Logs a given log text with a [marker] to STDERR
+function log() {
     local marker="$1"
     local text="$2"
 
@@ -191,9 +188,8 @@ function is_osx {
     fi
 }
 
-# Downloads a PHP Source Tarball and extracts it
-# to `$TMP/source/$DEFINITION`.
-function download {
+# Downloads a PHP Source Tarball and extracts it to `$TMP/source/$DEFINITION`
+function download() {
     local url=$1
     local basename=$(download_filename $url)
     local package_file="$TMP/packages/$basename"
@@ -228,7 +224,7 @@ function download {
     "extract_$archive_type" "$package_file" "$TMP/source/$DEFINITION"
 }
 
-function download_filename {
+function download_filename() {
     local url=$1
 
     # Try to get "filename" in Content-Disposition header; strip quotes and newlines
@@ -242,9 +238,9 @@ function download_filename {
     echo $filename
 }
 
-# Downloads a PHP Source Tarball from GitHub and extracts it
-# to `$TMP/source/$DEFINITION`.
-function download_from_github {
+# Downloads a PHP Source Tarball from GitHub and extracts it to
+# `$TMP/source/$DEFINITION`.
+function download_from_github() {
     local branch=$1
     local repo=$2
     local package_file="$TMP/packages/$branch.tar.gz"
@@ -272,17 +268,16 @@ function download_from_github {
     extract_gz "$package_file" "$TMP/source/$DEFINITION"
 }
 
-function extract_gz {
+function extract_gz() {
     tar -x -z --strip-components 1 -f "$1" -C "$2"
 }
 
-function extract_bz2 {
+function extract_bz2() {
     tar -x -j --strip-components 1 -f "$1" -C "$2"
 }
 
-# List all defintions found in `share/php-build/definitions`.
-#
-function list_definitions {
+# List all defintions found in `share/php-build/definitions`
+function list_definitions() {
     {
         for definition in "$PHP_BUILD_ROOT/share/php-build/definitions/"*
         do
@@ -291,7 +286,7 @@ function list_definitions {
     } | sort
 }
 
-function trigger_before_install {
+function trigger_before_install() {
     export PHP_BUILD_ROOT
     export PREFIX
 
@@ -306,7 +301,7 @@ function trigger_before_install {
     fi
 }
 
-function trigger_after_install {
+function trigger_after_install() {
     export PHP_BUILD_ROOT
     export PREFIX
 
@@ -331,7 +326,7 @@ function after_install() {
     local stub=1
 }
 
-function load_plugins {
+function load_plugins() {
     if [ ! -d "$1" ]; then
         return 1
     fi
@@ -343,7 +338,7 @@ function load_plugins {
     done
 }
 
-function build_package {
+function build_package() {
     local source_path=$1
     local cwd="$(pwd)"
     if [ -z $1 ]; then
@@ -397,7 +392,7 @@ function build_package {
 }
 
 # Apply patch files
-function apply_patches {
+function apply_patches() {
     local source_path=$1
 
     if [ -n "$PATCH_FILES" ]; then
@@ -409,7 +404,7 @@ function apply_patches {
 }
 
 # Install extensions
-function install_extensions {
+function install_extensions() {
     ## handle extensions that should be installed by defined environment variable
     ## variable must be in the format: extension_name=version extension_name=version
     for extension_def in $PHPBUILD_INSTALL_EXTENSION; do
@@ -433,7 +428,7 @@ function install_extensions {
 # ### install_package
 #
 # Downloads and builds the PHP tarball from the given URL.
-function install_package {
+function install_package() {
     local url=$1
     local archive_type=$2
 
@@ -450,7 +445,7 @@ function install_package {
 # Downloads and builds the PHP tarball from the given branch/tag on GitHub.
 # Optionally, repo canbe specified as 2nd argument.
 # Otherwise "php/php-src" is used by default.
-function install_package_from_github {
+function install_package_from_github() {
     local branch=$1
     local repo=${2:-php/php-src}
 
@@ -468,7 +463,7 @@ function install_package_from_github {
 # the `-D` option to unset the argument given in `$2`. Otherwise
 # the first argument is the name of the option and the second
 # argument contains the optional value.
-function configure_option {
+function configure_option() {
     if [ "$1" = "-D" ]; then
         # This variable will contain the filtered arguments.
         local filtered=
@@ -507,7 +502,7 @@ function configure_option {
 # ### patch_file
 #
 # Add a patch to internal patch list
-function patch_file {
+function patch_file() {
     local patches_dir="$PHP_BUILD_ROOT/share/php-build/patches"
     local patch="$patches_dir/$1"
 
@@ -529,14 +524,14 @@ function patch_file {
 # This is left in for backwards compatibility with
 # definitions which were written before `--with-openssl`
 # was in the list of default configure arguments.
-function with_openssl {
+function with_openssl() {
     stub=1
 }
 
 # ### with_pear
 #
 # Configures a `pear` install in `$PREFIX/pear`.
-function with_pear {
+function with_pear() {
     pear_dir="$PREFIX/pear"
 
     [ ! -d "$PREFIX/pear" ] && mkdir -p "$PREFIX/pear"
@@ -544,12 +539,12 @@ function with_pear {
     configure_option "--with-pear" "$PREFIX/pear"
 }
 
-pear_setup() {
+function pear_setup() {
     "$PREFIX/bin/pear" config-set php_ini "$PREFIX/etc/php.ini" system
     "$PREFIX/bin/pear" config-set auto_discover 1
 }
 
-function with_apxs2 {
+function with_apxs2() {
     local apxs="$1"
     shift
 
@@ -566,7 +561,7 @@ function with_apxs2 {
 # This is invoked by `build_package` and is used to
 # build PHP with the arguments in `$CONFIGURE_OPTIONS`.
 #
-function configure_package {
+function configure_package() {
     local source_path=$1
     local backup_pwd=$(pwd)
 
@@ -647,9 +642,8 @@ EOF
     cd "$backup_pwd"
 }
 
-# Handles build errors, and displays the last 10 lines
-# of the build log.
-function build_error {
+# Handles build errors, and displays the last 10 lines of the build log
+function build_error() {
     {
         echo
         echo "-----------------"
@@ -671,13 +665,13 @@ function build_error {
     fi
 }
 
-function cleanup_abort {
+function cleanup_abort() {
     log "Warn" "Aborting build."
 
     make -C "$TMP/source/$DEFINITION" clean &> /dev/null
 }
 
-function find_definition {
+function find_definition() {
     local definition="$1"
 
     # Check if the supplied argument is an existing file itself,
