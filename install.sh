@@ -8,7 +8,7 @@ if [ -z "$PREFIX" ]; then
     PREFIX="/usr/local"
 fi
 
-echo "Installing php-build in $PREFIX"
+echo "Installing php-build in '$PREFIX'"
 
 BIN_DIR="$PREFIX/bin"
 SHARE_DIR="$PREFIX/share"
