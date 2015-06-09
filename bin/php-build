@@ -706,10 +706,6 @@ function enable_builtin_opcache {
 # Here the magic begins
 # ---------------------
 
-# Set up the directories needed for the source
-# and the downloaded packages.
-init
-
 # Display the Usage message if no arguments are given.
 if [ -z $1 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     display_usage
@@ -725,6 +721,9 @@ if [ "$1" = "--definitions" ]; then
     list_definitions
     exit
 fi
+
+# Set up the directories needed for the source and the downloaded packages
+init
 
 # If `-i` or `--ini` is given as first argument, then
 # treat the second argument as `php.ini` file.
