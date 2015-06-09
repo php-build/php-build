@@ -758,7 +758,7 @@ if ! find_definition "$DEFINITION" > /dev/null; then
 fi
 
 DEFINITION_PATH="$(find_definition "$DEFINITION")"
-
+DEFINITION="$(basename "$DEFINITION_PATH")"
 LOG_NAME="$(basename "$DEFINITION_PATH")"
 # Generate the Path for the build log.
 TIME="$(date "+%Y%m%d%H%M%S")"

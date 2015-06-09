@@ -4,6 +4,7 @@
 
 Added: uninstaller script #279
 Fixed: installer fails if share directory doesn't exist
+Fixed: Build error when trying to use definition file #285
 
 ## 0.10.0 - 2013/06/14
 
