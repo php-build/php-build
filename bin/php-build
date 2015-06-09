@@ -25,16 +25,14 @@ set -e
 #
 # Usage message done like [shocco](https://github.com/rtomayko/shocco)
 
-# Set the `PHP_BUILD_DEBUG` environment variable to
-# `yes` to trigger the `set -x` call, which in turn
-# outputs every issued shell command to `STDOUT`.
+# Set the `PHP_BUILD_DEBUG` environment variable to `yes` to trigger the
+# `set -x` call, which in turn outputs every issued shell command to `STDOUT`.
 if [ -n "$PHP_BUILD_DEBUG" ]; then
     set -x
 fi
 
-# Preserve STDERR on FD3, so we can easily log build
-# errors on FD2 to a file and use FD3 for php-build's
-# visible error messages.
+# Preserve STDERR on FD3, so we can easily log build errors on FD2 to a file and
+# use FD3 for php-build's visible error messages.
 exec 3<&2
 
 # Simple function for resolving a relative path to an absolute one
@@ -60,23 +58,19 @@ function realpath() {
 # Common Variables
 # ----------------
 
-# This is the path where php-build is installed. This
-# is treated as the base for the `share/` and `tmp/`
-# folders of php-build.
+# This is the path where php-build is installed. This is treated as the base for
+# the `share/` and `tmp/` folders of php-build.
 PHP_BUILD_ROOT="$(realpath "$0")/.."
 TMP="$(dirname $(mktemp --dry-run 2>/dev/null || echo "/var/tmp/tmp_dir"))/php-build"
 
-# This file gets copied to `$PREFIX/etc/php.ini` once
-# the build is complete. This is by default the PHP tarball's
-# `php.ini-production`.
+# This file gets copied to `$PREFIX/etc/php.ini` once the build is complete.
+# This is by default the PHP tarball's `php.ini-production`.
 PHP_DEFAULT_INI="php.ini-production"
 
 # Initialize the builtin definition path.
 [ -z "$PHP_BUILD_DEFINITION_PATH" ] && PHP_BUILD_DEFINITION_PATH="$PHP_BUILD_ROOT/share/php-build/definitions"
 
-# Read the list of arguments for the call to `./configure`
-# in PHP's source.
-#
+# Read the list of arguments for the call to `./configure` in PHP's source.
 # These arguments are read from `share/php-build/default_configure_options`.
 CONFIGURE_OPTIONS=$(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_options")
 
@@ -175,9 +169,8 @@ function log() {
     echo "[$marker]: $text" >&3
 }
 
-# Uses uname to check if php-build is run on OSX.
-# This is used later on to enable specifc fixes for
-# OSX oddnesses in library file placement.
+# Uses uname to check if php-build is run on OSX. This is used later on to
+# enable specifc fixes for OSX oddnesses in library file placement.
 function is_osx {
     local uname=$(uname)
 
@@ -383,8 +376,8 @@ function build_package() {
         fi
     fi
 
-    # Comment out 'extension_dir' in old default php.ini files (PHP 5.2). In newer
-    # ones (>= 5.3) this is already the default.
+    # Comment out 'extension_dir' in old default php.ini files (PHP 5.2). In
+    # newer ones (>= 5.3) this is already the default.
     if [ -f "$PREFIX/etc/php.ini" ]; then
         sed -i.bak -e 's/^\(extension_dir\)/; \1/g' "$PREFIX/etc/php.ini"
         rm "$PREFIX/etc/php.ini.bak"
@@ -405,8 +398,8 @@ function apply_patches() {
 
 # Install extensions
 function install_extensions() {
-    ## handle extensions that should be installed by defined environment variable
-    ## variable must be in the format: extension_name=version extension_name=version
+    # handle extensions that should be installed by defined environment variable
+    # variable must be in the format: extension_name=version extension_name=version
     for extension_def in $PHPBUILD_INSTALL_EXTENSION; do
         local extension=$(echo $extension_def | cut -d"=" -f1)
         local version=$(echo $extension_def | cut -d"=" -f2)
@@ -725,12 +718,11 @@ fi
 # Set up the directories needed for the source and the downloaded packages
 init
 
-# If `-i` or `--ini` is given as first argument, then
-# treat the second argument as `php.ini` file.
+# If `-i` or `--ini` is given as first argument, then treat the second argument
+# as `php.ini` file.
 if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
-    # If an existing path is passed (and the path is a file)
-    # then use this file, otherwise use `php.ini-<value>`
-    # from the tarball.
+    # If an existing path is passed (and the path is a file) then use this file,
+    # otherwise use `php.ini-<value>` from the tarball.
     if [ -f "$2" ]; then
         PHP_DEFAULT_INI="$2"
     else
@@ -800,7 +792,6 @@ trap build_error ERR EXIT
 source "$DEFINITION_PATH"
 
 # Run executables placed in `share/php-build/after-install.d`
-#
 trigger_after_install 2>&4
 
 if [ "$ENABLE_PEAR" = "1" ]; then
