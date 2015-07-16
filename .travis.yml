@@ -1,3 +1,5 @@
+sudo: false
+
 env:
     - DEFINITION=5.2.17 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
     - DEFINITION=5.3.3 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
@@ -7,12 +9,17 @@ env:
     - DEFINITION=5.6.11
     - DEFINITION=7.0.0beta1
 
+cache: apt
+
 script: ./run-tests.sh $DEFINITION
 
-before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get build-dep php5-cli
-    - sudo apt-get install -qq git-core libmcrypt-dev libjpeg-dev libreadline-dev
+addons:
+    apt:
+        packages:
+            - libjpeg-dev
+            - libmcrypt-dev
+            - libreadline-dev
+            - php5-cli
 
 before_script:
     - git clone http://github.com/sstephenson/bats
@@ -21,4 +28,4 @@ before_script:
     - bats --version
 
 after_failure:
-    - sudo cat $(ls -r /tmp/php-build*.log | head -n 1)
+    - cat $(ls -r /tmp/php-build*.log | head -n 1)
