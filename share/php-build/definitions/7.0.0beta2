@@ -1,0 +1,3 @@
+install_package "http://downloads.php.net/~ab/php-7.0.0beta2.tar.bz2"
+install_pyrus
+enable_builtin_opcache
