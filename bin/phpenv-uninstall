@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Usage: phpenv uninstall [--force|-f] VERSION
+# Remove an installed PHP version.
+#
+#   -f, --force   Force removal, never prompt
+#   -h, --help    Displays this help
+#
+# Report bugs on https://github.com/php-build/php-build.
+#
+
+set -e
+
+test -n "${PHPENV_DEBUG}" &&
+  set -x
+
+test -z "${PHPENV_ROOT}" &&
+  PHPENV_ROOT="${HOME}/.phpenv"
+
+CONFIRM=0
+VERSION=""
+HELP_MESSAGE=$(sed -E 's/^#\s?(.*)/\1/g' "${0}" | sed -nE '/^Usage/,/^Report/p')
+
+if [[ "${1}" == '--help' ]] || [[ "${1}" == '-h' ]]; then
+  echo "${HELP_MESSAGE}"
+  exit
+fi
+
+if [[ "${1}" == '--force' ]] || [[ "${1}" == '-f' ]]; then
+  CONFIRM=1
+  shift
+fi
+
+VERSION="${1##*/}"
+VERSION_DIRECTORY="${PHPENV_ROOT}/versions/${VERSION}"
+
+if [[ -z "${VERSION}" ]]; then
+  echo "${HELP_MESSAGE}" 1>&2
+  exit 1
+fi
+
+if [[ ! -d "${VERSION_DIRECTORY}" ]]; then
+  {
+    echo "‘${VERSION}’ is not a valid version."
+    echo
+    echo "Installed versions:"
+    phpenv versions | grep -v system | sed 's,\*, ,g; s, (.*,,g'
+    echo
+  } 1>&2
+  exit 2
+fi
+
+if [[ ${CONFIRM} -eq 0 ]]; then
+  echo -n "Are you sure you want to remove version ‘${VERSION}’? [y/N]: "
+  read ANSWER
+
+  if [[ "${ANSWER,,}" = "y" ]]; then
+    CONFIRM=1
+  fi
+fi
+
+if [[ ${CONFIRM} -gt 0 ]]; then
+  rm -rf "${VERSION_DIRECTORY}"
+  echo "Version ‘${VERSION}’ (${VERSION_DIRECTORY}) successfully removed."
+  exit
+fi
+
+echo "Aborted!" 1>&2
+exit 3
