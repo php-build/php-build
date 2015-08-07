@@ -271,12 +271,11 @@ function extract_bz2() {
 
 # List all defintions found in `share/php-build/definitions`
 function list_definitions() {
-    {
-        for definition in "$PHP_BUILD_ROOT/share/php-build/definitions/"*
-        do
-            echo $(basename "$definition")
-        done
-    } | sort
+    ls -1 "${PHP_BUILD_ROOT}/share/php-build/definitions/"* |
+        xargs -n1 basename |
+        sed -E 's,([0-9])([a-z]),\1.\2,g; s,\b([0-9])\b,0\1,g;' |
+        sort |
+        sed -E 's,\b0([0-9])\b,\1,g; s,\.([a-z]),\1,g'
 }
 
 function trigger_before_install() {
