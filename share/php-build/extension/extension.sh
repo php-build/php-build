@@ -129,7 +129,7 @@ function _build_extension {
             $configure_args > /dev/null
 
         make > /dev/null
-	make install > /dev/null
+        make install > /dev/null
     } >&4 2>&1
 
     local extension_home="$PREFIX/share/$name"
