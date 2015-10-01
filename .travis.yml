@@ -3,9 +3,9 @@ env:
     - DEFINITION=5.3.3 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
     - DEFINITION=5.3.29
     - DEFINITION=5.4.45
-    - DEFINITION=5.5.29
-    - DEFINITION=5.6.13
-    - DEFINITION=7.0.0RC3
+    - DEFINITION=5.5.30
+    - DEFINITION=5.6.14
+    - DEFINITION=7.0.0RC4
 
 script: ./run-tests.sh $DEFINITION
 
