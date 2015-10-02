@@ -1,3 +1,3 @@
-install_package "http://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.3.19.tar.bz2;h=666ec3f90a28467f97e956589e38c3598918af32;hb=186d0ee2e8600ca14691d7a6bd5833dd6d01542c"
+install_package "https://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.3.19.tar.bz2;h=666ec3f90a28467f97e956589e38c3598918af32;hb=186d0ee2e8600ca14691d7a6bd5833dd6d01542c"
 install_pyrus
 install_xdebug "2.2.7"

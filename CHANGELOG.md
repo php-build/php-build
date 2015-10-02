@@ -71,7 +71,7 @@
 
 ## 0.6.0 - 2012/05/01
 
- * php-build now works as plugin to [humanshell/phpenv](http://github.com/humanshell/phpenv) @humanshell
+ * php-build now works as plugin to [humanshell/phpenv](https://github.com/humanshell/phpenv) @humanshell
  * Added support for 5.4.1, 5.3.11
  * Better handling of `*.dSYM` executables @CHH, @eriksencosta
 

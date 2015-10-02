@@ -51,7 +51,7 @@ The built version will be installed into `$HOME/.phpenv/versions/<definition>`.
 
 ## Contributing
 
-Issue reports and pull requests are always welcome. 
+Issue reports and pull requests are always welcome.
 
 - Freenode channel: `#php-build`
 - Google group: https://groups.google.com/forum/#!forum/php-build-developers
@@ -74,7 +74,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 php-build is released under the [MIT License][license].
 
 [contributors]: https://github.com/php-build/php-build/graphs/contributors
-[Gittipp-ing]: http://gittip.com/CHH
+[Gittipp-ing]: https://gittip.com/CHH
 [license]: LICENSE
 [phpenv]: https://github.com/CHH/phpenv
 [ruby-build]: https://github.com/sstephenson/ruby-build

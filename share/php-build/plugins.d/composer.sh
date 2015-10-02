@@ -17,7 +17,7 @@ download_composer() {
     local composer_url="$1"
 
     if [ -z "$composer_url" ]; then
-        composer_url="http://getcomposer.org/composer.phar"
+        composer_url="https://getcomposer.org/composer.phar"
     fi
 
     if [ ! -f "$TMP/packages/composer.phar" ]; then

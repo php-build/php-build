@@ -15,7 +15,7 @@ before_install:
     - sudo apt-get install -qq git-core libmcrypt-dev libjpeg-dev libreadline-dev
 
 before_script:
-    - git clone http://github.com/sstephenson/bats
+    - git clone https://github.com/sstephenson/bats
     - bats/install.sh $HOME
     - export PATH=$HOME/bin:$HOME/libexec:$PATH
     - bats --version

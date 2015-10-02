@@ -11,5 +11,5 @@ patch_file "zip_direct.c.patch"
 
 with_pear
 
-install_package "http://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.2.17.tar.bz2;h=90d654f7b9c60320f6228194ed1d2f12976a3a59;hb=bed93a30bbc2104f6e88e6ef142891a4c289502f"
+install_package "https://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.2.17.tar.bz2;h=90d654f7b9c60320f6228194ed1d2f12976a3a59;hb=bed93a30bbc2104f6e88e6ef142891a4c289502f"
 install_xdebug "2.2.7"
