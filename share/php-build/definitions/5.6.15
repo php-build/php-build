@@ -1,0 +1,4 @@
+install_package "https://secure.php.net/distributions/php-5.6.15.tar.bz2"
+install_pyrus
+install_xdebug "2.3.3"
+enable_builtin_opcache
