@@ -231,36 +231,6 @@ function download_filename() {
     echo $filename
 }
 
-# Downloads a PHP Source Tarball from GitHub and extracts it to
-# `$TMP/source/$DEFINITION`.
-function download_from_github() {
-    local branch=$1
-    local repo=$2
-    local package_file="$TMP/packages/$branch.tar.gz"
-    local url="https://github.com/$repo/tarball/$branch"
-    local temp_package="$TMP/$branch.tar.gz"
-
-    if [ -d "$TMP/source/$DEFINITION" ]; then
-        log "Removing" "Already downloaded and extracted $url"
-        rm -rf "$TMP/source/$DEFINITION"
-    fi
-
-    log "Downloading" "$url"
-
-    # Remove the temp file if one exists.
-    if [ -f "$temp_package" ]; then
-        rm "$temp_package"
-    fi
-
-    http get "$url" > $temp_package
-    cp "$temp_package" "$TMP/packages"
-    rm "$temp_package"
-
-    mkdir "$TMP/source/$DEFINITION"
-
-    extract_gz "$package_file" "$TMP/source/$DEFINITION"
-}
-
 function extract_gz() {
     tar -x -z --strip-components 1 -f "$1" -C "$2"
 }
@@ -426,23 +396,6 @@ function install_package() {
 
     {
         download $url $archive_type
-        cd "$TMP/source/$DEFINITION"
-        build_package
-        cd - > /dev/null
-    } >&4 2>&1
-}
-
-# ### install_package_from_github
-#
-# Downloads and builds the PHP tarball from the given branch/tag on GitHub.
-# Optionally, repo canbe specified as 2nd argument.
-# Otherwise "php/php-src" is used by default.
-function install_package_from_github() {
-    local branch=$1
-    local repo=${2:-php/php-src}
-
-    {
-        download_from_github "$branch" "$repo"
         cd "$TMP/source/$DEFINITION"
         build_package
         cd - > /dev/null
