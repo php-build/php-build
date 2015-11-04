@@ -26,7 +26,7 @@ function xdebug_after_install {
      # Comment out the lines in the xdebug.ini when the env variable
     # is set to something to "no"
     local conf_line_prefix=
-    if [ "$PHP_BUILD_XDEBUG_ENABLE" == "off" ]; then
+    if [ "$PHP_BUILD_XDEBUG_ENABLE" == "off" ] || [ "$PHP_BUILD_XDEBUG_ENABLE" == "no" ]; then
         log "XDebug" "XDebug is commented out in $xdebug_ini. Remove the \";\" to enable it."
         conf_line_prefix=";"
     fi
