@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$PHPENV_DEBUG" ] && set -x
+
+if [ -z "$PHPENV_ROOT" ]; then
+  PHPENV_ROOT="${HOME}/.phpenv"
+fi
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE:-${(%):-%N}}")"; pwd)"
+cd ${script_dir}/..
+git pull
