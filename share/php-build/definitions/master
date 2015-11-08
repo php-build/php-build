@@ -1,6 +1,4 @@
 install_package_from_github master
 install_pyrus
-# Xdebug is not yet compatible with PHP 7 so it is disabled for now
-# TODO: uncomment this once support is added: http://bugs.xdebug.org/view.php?id=1109
-# install_xdebug_master
+install_xdebug_master
 enable_builtin_opcache
