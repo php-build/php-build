@@ -14,16 +14,18 @@ env:
 script: ./run-tests.sh $DEFINITION
 
 before_install:
-    - echo $TRAVIS_OS_NAME
-    # LINUX
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update -qq; fi
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get build-dep php5-cli; fi
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -qq git-core libmcrypt-dev libjpeg-dev libreadline-dev; fi
-    # OSX
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/versions; fi
-    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install git vim curl wget re2c libjpeg libpng libmcrypt autoconf bison; fi
-    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link bison --force; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install re2c; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libjpeg; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libpng; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libmcrypt; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install autoconf; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install bison27; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link bison27 --force; fi
 
 
 before_script:
