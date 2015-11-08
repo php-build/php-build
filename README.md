@@ -1,4 +1,4 @@
-# php-build [![Build Status](https://secure.travis-ci.org/php-build/php-build.png?branch=master)](https://travis-ci.org/php-build/php-build)
+# php-build [![Build Status](https://secure.travis-ci.org/php-build/php-build.svg?branch=master)](https://travis-ci.org/php-build/php-build)
 
 php-build is a utility for building versions of PHP to use them side by side with each other. The overall structure is loosly borrowed from Sam Stephenson's [ruby-build].
 
