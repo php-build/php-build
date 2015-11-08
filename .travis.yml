@@ -21,7 +21,6 @@ before_install:
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew tap homebrew/versions; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install re2c; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libjpeg; fi
-    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libpng; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libmcrypt; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install autoconf; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install bison27; fi
