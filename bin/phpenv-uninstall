@@ -18,7 +18,7 @@ test -z "${PHPENV_ROOT}" &&
 
 CONFIRM=0
 VERSION=""
-HELP_MESSAGE=$(sed -E 's/^#\s?(.*)/\1/g' "${0}" | sed -nE '/^Usage/,/^Report/p')
+HELP_MESSAGE=$(sed -E 's/^#[[:space:]]?(.*)/\1/g' "${0}" | sed -nE '/^Usage/,/^Report/p')
 
 if [[ "${1}" == '--help' ]] || [[ "${1}" == '-h' ]]; then
   echo "${HELP_MESSAGE}"
