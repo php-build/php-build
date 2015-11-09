@@ -23,8 +23,10 @@ before_install:
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libjpeg; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install libmcrypt; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install autoconf; fi
-    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install bison27; fi
-    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew link bison27 --force; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$DEFINITION" == "5.2.17" ]; then brew install https://raw.githubusercontent.com/rogeriopradoj/homebrew-versions-1/bison-241-242-264/bison241.rb && brew link bison241 --force; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$DEFINITION" == "5.3.3" ]; then brew install https://raw.githubusercontent.com/rogeriopradoj/homebrew-versions-1/bison-241-242-264/bison242.rb && brew link bison242 --force; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$DEFINITION" == "5.3.29" ]; then brew install https://raw.githubusercontent.com/rogeriopradoj/homebrew-versions-1/bison-241-242-264/bison264.rb && brew link bison264 --force; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$DEFINITION" != "5.2.17" ] && [ "$DEFINITION" != "5.3.3" ] && [ "$DEFINITION" != "5.3.29" ]; then brew install bison27 && brew link bison27 --force; fi
 
 
 before_script:
