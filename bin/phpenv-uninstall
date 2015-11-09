@@ -13,6 +13,11 @@ set -e
 test -n "${PHPENV_DEBUG}" &&
   set -x
 
+# Provide phpenv completions
+if [ "$1" = "--complete" ]; then
+  exec phpenv-versions --bare
+fi
+
 test -z "${PHPENV_ROOT}" &&
   PHPENV_ROOT="${HOME}/.phpenv"
 
