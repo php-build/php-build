@@ -13,6 +13,11 @@ set -e
 test -n "${RBENV_DEBUG}" &&
   set -x
 
+# Provide rbenv completions
+if [ "$1" = "--complete" ]; then
+  exec rbenv-versions --bare
+fi
+
 test -z "${RBENV_ROOT}" &&
   RBENV_ROOT="${HOME}/.phpenv"
 
