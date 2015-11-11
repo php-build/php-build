@@ -58,7 +58,7 @@ if [[ ${CONFIRM} -eq 0 ]]; then
   echo -n "Are you sure you want to remove version ‘${VERSION}’? [y/N]: "
   read ANSWER
 
-  if [[ "${ANSWER,,}" = "y" ]]; then
+  if [[ "${ANSWER}" =~ ^[Yy]$ ]]; then
     CONFIRM=1
   fi
 fi
