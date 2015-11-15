@@ -12,6 +12,11 @@ addons:
    - libtidy-dev
 
 env:
+  global:
+    # There are 2 cores on the CI environment
+    # (via: http://docs.travis-ci.com/user/ci-environment/ )
+    - PHPBUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+  matrix:
     - DEFINITION=5.2.17 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
     - DEFINITION=5.3.3 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
     - DEFINITION=5.3.29
