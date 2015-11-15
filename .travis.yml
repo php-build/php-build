@@ -3,12 +3,10 @@ sudo: false
 addons:
   apt:
     packages:
-      - php5-cli
       - libmcrypt-dev
-      - libjpeg-dev
-      - libreadline-dev
-      - re2c
       - libtidy-dev
+      - php5-cli
+      - re2c
 
 env:
   global:
