@@ -1,3 +1,16 @@
+sudo: false
+
+addons:
+ apt:
+  packages:
+   - php5-cli
+   - git-core
+   - libmcrypt-dev
+   - libjpeg-dev
+   - libreadline-dev
+   - re2c
+   - libtidy-dev
+
 env:
     - DEFINITION=5.2.17 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
     - DEFINITION=5.3.3 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
@@ -9,11 +22,6 @@ env:
 
 script: ./run-tests.sh $DEFINITION
 
-before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get build-dep php5-cli
-    - sudo apt-get install -qq git-core libmcrypt-dev libjpeg-dev libreadline-dev
-
 before_script:
     - git clone https://github.com/sstephenson/bats
     - bats/install.sh $HOME
@@ -21,4 +29,4 @@ before_script:
     - bats --version
 
 after_failure:
-    - sudo cat $(ls -r /tmp/php-build*.log | head -n 1)
+    - cat $(ls -r /tmp/php-build*.log | head -n 1)
