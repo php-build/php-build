@@ -22,7 +22,7 @@ env:
     - DEFINITION=5.4.45
     - DEFINITION=5.5.30
     - DEFINITION=5.6.15
-    - DEFINITION=7.0.0RC6
+    - DEFINITION=7.0.0RC7
 
 script: ./run-tests.sh $DEFINITION
 

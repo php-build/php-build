@@ -1,0 +1,4 @@
+install_package "https://downloads.php.net/~ab/php-7.0.0RC7.tar.bz2"
+install_pyrus
+install_xdebug "2.4.0beta1"
+enable_builtin_opcache
