@@ -4,7 +4,6 @@ addons:
  apt:
   packages:
    - php5-cli
-   - git-core
    - libmcrypt-dev
    - libjpeg-dev
    - libreadline-dev
