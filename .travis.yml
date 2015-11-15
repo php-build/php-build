@@ -1,19 +1,17 @@
 sudo: false
 
 addons:
- apt:
-  packages:
-   - php5-cli
-   - libmcrypt-dev
-   - libjpeg-dev
-   - libreadline-dev
-   - re2c
-   - libtidy-dev
+  apt:
+    packages:
+      - php5-cli
+      - libmcrypt-dev
+      - libjpeg-dev
+      - libreadline-dev
+      - re2c
+      - libtidy-dev
 
 env:
   global:
-    # There are 2 cores on the CI environment
-    # (via: http://docs.travis-ci.com/user/ci-environment/ )
     - PHPBUILD_EXTRA_MAKE_ARGUMENTS="-j2"
   matrix:
     - DEFINITION=5.2.17 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
@@ -24,13 +22,14 @@ env:
     - DEFINITION=5.6.15
     - DEFINITION=7.0.0RC7
 
-script: ./run-tests.sh $DEFINITION
+install:
+  - git clone https://github.com/sstephenson/bats
+  - bats/install.sh $HOME
+  - export PATH=$HOME/bin:$HOME/libexec:$PATH
+  - bats --version
 
-before_script:
-    - git clone https://github.com/sstephenson/bats
-    - bats/install.sh $HOME
-    - export PATH=$HOME/bin:$HOME/libexec:$PATH
-    - bats --version
+script:
+  - ./run-tests.sh $DEFINITION
 
 after_failure:
-    - cat $(ls -r /tmp/php-build*.log | head -n 1)
+  - cat $(ls -r /tmp/php-build*.log | head -n 1)
