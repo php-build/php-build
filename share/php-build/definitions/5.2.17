@@ -8,6 +8,7 @@ configure_option -R "--with-pdo-mysql"
 patch_file "gmp.c.patch"
 patch_file "xp_ssl.c.patch"
 patch_file "zip_direct.c.patch"
+patch_file "php-5.4.6-libxml2-2.9.patch"
 
 with_pear
 
