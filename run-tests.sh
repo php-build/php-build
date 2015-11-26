@@ -40,7 +40,7 @@ echo
 
 for definition in $BUILD_LIST; do
     echo -n "Building '$definition'..."
-    if ./bin/php-build --pear "$definition" "$BUILD_PREFIX/$definition" &> /dev/null; then
+    if ./bin/php-build --pear "$definition" "$BUILD_PREFIX/$definition"; then
         echo "OK"
 
         export TEST_PREFIX="$BUILD_PREFIX/$definition"
