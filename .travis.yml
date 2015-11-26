@@ -17,7 +17,7 @@ env:
     - DEFINITION=5.3.29
     - DEFINITION=5.4.45
     - DEFINITION=5.5.30
-    - DEFINITION=5.6.15
+    - DEFINITION=5.6.16
     - DEFINITION=7.0.0RC8
 
 install:
