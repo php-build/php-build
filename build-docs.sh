@@ -1,7 +1,7 @@
 #!/bin/sh
 
 TEMP_PAGES_DIR=/var/tmp/php-build-gh-pages
-GIT_REPO="git@github.com:CHH/php-build"
+GIT_REPO="git@github.com:php-build/php-build"
 
 update_gh_pages() {
     if [ -d "$TEMP_PAGES_DIR" ]; then
