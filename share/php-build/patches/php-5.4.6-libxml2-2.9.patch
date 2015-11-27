@@ -1,0 +1,57 @@
+diff -c -r php-5.4.6-orig/ext/dom/documenttype.c php-5.4.6/ext/dom/documenttype.c
+*** php-5.4.6-orig/ext/dom/documenttype.c	2012-08-15 13:26:05.000000000 +0900
+--- php-5.4.6/ext/dom/documenttype.c	2013-11-05 02:03:54.000000000 +0900
+***************
+*** 205,211 ****
+--- 205,215 ----
+  		if (buff != NULL) {
+  			xmlNodeDumpOutput (buff, NULL, (xmlNodePtr) intsubset, 0, 0, NULL);
+  			xmlOutputBufferFlush(buff);
++ #ifdef LIBXML2_NEW_BUFFER
++ 			ZVAL_STRINGL(*retval, xmlOutputBufferGetContent(buff), xmlOutputBufferGetSize(buff), 1);
++ #else
+  			ZVAL_STRINGL(*retval, buff->buffer->content, buff->buffer->use, 1);
++ #endif
+  			(void)xmlOutputBufferClose(buff);
+  			return SUCCESS;
+  		}
+diff -c -r php-5.4.6-orig/ext/dom/node.c php-5.4.6/ext/dom/node.c
+*** php-5.4.6-orig/ext/dom/node.c	2012-08-15 13:26:05.000000000 +0900
+--- php-5.4.6/ext/dom/node.c	2013-11-05 02:03:54.000000000 +0900
+***************
+*** 1895,1903 ****
+--- 1895,1911 ----
+          RETVAL_FALSE;
+      } else {
+  		if (mode == 0) {
++ #ifdef LIBXML2_NEW_BUFFER
++ 			ret = xmlOutputBufferGetSize(buf);
++ #else
+  			ret = buf->buffer->use;
++ #endif
+  			if (ret > 0) {
++ #ifdef LIBXML2_NEW_BUFFER
++ 				RETVAL_STRINGL((char *) xmlOutputBufferGetContent(buf), ret, 1);
++ #else
+  				RETVAL_STRINGL((char *) buf->buffer->content, ret, 1);
++ #endif
+  			} else {
+  				RETVAL_EMPTY_STRING();
+  			}
+diff -c -r php-5.4.6-orig/ext/simplexml/simplexml.c php-5.4.6/ext/simplexml/simplexml.c
+*** php-5.4.6-orig/ext/simplexml/simplexml.c	2012-08-15 13:26:05.000000000 +0900
+--- php-5.4.6/ext/simplexml/simplexml.c	2013-11-05 02:03:54.000000000 +0900
+***************
+*** 1417,1423 ****
+--- 1417,1427 ----
+  
+  			xmlNodeDumpOutput(outbuf, (xmlDocPtr) sxe->document->ptr, node, 0, 0, ((xmlDocPtr) sxe->document->ptr)->encoding);
+  			xmlOutputBufferFlush(outbuf);
++ #ifdef LIBXML2_NEW_BUFFER
++ 			RETVAL_STRINGL((char *)xmlOutputBufferGetContent(outbuf), xmlOutputBufferGetSize(outbuf), 1);
++ #else
+  			RETVAL_STRINGL((char *)outbuf->buffer->content, outbuf->buffer->use, 1);
++ #endif
+  			xmlOutputBufferClose(outbuf);
+  		}
+  	} else {
