@@ -92,6 +92,8 @@ function _checkout_extension {
     if [ -d "$source_dir" ] && [ -d "$source_dir/.git" ]; then
         log "$name" "Updating $name from Git Master"
         cd "$source_dir"
+        git clean -fdx
+        git reset --hard HEAD
         git pull origin master > /dev/null
         cd "$cwd"
     else
