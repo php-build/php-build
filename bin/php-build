@@ -78,11 +78,11 @@ CONFIGURE_OPTIONS=$(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_optio
 PATCH_FILES=""
 
 # Whether do "make clean" after installation or not
-[ -z "$PHPBUILD_KEEP_OBJECT_FILES" ] && PHPBUILD_KEEP_OBJECT_FILES=off
+[ -z "$PHP_BUILD_KEEP_OBJECT_FILES" ] && PHP_BUILD_KEEP_OBJECT_FILES=off
 
-[ -z "$PHPBUILD_EXTRA_MAKE_ARGUMENTS" ] && PHPBUILD_EXTRA_MAKE_ARGUMENTS=""
+[ -z "$PHP_BUILD_EXTRA_MAKE_ARGUMENTS" ] && PHP_BUILD_EXTRA_MAKE_ARGUMENTS=""
 
-[ -z "$PHPBUILD_INSTALL_EXTENSION" ] && PHPBUILD_INSTALL_EXTENSION=""
+[ -z "$PHP_BUILD_INSTALL_EXTENSION" ] && PHP_BUILD_INSTALL_EXTENSION=""
 
 if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
@@ -326,9 +326,9 @@ function build_package() {
 
     cd "$source_path"
     {
-        make $PHPBUILD_EXTRA_MAKE_ARGUMENTS
+        make $PHP_BUILD_EXTRA_MAKE_ARGUMENTS
         make install
-        if [ "$PHPBUILD_KEEP_OBJECT_FILES" == "off" ]; then
+        if [ "$PHP_BUILD_KEEP_OBJECT_FILES" == "off" ]; then
             make clean
         fi
     } > /dev/null
@@ -376,7 +376,7 @@ function apply_patches() {
 function install_extensions() {
     # handle extensions that should be installed by defined environment variable
     # variable must be in the format: extension_name=version extension_name=version
-    for extension_def in $PHPBUILD_INSTALL_EXTENSION; do
+    for extension_def in $PHP_BUILD_INSTALL_EXTENSION; do
         local extension=$(echo $extension_def | cut -d"=" -f1)
         local version=$(echo $extension_def | cut -d"=" -f2)
         local first_char=$(echo $version | cut -c1 )
