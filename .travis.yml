@@ -1,5 +1,9 @@
 sudo: false
 
+os:
+  - linux
+  - osx
+
 addons:
   apt:
     packages:
@@ -12,13 +16,23 @@ env:
   global:
     - PHPBUILD_EXTRA_MAKE_ARGUMENTS="-j2"
   matrix:
-    - DEFINITION=5.2.17 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
-    - DEFINITION=5.3.3 PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
+    - DEFINITION=5.2.17
+    - DEFINITION=5.3.3
     - DEFINITION=5.3.29
     - DEFINITION=5.4.45
     - DEFINITION=5.5.30
     - DEFINITION=5.6.16
     - DEFINITION=7.0.0RC8
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$DEFINITION" =~ ^("5.2.".*|"5.3."[0-6])$ ]]; then export PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu" ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$DEFINITION" =~ ^("5.2."|"5.3."|"5.4."[0-9]$|"5.4.1"[0-4]$) ]]; then export LIBS="-lssl -lcrypto"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install re2c; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libmcrypt; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install bison27 && brew link bison27 --force; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$DEFINITION" == "5.2.17" ]]; then brew install mysql ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" && "$DEFINITION" == "5.3.3" ]]; then brew install libevent ; fi
 
 install:
   - git clone https://github.com/sstephenson/bats
