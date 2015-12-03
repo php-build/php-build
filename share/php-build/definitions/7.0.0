@@ -1,4 +1,4 @@
 install_package "https://secure.php.net/distributions/php-7.0.0.tar.bz2"
 install_pyrus
-install_xdebug "XDEBUG_2_4_0RC2"
+install_xdebug_master
 enable_builtin_opcache
