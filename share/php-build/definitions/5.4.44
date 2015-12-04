@@ -1,3 +1,2 @@
 install_package "https://secure.php.net/distributions/php-5.4.44.tar.bz2"
-install_pyrus
 install_xdebug "2.3.3"

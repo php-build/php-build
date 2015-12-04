@@ -10,9 +10,6 @@
 .
 .nf
 
-# Passes `\-\-with\-pear=$PREFIX/pear` to `configure`\.
-with_pear
-
 # Add/Delete flags passed to `configure`\.
 configure_option <FLAG> [<VALUE>]
 configure_option \-R <FLAG> [<VALUE>]
@@ -31,15 +28,11 @@ install_xdebug <VERSION>
 # versions of PHP need the latest XDebug from master\.
 install_xdebug_master
 
-install_pyrus [<URL>]
-.
-.fi
-.
 .SH "DESCRIPTION"
 php\-build definitions are Shell source files which get sourced by the \fBphp\-build\fR command\. Therefore you can put \fIeverything\fR in a definition file that\'s \fIvalid\fR Shell source code\.
 .
 .P
-php\-build defines some custom commands, which aid in building, downloading and compiling PHP tarballs and often needed add\-on features such as PEAR support and XDebug\.
+php\-build defines some custom commands, which aid in building, downloading and compiling PHP tarballs and often needed add\-on features such as XDebug\.
 .
 .SH "BUILTIN COMMANDS"
 .
@@ -58,10 +51,6 @@ Adds the \fIFLAG\fR to the list of options passed to PHP\'s \fBconfigure\fR\. Wh
 .TP
 \fBconfigure_option\fR \fB\-D\fR \fIFLAG\fR
 Deletes the \fIFLAG\fR from the list of configure options\.
-.
-.TP
-\fBwith_pear\fR
-The \fBpear\fR command is disabled by default in the configure options in favor of the new Pyrus Tool for PEAR\. To enable \fBpear\fR call this command before \fBinstall_package\fR\.
 .
 .TP
 \fBwith_openssl\fR
@@ -113,12 +102,6 @@ Root of the php\-build(1) install, for example \fB/usr/local\fR\.
 Path to the currently used log file\.
 .
 .SH "CORE PLUGINS"
-.
-.SS "PYRUS"
-.
-.TP
-\fBinstall_pyrus\fR [\fIURL\fR]
-Downloads and installs the \fBpyrus\fR command for managing PEAR packages\. Each built PHP versions also gets its own Pyrus environment (not shared)\.
 .
 .SS "XDEBUG"
 .

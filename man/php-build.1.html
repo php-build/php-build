@@ -76,7 +76,7 @@
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
 <p><code>php-build</code> <code>--definitions</code> <br />
-<code>php-build</code> [<code>-i</code>|<code>--ini</code> <var>env</var>] [--pear] <var>definition</var> <var>prefix</var></p>
+<code>php-build</code> [<code>-i</code>|<code>--ini</code> <var>env</var>] <var>definition</var> <var>prefix</var></p>
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
 
@@ -112,18 +112,11 @@ folder with development configuration:</p>
 <p>Here is a quick overview of what is stored where:</p>
 
 <ul>
-<li><code>bin/</code>, Contains the PHP executables and all executables installed via <code>pear</code> or <code>pyrus</code>.</li>
 <li><code>bin/php</code>, The PHP Executable</li>
-<li><code>bin/pyrus</code>, a Pyrus executable, which installs packages <em>local</em> to this PHP version.</li>
-<li><code>bin/pear</code>, a PEAR executable, which installs packages <em>local</em> to this PHP version.</li>
 <li><code>etc/php.ini</code></li>
 <li><code>etc/conf.d/</code>, PHP is configured to look for additional
 <code>.ini</code> files in this directory. Place your extension's
 config files or your config overrides here.</li>
-<li><code>pear/</code>, here are PHP source files of PEAR packages installed
-via <code>pear</code> located.</li>
-<li><code>share/pyrus/.pear/php</code>, here are the source files of PEAR packages located
-which were installed via <code>pyrus</code>. This is configured as Include Path.</li>
 </ul>
 
 
@@ -144,8 +137,6 @@ are looked up in <code>share/plugins.d</code>.</p>
 <p><code>php-build</code> ships with these plugins:</p>
 
 <ul>
-<li><code>pyrus</code>, Provides a <code>install_pyrus</code> command which downloads
-a <code>pyrus.phar</code> and sets up a Pyrus install local to this <var>prefix</var></li>
 <li><code>xdebug</code>, Provides the <code>install_xdebug</code> <var>version</var> and
 <code>install_xdebug_master</code> commands. Use <code>install_xdebug_master</code>
 for building development versions of PHP and <code>install_xdebug</code>
@@ -154,17 +145,6 @@ for building development versions of PHP and <code>install_xdebug</code>
 
 
 <p>For more information about the definition file format see <span class="man-ref">php-build<span class="s">(5)</span></span>.</p>
-
-<h3 id="pear-vs-pyrus">pear vs. pyrus</h3>
-
-<p>Currently <a href="http://pear2.php.net/PEAR2_Pyrus">Pyrus</a> is provided
-as the default installer for PEAR packages in the shipped definitions.</p>
-
-<p>To install the old "pear" tool alongside of Pyrus, add the <code>--pear</code> flag
-on the command line, right after the <code>--ini</code> switch. This is considered experimental!</p>
-
-<p>The <code>pear</code> command installs PHP source files to <code>$PREFIX/pear</code> and
-executables to <code>$PREFIX/bin</code>.</p>
 
 <h2 id="OPTIONS">OPTIONS</h2>
 

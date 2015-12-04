@@ -37,7 +37,6 @@ So far our whole definition will look like this:
 
     # share/php-build/definitions/5.5.0
     install_package "https://secure.php.net/distributions/php-5.5.0.tar.bz2"
-    install_pyrus
     install_xdebug_master # or install_xdebug "<version>"
 
 Since this is a new stable version, let's update the versions for the `stable`

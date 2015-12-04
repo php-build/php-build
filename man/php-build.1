@@ -10,7 +10,7 @@
 \fBphp\-build\fR \fB\-\-definitions\fR
 .
 .br
-\fBphp\-build\fR [\fB\-i\fR|\fB\-\-ini\fR \fIenv\fR] [\-\-pear] \fIdefinition\fR \fIprefix\fR
+\fBphp\-build\fR [\fB\-i\fR|\fB\-\-ini\fR \fIenv\fR] \fIdefinition\fR \fIprefix\fR
 .
 .SH "DESCRIPTION"
 \fBphp\-build\fR builds common PHP versions so, that they can be used side by side in a development environment\.
@@ -40,28 +40,16 @@ For example to build PHP 5\.4\.0beta2 into your \fB~/local\fR folder with develo
 Here is a quick overview of what is stored where:
 .
 .IP "\(bu" 4
-\fBbin/\fR, Contains the PHP executables and all executables installed via \fBpear\fR or \fBpyrus\fR\.
+\fBbin/\fR, Contains the PHP executables\.
 .
 .IP "\(bu" 4
 \fBbin/php\fR, The PHP Executable
-.
-.IP "\(bu" 4
-\fBbin/pyrus\fR, a Pyrus executable, which installs packages \fIlocal\fR to this PHP version\.
-.
-.IP "\(bu" 4
-\fBbin/pear\fR, a PEAR executable, which installs packages \fIlocal\fR to this PHP version\.
 .
 .IP "\(bu" 4
 \fBetc/php\.ini\fR
 .
 .IP "\(bu" 4
 \fBetc/conf\.d/\fR, PHP is configured to look for additional \fB\.ini\fR files in this directory\. Place your extension\'s config files or your config overrides here\.
-.
-.IP "\(bu" 4
-\fBpear/\fR, here are PHP source files of PEAR packages installed via \fBpear\fR located\.
-.
-.IP "\(bu" 4
-\fBshare/pyrus/\.pear/php\fR, here are the source files of PEAR packages located which were installed via \fBpyrus\fR\. This is configured as Include Path\.
 .
 .IP "" 0
 .
@@ -75,24 +63,12 @@ Definitions are the \fIblueprints\fR for building PHP versions\. Definitions are
 \fBphp\-build\fR ships with these plugins:
 .
 .IP "\(bu" 4
-\fBpyrus\fR, Provides a \fBinstall_pyrus\fR command which downloads a \fBpyrus\.phar\fR and sets up a Pyrus install local to this \fIprefix\fR
-.
-.IP "\(bu" 4
 \fBxdebug\fR, Provides the \fBinstall_xdebug\fR \fIversion\fR and \fBinstall_xdebug_master\fR commands\. Use \fBinstall_xdebug_master\fR for building development versions of PHP and \fBinstall_xdebug\fR \fIversion\fR for building stable releases\.
 .
 .IP "" 0
 .
 .P
 For more information about the definition file format see php\-build(5)\.
-.
-.SS "pear vs\. pyrus"
-Currently Pyrus \fIhttp://pear2\.php\.net/PEAR2_Pyrus\fR is provided as the default installer for PEAR packages in the shipped definitions\.
-.
-.P
-To install the old "pear" tool alongside of Pyrus, add the \fB\-\-pear\fR flag on the command line, right after the \fB\-\-ini\fR switch\. This is considered experimental!
-.
-.P
-The \fBpear\fR command installs PHP source files to \fB$PREFIX/pear\fR and executables to \fB$PREFIX/bin\fR\.
 .
 .SH "OPTIONS"
 .
