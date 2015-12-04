@@ -3,14 +3,11 @@ php-build(5) -- Definition Format
 
 ## SYNOPSIS
 
-    # Passes `--with-pear=$PREFIX/pear` to `configure`.
-    with_pear
-    
     # Add/Delete flags passed to `configure`.
     configure_option <FLAG> [<VALUE>]
     configure_option -R <FLAG> [<VALUE>]
     configure_option -D <FLAG>
-    
+
     # Download and compile a PHP package from <URL>
     install_package <URL>
 
@@ -19,12 +16,10 @@ php-build(5) -- Definition Format
 
     # Download and compile XDebug version tarball.
     install_xdebug <VERSION>
-    
+
     # Use XDebug from <https://github.com/derickr/xdebug>. Development
     # versions of PHP need the latest XDebug from master.
     install_xdebug_master
-    
-    install_pyrus [<URL>]
 
 ## DESCRIPTION
 
@@ -33,8 +28,7 @@ command. Therefore you can put _everything_ in a definition file that's _valid_
 Shell source code.
 
 php-build defines some custom commands, which aid in building, downloading
-and compiling PHP tarballs and often needed add-on features such as PEAR
-support and XDebug.
+and compiling PHP tarballs and often needed add-on features such as XDebug.
 
 ## BUILTIN COMMANDS
 
@@ -50,14 +44,10 @@ support and XDebug.
    Adds the <FLAG> to the list of options passed to PHP's `configure`.
    When <VALUE> is present, then <FLAG>=<VALUE> is added to the list
    of configure options.
-   Replaces the value of the existing <FLAG> with a new <VALUE> when 
+   Replaces the value of the existing <FLAG> with a new <VALUE> when
    the `-R` option is present.
  * `configure_option` `-D` <FLAG>:
    Deletes the <FLAG> from the list of configure options.
- * `with_pear`:
-   The `pear` command is disabled by default in the configure options in
-   favor of the new Pyrus Tool for PEAR. To enable `pear` call this
-   command before `install_package`.
  * `with_openssl`:
    Adds `--with-openssl` to the list of configure options.
    Legacy command, which is left in for backwards compatibility with definitions
@@ -98,12 +88,6 @@ as well as all builtin commands.
    Path to the currently used log file.
 
 ## CORE PLUGINS
-
-### PYRUS
-
- * `install_pyrus` [<URL>]:
-   Downloads and installs the `pyrus` command for managing PEAR packages.
-   Each built PHP versions also gets its own Pyrus environment (not shared).
 
 ### XDEBUG
 

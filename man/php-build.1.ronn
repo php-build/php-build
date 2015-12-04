@@ -3,7 +3,7 @@
 ## SYNOPSIS
 
 `php-build` `--definitions` <br>
-`php-build` [`-i`|`--ini` <env>] [--pear] <definition> <prefix>
+`php-build` [`-i`|`--ini` <env>] <definition> <prefix>
 
 ## DESCRIPTION
 
@@ -38,18 +38,12 @@ folder with development configuration:
 
 Here is a quick overview of what is stored where:
 
- * `bin/`, Contains the PHP executables and all executables installed via `pear` or `pyrus`.
+ * `bin/`, Contains the PHP executables.
  * `bin/php`, The PHP Executable
- * `bin/pyrus`, a Pyrus executable, which installs packages _local_ to this PHP version.
- * `bin/pear`, a PEAR executable, which installs packages _local_ to this PHP version.
  * `etc/php.ini`
  * `etc/conf.d/`, PHP is configured to look for additional
-   `.ini` files in this directory. Place your extension's 
+   `.ini` files in this directory. Place your extension's
    config files or your config overrides here.
- * `pear/`, here are PHP source files of PEAR packages installed
-   via `pear` located.
- * `share/pyrus/.pear/php`, here are the source files of PEAR packages located 
-   which were installed via `pyrus`. This is configured as Include Path.
 
 ### Definitions
 
@@ -62,30 +56,17 @@ take a look at these to get a feel for them.
 `php-build` defines utility functions for building a PHP source tarball
 and manipulating config files. `php-build` supports
 **plugins** which provide additional functions for usage within
-definitions. Plugins must have the extension `.sh` and 
+definitions. Plugins must have the extension `.sh` and
 are looked up in `share/plugins.d`.
 
 `php-build` ships with these plugins:
 
- * `pyrus`, Provides a `install_pyrus` command which downloads
-   a `pyrus.phar` and sets up a Pyrus install local to this <prefix>
  * `xdebug`, Provides the `install_xdebug` <version> and
    `install_xdebug_master` commands. Use `install_xdebug_master`
    for building development versions of PHP and `install_xdebug`
    <version> for building stable releases.
 
 For more information about the definition file format see php-build(5).
-
-### pear vs. pyrus
-
-Currently [Pyrus](http://pear2.php.net/PEAR2_Pyrus) is provided
-as the default installer for PEAR packages in the shipped definitions.
-
-To install the old "pear" tool alongside of Pyrus, add the `--pear` flag
-on the command line, right after the `--ini` switch. This is considered experimental!
-
-The `pear` command installs PHP source files to `$PREFIX/pear` and
-executables to `$PREFIX/bin`.
 
 ## OPTIONS
 

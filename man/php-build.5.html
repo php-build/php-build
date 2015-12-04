@@ -74,9 +74,7 @@
 
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
-<pre><code># Passes `--with-pear=$PREFIX/pear` to `configure`.
-with_pear
-
+<pre><code>
 # Add/Delete flags passed to `configure`.
 configure_option &lt;FLAG> [&lt;VALUE>]
 configure_option -R &lt;FLAG> [&lt;VALUE>]
@@ -94,8 +92,6 @@ install_xdebug &lt;VERSION>
 # Use XDebug from &lt;https://github.com/derickr/xdebug&gt;. Development
 # versions of PHP need the latest XDebug from master.
 install_xdebug_master
-
-install_pyrus [&lt;URL>]
 </code></pre>
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
@@ -105,8 +101,7 @@ command. Therefore you can put <em>everything</em> in a definition file that's <
 Shell source code.</p>
 
 <p>php-build defines some custom commands, which aid in building, downloading
-and compiling PHP tarballs and often needed add-on features such as PEAR
-support and XDebug.</p>
+and compiling PHP tarballs and often needed add-on features such as XDebug.</p>
 
 <h2 id="BUILTIN-COMMANDS">BUILTIN COMMANDS</h2>
 
@@ -123,9 +118,6 @@ of configure options.
 Replaces the value of the existing <var>FLAG</var> with a new <var>VALUE</var> when
 the <code>-R</code> option is present.</dd>
 <dt><code>configure_option</code> <code>-D</code> <var>FLAG</var></dt><dd>Deletes the <var>FLAG</var> from the list of configure options.</dd>
-<dt><code>with_pear</code></dt><dd>The <code>pear</code> command is disabled by default in the configure options in
-favor of the new Pyrus Tool for PEAR. To enable <code>pear</code> call this
-command before <code>install_package</code>.</dd>
 <dt><code>with_openssl</code></dt><dd>Adds <code>--with-openssl</code> to the list of configure options.
 Legacy command, which is left in for backwards compatibility with definitions
 written before <code>--with-openssl</code> was moved to the default configure options.</dd>
@@ -163,13 +155,6 @@ file path was passed as definition, then this contains the path's basename.</dd>
 
 
 <h2 id="CORE-PLUGINS">CORE PLUGINS</h2>
-
-<h3 id="PYRUS">PYRUS</h3>
-
-<dl>
-<dt><code>install_pyrus</code> [<var>URL</var>]</dt><dd>Downloads and installs the <code>pyrus</code> command for managing PEAR packages.
-Each built PHP versions also gets its own Pyrus environment (not shared).</dd>
-</dl>
 
 
 <h3 id="XDEBUG">XDEBUG</h3>

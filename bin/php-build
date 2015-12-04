@@ -19,7 +19,6 @@ set -e
 #/   -i|--ini <env>     php.ini to use. If <env> is a file then this file is
 #/                      used, otherwise php.ini-<env> from the source
 #/                      distribution is used. Defaults to "production".
-#/   --pear             Install PEAR alongside of Pyrus (experimental)
 #/   -v|--version       Display version information and exit
 #/
 #
@@ -480,22 +479,6 @@ function with_openssl() {
     stub=1
 }
 
-# ### with_pear
-#
-# Configures a `pear` install in `$PREFIX/pear`.
-function with_pear() {
-    pear_dir="$PREFIX/pear"
-
-    [ ! -d "$PREFIX/pear" ] && mkdir -p "$PREFIX/pear"
-
-    configure_option "--with-pear" "$PREFIX/pear"
-}
-
-function pear_setup() {
-    "$PREFIX/bin/pear" config-set php_ini "$PREFIX/etc/php.ini" system
-    "$PREFIX/bin/pear" config-set auto_discover 1
-}
-
 function with_apxs2() {
     local apxs="$1"
     shift
@@ -691,11 +674,6 @@ if [ "$1" = "-i" ] || [ "$1" = "--ini" ]; then
     shift
 fi
 
-if [ "$1" = "--pear" ]; then
-    ENABLE_PEAR=1
-    shift
-fi
-
 # This is the name of the definition we want to build.
 DEFINITION=$1
 
@@ -705,10 +683,6 @@ PREFIX=$2
 if [ -z "$PREFIX" ]; then
     display_usage
     exit 1
-fi
-
-if [ "$ENABLE_PEAR" = "1" ]; then
-    with_pear
 fi
 
 if ! find_definition "$DEFINITION" > /dev/null; then
@@ -727,15 +701,12 @@ LOG_PATH="/tmp/php-build.$LOG_NAME.$TIME.log"
 # to the Log file.
 exec 4<> "$LOG_PATH"
 
-[ "$ENABLE_PEAR" = "1" ] && log Warning "Installing Pear alongside of Pyrus is still experimental."
-
 # Load extension plugin
 source "$PHP_BUILD_ROOT/share/php-build/extension/extension.sh"
 log Info "Loaded extension plugin"
 
 # Load all definition plugins. Plugins register functions
-# for use whithin definitions. See the xdebug and pyrus plugins for
-# examples.
+# for use whithin definitions. See the xdebug plugin examples.
 load_plugins "$PHP_BUILD_ROOT/share/php-build/plugins.d"
 
 log Info "$PHP_DEFAULT_INI gets used as php.ini"
@@ -752,10 +723,6 @@ source "$DEFINITION_PATH"
 
 # Run executables placed in `share/php-build/after-install.d`
 trigger_after_install 2>&4
-
-if [ "$ENABLE_PEAR" = "1" ]; then
-    pear_setup
-fi
 
 # Installed extensions defined by environment variable
 install_extensions 2>&4

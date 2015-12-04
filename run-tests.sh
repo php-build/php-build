@@ -40,13 +40,10 @@ echo
 
 for definition in $BUILD_LIST; do
     echo -n "Building '$definition'..."
-    if ./bin/php-build --pear "$definition" "$BUILD_PREFIX/$definition"; then
+    if ./bin/php-build "$definition" "$BUILD_PREFIX/$definition"; then
         echo "OK"
 
         export TEST_PREFIX="$BUILD_PREFIX/$definition"
-
-        grep -e 'install_pyrus' "share/php-build/definitions/$definition" > /dev/null
-        export INSTALL_PYRUS=$?
 
         echo "Running Tests..."
         bats "tests/"

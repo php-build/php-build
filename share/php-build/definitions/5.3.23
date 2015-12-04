@@ -1,3 +1,2 @@
 install_package "https://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.3.23.tar.bz2;h=d82389aa0bbdd72a78333c55d8ec6537ca9eba17;hb=8df98dc7857d7576a2540c5b2fb952b4a8cea4b5"
-install_pyrus
 install_xdebug "2.2.7"
