@@ -255,6 +255,7 @@ function list_definitions() {
 function trigger_before_install() {
     export PHP_BUILD_ROOT
     export PREFIX
+    export SOURCE_PATH="$1"
 
     local triggers_dir="$PHP_BUILD_ROOT/share/php-build/before-install.d/"
     local triggers=$(ls "$triggers_dir")
@@ -317,7 +318,7 @@ function build_package() {
 
     configure_package "$source_path"
 
-    trigger_before_install 2>&4
+    trigger_before_install "$source_path" 2>&4
 
     apply_patches "$source_path" 2>&4
 
