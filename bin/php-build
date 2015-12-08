@@ -243,9 +243,9 @@ function extract_bz2() {
     tar -x -j --strip-components 1 -f "$1" -C "$2"
 }
 
-# List all defintions found in `share/php-build/definitions`
+# List all defintions found in $PHP_BUILD_DEFINITION_PATH
 function list_definitions() {
-    ls -1 "${PHP_BUILD_ROOT}/share/php-build/definitions/"* |
+    ls -1 "${PHP_BUILD_DEFINITION_PATH}/"* |
         xargs -n1 basename |
         sed -E 's,([0-9])([a-z]),\1.\2,g; s,\b([0-9])\b,0\1,g;s,$,~,g' |
         sort |
