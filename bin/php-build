@@ -487,6 +487,7 @@ function with_apxs2() {
     if [ -z "$apxs" ]; then
         apxs="$PHP_BUILD_APXS"
     fi
+    PHP_BUILD_APXS="$apxs"
 
     configure_option "--with-apxs2" "$apxs"
 }
@@ -565,15 +566,10 @@ $CONFIGURE_OPTIONS"
     ./configure $argv > /dev/null
 
     # Use php-build prefix for the Apache libexec folder
-    cat <<EOF | patch -N -p1 -s || true
-*** 5.2.17-orig/Makefile 2012-11-26 19:10:33.000000000 +0900
---- 5.2.17/Makefile 2012-11-26 19:11:53.000000000 +0900
-***************
-*** 105 ****
-! INSTALL_IT = \$(mkinstalldirs) '\$(INSTALL_ROOT)/usr/libexec/apache2' && \$(mkinstalldirs) '\$(INSTALL_ROOT)/private/etc/apache2' && /usr/sbin/apxs -S LIBEXECDIR='\$(INSTALL_ROOT)/usr/libexec/apache2' -S SYSCONFDIR='\$(INSTALL_ROOT)/private/etc/apache2' -i -a -n php5 libs/libphp5.so
---- 105 ----
-! INSTALL_IT = \$(mkinstalldirs) '$PREFIX/libexec/apache2' && \$(mkinstalldirs) '\$(INSTALL_ROOT)/private/etc/apache2' && /usr/sbin/apxs -S LIBEXECDIR='$PREFIX/libexec/apache2' -S SYSCONFDIR='\$(INSTALL_ROOT)/private/etc/apache2' -i -a -n php5 libs/libphp5.so
-EOF
+    if [ -n "$PHP_BUILD_APXS" ]; then
+        apxs_libexecdir=$($PHP_BUILD_APXS -q LIBEXECDIR)
+        sed -i"" -e "s|'\$(INSTALL_ROOT)${apxs_libexecdir}'|${PREFIX}${apxs_libexecdir}|g" ${source_path}/Makefile
+    fi
 
     cd "$backup_pwd"
 }
