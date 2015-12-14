@@ -81,7 +81,7 @@ function _download_extension {
 
 function _checkout_extension {
     local name=$1
-    local version="$2"
+    local revision="$2"
     local url_source="$3"
     local source_cwd="$4"
     local configure_args="$5"
@@ -101,8 +101,8 @@ function _checkout_extension {
         git clone "$url_source" "$source_dir" > /dev/null
     fi
 
-    if [ -n "$version" ]; then
-        log "$name" "Checkout specified revision: $version"
+    if [ -n "$revision" ]; then
+        log "$name" "Checkout specified revision: $revision"
         cd "$source_dir"
         git reset --hard $revision
         cd "$cwd"
