@@ -74,7 +74,7 @@ See [CHANGELOG.md](CHANGELOG.md).
 php-build is released under the [MIT License][license].
 
 [contributors]: https://github.com/php-build/php-build/graphs/contributors
-[Gittipp-ing]: https://gittip.com/CHH
+[Gittipp-ing]: https://gratipay.com/~CHH/
 [license]: LICENSE
 [phpenv]: https://github.com/CHH/phpenv
-[ruby-build]: https://github.com/sstephenson/ruby-build
+[ruby-build]: https://github.com/rbenv/ruby-build
