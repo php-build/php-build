@@ -9,6 +9,14 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
+SED_REGEX_SWITCH='E'
+
+# sed switch -E is BSD specific and only added to UNIX sed after v4.2
+# fallback to -r if -E does not work
+if ! sed -$SED_REGEX_SWITCH '' /dev/null > /dev/null 2>&1; then
+    SED_REGEX_SWITCH='r'
+fi
+
 echo "Releasing $VERSION"
 echo "==="
 echo
@@ -29,7 +37,7 @@ echo "Done"
 
 echo
 echo "---> Updating version number to \"$VERSION\"... "
-sed -E -e "s/(PHP_BUILD_VERSION=\")(.+)(\")/\1$VERSION\3/" -i '' bin/php-build
+sed -${SED_REGEX_SWITCH} -e "s/(PHP_BUILD_VERSION=\")(.+)(\")/\1$VERSION\3/" -i '' bin/php-build
 ./bin/php-build --version
 echo "Done"
 

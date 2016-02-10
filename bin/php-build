@@ -245,11 +245,19 @@ function extract_bz2() {
 
 # List all defintions found in $PHP_BUILD_DEFINITION_PATH
 function list_definitions() {
+    local sed_regex_switch='E'
+   
+    # sed switch -E is BSD specific and only added to UNIX sed after v4.2
+    # fallback to -r if -E does not work
+    if ! sed -${sed_regex_switch} '' /dev/null > /dev/null 2>&1; then
+        sed_regex_switch='r'
+    fi
+
     ls -1 "${PHP_BUILD_DEFINITION_PATH}/"* |
         xargs -n1 basename |
-        sed -E 's,([0-9])([a-z]),\1.\2,g; s,\b([0-9])\b,0\1,g;s,$,~,g' |
+        sed -${sed_regex_switch} 's,([0-9])([a-z]),\1.\2,g; s,\b([0-9])\b,0\1,g;s,$,~,g' |
         sort |
-        sed -E 's,~$,,g; s,\b0([0-9])\b,\1,g; s,\.([a-z]),\1,g'
+        sed -${sed_regex_switch} 's,~$,,g; s,\b0([0-9])\b,\1,g; s,\.([a-z]),\1,g'
 }
 
 function trigger_before_install() {
