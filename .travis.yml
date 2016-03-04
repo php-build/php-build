@@ -21,8 +21,8 @@ env:
     - DEFINITION=5.3.29
     - DEFINITION=5.4.45
     - DEFINITION=5.5.32
-    - DEFINITION=5.6.18
-    - DEFINITION=7.0.3
+    - DEFINITION=5.6.19
+    - DEFINITION=7.0.4
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$DEFINITION" =~ ^("5.2.".*|"5.3."[0-6])$ ]]; then export PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu" ; fi
