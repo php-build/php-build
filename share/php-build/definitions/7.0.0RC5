@@ -1,3 +1,0 @@
-install_package "https://downloads.php.net/~ab/php-7.0.0RC5.tar.bz2"
-install_xdebug_master
-enable_builtin_opcache
