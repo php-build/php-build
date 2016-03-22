@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# Usage: phpenv uninstall [--force|-f] VERSION
-# Remove an installed PHP version.
+#
+# Summary: Uninstall a specific PHP version using the php-build plugin
+#
+# Usage: phpenv uninstall [-f|--force] <version>
 #
 #   -f, --force   Force removal, never prompt
 #   -h, --help    Displays this help
 #
+# See `phpenv versions` for a complete list of installed versions.
 # Report bugs on https://github.com/php-build/php-build.
 #
-
 set -e
 
 test -n "${PHPENV_DEBUG}" &&

@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+#
+# Summary: Install a PHP version using the php-build plugin
+#
+# Usage: phpenv install [--ini|-i <environment>] <version>
+#        phpenv install [--ini|-i <environment>] <definition-file>
+#
+# For detailed information on installing PHP versions with
+# php-build, including a list of environment variables for adjusting
+# compilation, see: https://github.com/php-build/php-build
+#
 set -e
 [ -n "$PHPENV_DEBUG" ] && set -x
 
