@@ -4,6 +4,11 @@
 #
 # Usage: phpenv install [--ini|-i <environment>] <version>
 #        phpenv install [--ini|-i <environment>] <definition-file>
+#        phpenv install -l|--list
+#        phpenv install -V|--version
+#
+#  -l/--list     List all available versions
+#  -V/--version  Show version of php-build
 #
 # For detailed information on installing PHP versions with
 # php-build, including a list of environment variables for adjusting
@@ -14,11 +19,41 @@ set -e
 
 # Provide phpenv completions
 if [ "$1" = "--complete" ]; then
+  echo --list
+  echo --version
   exec php-build --definitions
 fi
 
+usage() {
+  phpenv-help install 2>/dev/null
+  [ -z "$1" ] || exit "$1"
+}
+
+definitions() {
+  local query="$1"
+  php-build --definitions | $(type -p ggrep grep | head -1) -F "$query" || true
+}
+
+indent() {
+  sed 's/^/  /'
+}
+
 if [ -z "$PHPENV_ROOT" ]; then
   PHPENV_ROOT="${HOME}/.phpenv"
+fi
+
+if [[ "$1" == '--help' ]] || [[ "$1" == '-h' ]]; then
+  usage 0
+fi
+
+if [[ "$1" == '--list' ]] || [[ "$1" == '-l' ]]; then
+  echo "Available versions:"
+  definitions | indent
+  exit
+fi
+
+if [[ "$1" == '--version' ]] || [[ "$1" == '-V' ]]; then
+  exec php-build --version
 fi
 
 ENVIRONMENT="production"
@@ -30,14 +65,7 @@ fi
 DEFINITION="$1"
 case "$DEFINITION" in
 "" | -* )
-  { echo "usage: phpenv install [--ini|-i <environment>] VERSION"
-    echo "       phpenv install [--ini|-i <environment>] /path/to/definition"
-    echo
-    echo "Available versions:"
-    php-build --definitions | sed 's/^/  /'
-    echo
-  } >&2
-  exit 1
+  usage 1
   ;;
 esac
 
@@ -46,3 +74,4 @@ PREFIX="${PHPENV_ROOT}/versions/${VERSION_NAME}"
 
 php-build --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX"
 phpenv rehash
+
