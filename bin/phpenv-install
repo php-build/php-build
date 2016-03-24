@@ -74,4 +74,3 @@ PREFIX="${PHPENV_ROOT}/versions/${VERSION_NAME}"
 
 php-build --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX"
 phpenv rehash
-
