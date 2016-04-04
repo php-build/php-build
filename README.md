@@ -13,7 +13,39 @@ php-build is a utility for building versions of PHP to use them side by side wit
 
 ## Installation
 
-### Install standalone php-build
+### As `phpenv` plugin
+
+#### With CHH/[phpenv] via installer
+
+It's the standard way: installs `phpenv` in $HOME/.phpenv (default
+$PHPENV_ROOT value).
+
+```shell
+curl -L http://git.io/phpenv-installer \
+    | bash
+```
+
+See more on https://github.com/rogeriopradoj/phpenv-installer: install [CHH/phpenv](https://github.com/CHH/phpenv) +
+[php-build/php-build](https://github.com/php-build/php-build) (and
+other plugins), updating all of them when you want to!
+
+#### With `phpenv` manually
+
+Locate your phpenv directory:
+
+    % ls $HOME/.phpenv
+
+Clone the Git repository into phpenv plugins directory:
+
+    % git clone git://github.com/php-build/php-build.git $HOME/.phpenv/plugins/php-build
+
+Now you can use php-build as phpenv plugin, as follows:
+
+    % phpenv install <definition>
+
+The built version will be installed into `$HOME/.phpenv/versions/<definition>`.
+
+### As standalone `php-build`
 
 Clone the Git Repository:
 
@@ -32,22 +64,6 @@ environment variable:
 
 If you don't have permissions to write to the prefix, then you have to run
 `install.sh` as superuser, either via `su -c` or via `sudo`.
-
-### Install with [phpenv]
-
-Locate your phpenv directory:
-
-    % ls $HOME/.phpenv
-
-Clone the Git repository into phpenv plugins directory:
-
-    % git clone git://github.com/php-build/php-build.git $HOME/.phpenv/plugins/php-build
-
-Now you can use php-build as phpenv plugin, as follows:
-
-    % phpenv install <definition>
-
-The built version will be installed into `$HOME/.phpenv/versions/<definition>`.
 
 ## Contributing
 
