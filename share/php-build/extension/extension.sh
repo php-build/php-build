@@ -39,7 +39,7 @@ function install_extension {
                 "$configure_args" $extension_type "$after_install"
         fi
     else
-        echo "No configuration found fo extension \"$extension\", skipping" >&3
+        echo "No configuration found for extension \"$extension\", skipping" >&3
     fi
 }
 
