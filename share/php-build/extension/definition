@@ -5,7 +5,8 @@
 "imagick","http://pecl.php.net/get/imagick-$version.tgz","https://github.com/mkoppanen/imagick.git",,,"extension",
 "memcache","http://pecl.php.net/get/memcache-$version.tgz","git@git.php.net:/pecl/caching/memcache.git",,,"extension",
 "memcached","http://pecl.php.net/get/memcached-$version.tgz","https://github.com/php-memcached-dev/php-memcached.git",,"--disable-memcached-sasl","extension",
+"opcache","http://pecl.php.net/get/zendopcache-$version.tgz","https://github.com/zendtech/ZendOptimizerPlus.git",,,"zend_extension",
 "uprofiler",,"https://github.com/FriendsOfPHP/uprofiler.git","extension",,"extension","uprofiler_after_install"
 "xcache","http://xcache.lighttpd.net/pub/Releases/$version/xcache-$version.tar.gz",,,"--enable-xcache","extension",
-"xdebug","http://xdebug.org/files/xdebug-$version.tgz","git://github.com/xdebug/xdebug.git",,"--enable-xdebug","zend_extension","xdebug_after_install"
-"xhprof","http://pecl.php.net/get/xhprof-$version.tgz","git://github.com/facebook/xhprof.git",,,"extension","xhprof_after_install"
+"xdebug","http://xdebug.org/files/xdebug-$version.tgz","https://github.com/xdebug/xdebug.git",,"--enable-xdebug","zend_extension","xdebug_after_install"
+"xhprof","http://pecl.php.net/get/xhprof-$version.tgz","https://github.com/facebook/xhprof.git",,,"extension","xhprof_after_install"
