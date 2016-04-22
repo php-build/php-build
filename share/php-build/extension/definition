@@ -9,3 +9,4 @@
 "xcache","http://xcache.lighttpd.net/pub/Releases/$version/xcache-$version.tar.gz",,,"--enable-xcache","extension",
 "xdebug","http://xdebug.org/files/xdebug-$version.tgz","git://github.com/xdebug/xdebug.git",,"--enable-xdebug","zend_extension","xdebug_after_install"
 "xhprof","http://pecl.php.net/get/xhprof-$version.tgz","git://github.com/facebook/xhprof.git",,,"extension","xhprof_after_install"
+"zendopcache","http://pecl.php.net/get/zendopcache-$version.tgz","https://github.com/zendtech/ZendOptimizerPlus.git",,"--enable-opcache","zend_extension","zendopcache_after_install"
