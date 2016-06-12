@@ -16,13 +16,13 @@ env:
   global:
     - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
   matrix:
-    # - DEFINITION=5.2.17
-    # - DEFINITION=5.3.3
-    # - DEFINITION=5.3.29
-    # - DEFINITION=5.4.45
-    # - DEFINITION=5.5.36
-    # - DEFINITION=5.6.22
-    # - DEFINITION=7.0.7
+    - DEFINITION=5.2.17
+    - DEFINITION=5.3.3
+    - DEFINITION=5.3.29
+    - DEFINITION=5.4.45
+    - DEFINITION=5.5.36
+    - DEFINITION=5.6.22
+    - DEFINITION=7.0.7
     - DEFINITION=7.1.0alpha1
 
 before_install:
