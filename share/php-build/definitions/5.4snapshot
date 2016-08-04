@@ -1,2 +1,2 @@
 install_package_from_github PHP-5.4
-install_xdebug "2.3.3"
+install_xdebug "2.4.1"
