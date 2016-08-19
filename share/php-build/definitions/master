@@ -1,3 +1,2 @@
 install_package_from_github master
-install_xdebug_master
 enable_builtin_opcache
