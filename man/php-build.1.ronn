@@ -92,7 +92,7 @@ For more information about the definition file format see php-build(5).
 
 To install php extension, you have to define `PHP_BUILD_INSTALL_EXTENSION` before execute php-build. The following are example use cases to use this environment variable
 
- * `PHP_BUILD_INSTALL_EXTENSION="apcu=4.0.7 imagick=3.1.2"` install ACPU version 4.0.7 and install imagick version 3.1.2
+ * `PHP_BUILD_INSTALL_EXTENSION="apcu=4.0.7 imagick=3.1.2"` install APCu version 4.0.7 and install imagick version 3.1.2
  * `PHP_BUILD_INSTALL_EXTENSION="uprofiler=@"` install uprofiler from source using master branch
  * `PHP_BUILD_INSTALL_EXTENSION="uprofiler=@851da15"` install uprofiler from source using commit sha1 '851da15'
 
