@@ -32,7 +32,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install re2c; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install libmcrypt; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install openssl libxml2 && export PHP_BUILD_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-libxml-dir=$(brew --prefix libxml2)"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install openssl libxml2; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$DEFINITION" == "5.2.17" ]]; then brew install mysql ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" && "$DEFINITION" == "5.3.3" ]]; then brew install libevent ; fi
 

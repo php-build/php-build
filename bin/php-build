@@ -83,18 +83,12 @@ PATCH_FILES=""
 
 [ -z "$PHP_BUILD_INSTALL_EXTENSION" ] && PHP_BUILD_INSTALL_EXTENSION=""
 
-if [ -n "$PHP_BUILD_CONFIGURE_OPTS" ]; then
-    CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS"
-fi
+[ -z "$PHP_BUILD_CONFIGURE_OPTS" ] && PHP_BUILD_CONFIGURE_OPTS=""
 
-if [ -n "$CONFIGURE_OPTS" ]; then
-    CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $CONFIGURE_OPTS"
-fi
+[ -z "$CONFIGURE_OPTS" ] && CONFIGURE_OPTS=""
 
 # Enable Zend Thread Safety by setting this value to "yes"
-if [ -z "$PHP_BUILD_ZTS_ENABLE" ]; then
-    PHP_BUILD_ZTS_ENABLE=off
-fi
+[ -z "$PHP_BUILD_ZTS_ENABLE" ] && PHP_BUILD_ZTS_ENABLE=off
 
 PHP_BUILD_VERSION="0.11.0dev"
 
@@ -183,6 +177,25 @@ function is_osx {
     else
         return 1
     fi
+}
+
+function osx_major {
+    if is_osx ; then
+        local osxVersionString=$(sw_vers -productVersion)
+        local osx_major=${osxVersionString%%.*}
+        echo $osx_major
+    fi
+    return 0
+}
+
+function osx_minor {
+    if is_osx ; then
+        local osxVersionString=$(sw_vers -productVersion)
+        local tmp=${osxVersionString#*.}
+        local osx_minor=${tmp%%.*}
+        echo $osx_minor
+    fi
+    return 0
 }
 
 # Downloads a PHP Source Tarball and extracts it to `$TMP/source/$DEFINITION`
@@ -533,6 +546,15 @@ function configure_package() {
         configure_option "--enable-maintainer-zts"
         log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
     fi
+
+    # Override `--with-openssl` and `--with-libxml-dir`
+    # if Homebrew's openssl and libxml2 exist on Mac OS X 10.11+.
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 11 ] && [ -n "$(which brew)" ] && [ -e "$(brew --prefix openssl)" ] && [ -e "$(brew --prefix libxml2)" ]; then
+        configure_option -R "--with-openssl" "$(brew --prefix openssl)"
+        configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
+    fi
+
+    CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS $CONFIGURE_OPTS"
 
     # Add the config-file-path, config-file-scan-dir aswell as the
     # prefix to the build options, these cannot be changed by definitions.
