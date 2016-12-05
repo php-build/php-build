@@ -31,3 +31,4 @@
 --disable-debug
 --enable-fpm
 --enable-bcmath
+--enable-phpdbg
