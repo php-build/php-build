@@ -601,6 +601,25 @@ $CONFIGURE_OPTIONS"
         sed -i"" -e "s|'\$(INSTALL_ROOT)${apxs_libexecdir}'|${PREFIX}${apxs_libexecdir}|g" ${source_path}/Makefile
     fi
 
+    # Fix --enable-intl problem on osx php5.3
+    if [ is_osx -a `echo $(pwd) | grep '5.3'` ]; then
+      for option in $CONFIGURE_OPTIONS; do
+        case "$option" in
+          "--enable-intl"*)
+            cat <<EOF | patch -N -p0 -s || true
+--- Makefile	2014-01-14 17:47:58.000000000 +0900
++++ Makefile.modified	2014-01-14 17:51:09.000000000 +0900
+@@ -95,3 +95,3 @@
+ EXTRA_LDFLAGS_PROGRAM = -L/usr/local/Cellar/libxml2/2.9.1/lib -L/usr/local/opt/openssl/lib -L/usr/local/opt/pcre/lib -L/usr/local/opt/zlib/lib -L/usr/local/opt/jpeg/lib -L/usr/X11/lib -L/usr/local/opt/freetype/lib -L/usr/local/Cellar/icu4c/52.1/lib -L/usr/local/opt/mcrypt/lib
+-EXTRA_LIBS = -lexslt -lresolv -ledit -lncurses -lmcrypt -lltdl -liconv -liconv -lfreetype -lpng -lz -ljpeg -lcurl -lz -lpcre -lcrypto -lssl -lcrypto -lm -lxml2 -lz -liconv -lm -lcurl -lxml2 -lz -liconv -lm -lm -licui18n -licuuc -licudata -lm -licuio -lxml2 -lz -liconv -lm -lxml2 -lz -liconv -lm -lxml2 -lz -liconv -lm -lxml2 -lz -liconv -lm -lxml2 -lz -liconv -lm -lxml2 -lxslt
++EXTRA_LIBS = -lexslt -lresolv -ledit -lncurses -lmcrypt -lltdl -liconv -liconv -lfreetype -lpng -lz -ljpeg -lcurl -lz -lpcre -lcrypto -lssl -lcrypto -lm -lxml2 -lz -liconv -lm -lcurl -lxml2 -lz -liconv -lm -lm -licui18n -licuuc -licudata -lm -licuio -lxml2 -lz -liconv -lm -lxml2 -lz -liconv -lm -lxml2 -lz -liconv -lm -lxml2 -lz -liconv -lm -lxml2 -lz -liconv -lm -lxml2 -lxslt -lstdc++
+ ZEND_EXTRA_LIBS =
+EOF
+            ;;
+        esac
+      done
+    fi
+
     cd "$backup_pwd"
 }
 
