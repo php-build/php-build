@@ -1,5 +1,5 @@
 configure_option -R "--with-mysql" "mysqlnd"
 
 install_package "https://secure.php.net/distributions/php-5.5.28.tar.bz2"
-install_xdebug "2.5.2"
+install_xdebug "2.5.3"
 enable_builtin_opcache
