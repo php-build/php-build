@@ -7,6 +7,7 @@
 .vagrant
 tmp/
 var/
+/versions/
 
 share/php-build/before-install.d/*
 !share/php-build/before-install.d/.empty
