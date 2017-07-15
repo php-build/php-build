@@ -15,6 +15,7 @@ set -e
 #/                      exist.
 #/
 #/   --definitions      Lists all available definitions and exit
+#/   --definition       Display contents of the specified <definition> file.
 #/   -h|--help          Display this help and exit
 #/   -i|--ini <env>     php.ini to use. If <env> is a file then this file is
 #/                      used, otherwise php.ini-<env> from the source
@@ -681,6 +682,20 @@ fi
 
 if [ "$1" = "--definitions" ]; then
     list_definitions
+    exit
+fi
+
+if [ "$1" = "--definition" ]; then
+    if [ -z $2 ]; then
+        display_usage
+        exit
+    fi
+    DEFINITION=$2
+    if ! find_definition "$DEFINITION" > /dev/null; then
+        log Error "Definition $DEFINITION not found."
+        exit $E_DEFINITION_NOT_FOUND
+    fi
+    cat $(find_definition "$DEFINITION")
     exit
 fi
 
