@@ -41,14 +41,22 @@ echo
 for definition in $BUILD_LIST; do
     echo -n "Building '$definition'..."
     if ./bin/php-build "$definition" "$BUILD_PREFIX/$definition"; then
-        echo "OK"
+        echo "BUILD OK"
 
         export TEST_PREFIX="$BUILD_PREFIX/$definition"
+        export DEFINITION_CONFIG=$(./bin/php-build --definition "$definition")
+        export PHP_MINOR_VERSION=${definition%.*}
 
         echo "Running Tests..."
-        bats "tests/"
+
+        if bats "tests/"; then
+            echo "TEST OK"
+        else
+            echo "TEST FAIL"
+            FAILED="$FAILED $definition"
+        fi
     else
-        echo "FAIL"
+        echo "BUILD FAIL"
         FAILED="$FAILED $definition"
     fi
 done

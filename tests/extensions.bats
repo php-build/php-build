@@ -10,10 +10,12 @@
     echo "$output" | grep -q '^ftp$'
     echo "$output" | grep -q '^gd$'
     echo "$output" | grep -q '^libxml$'
-    echo "$output" | grep -q '^mcrypt$'
+    # mcrypt is removed from the core in PHP 7.2.0
+    [[ $PHP_MINOR_VERSION < 7.2 ]] && echo "$output" | grep -q '^mcrypt$'
     echo "$output" | grep -q '^mbstring$'
     echo "$output" | grep -q '^mysqli$'
-    [ "${TEST_PREFIX##*/}" != "5.2.17" ] && echo "$output" | grep -q '^mysqlnd$'
+    # mysqlnd is introduced since PHP 5.3.0
+    [[ $PHP_MINOR_VERSION > 5.2 ]] && echo "$output" | grep -q '^mysqlnd$'
     echo "$output" | grep -q '^openssl$'
     echo "$output" | grep -q '^pcre$'
     echo "$output" | grep -q '^pdo_mysql$'
