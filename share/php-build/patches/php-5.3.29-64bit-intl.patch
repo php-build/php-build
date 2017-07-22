@@ -1,0 +1,49 @@
+Fix for PHP bug 48795 (https://bugs.php.net/bug.php?id=48795)
+This patch provides support for intl extension in PHP < 5.4.0 on x86_64
+diff -c -r php-5.3.29-orig/acinclude.m4 php-5.3.29/acinclude.m4
+*** php-5.3.29-orig/acinclude.m4	2014-08-14 04:22:50.000000000 +0900
+--- php-5.3.29/acinclude.m4	2017-07-22 19:16:33.000000000 +0900
+***************
+*** 762,767 ****
+--- 762,768 ----
+    if test -z "$php_cxx_done"; then
+      AC_PROG_CXX
+      AC_PROG_CXXCPP
++     PHP_ADD_LIBRARY(stdc++)
+      php_cxx_done=yes
+    fi
+  ])
+diff -c -r php-5.3.29-orig/aclocal.m4 php-5.3.29/aclocal.m4
+*** php-5.3.29-orig/aclocal.m4	2014-08-14 04:27:27.000000000 +0900
+--- php-5.3.29/aclocal.m4	2017-07-22 19:16:56.000000000 +0900
+***************
+*** 762,767 ****
+--- 762,768 ----
+    if test -z "$php_cxx_done"; then
+      AC_PROG_CXX
+      AC_PROG_CXXCPP
++     PHP_ADD_LIBRARY(stdc++)
+      php_cxx_done=yes
+    fi
+  ])
+diff -c -r php-5.3.29-orig/configure php-5.3.29/configure
+*** php-5.3.29-orig/configure	2014-08-14 04:27:27.000000000 +0900
+--- php-5.3.29/configure	2017-07-22 22:25:03.000000000 +0900
+***************
+*** 52880,52885 ****
+--- 52880,52895 ----
+  CXXCPP="$ac_cv_prog_CXXCPP"
+  echo "$ac_t""$CXXCPP" 1>&6
+  
++     
++   
++   case stdc++ in
++   c|c_r|pthread*) ;;
++   *) 
++       LIBS="-lstdc++ $LIBS" 
++    ;;
++   esac
++ 
++ 
+      php_cxx_done=yes
+    fi

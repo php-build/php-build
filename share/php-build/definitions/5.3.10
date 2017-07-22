@@ -1,5 +1,6 @@
 configure_option "--with-mysql" "mysqlnd"
 
+patch_file "php-5.3.29-64bit-intl.patch"
 patch_file "php-5.4.6-libxml2-2.9.patch"
 
 install_package "https://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.3.10.tar.bz2;h=e81d7ff32deb09b4e514540a181b583e681e3423;hb=483968fd35676f02e2cfbe01108afe2f4510e4ab"
