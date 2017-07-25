@@ -338,11 +338,11 @@ function build_package() {
         mkdir -p "$PREFIX"
     fi
 
+    apply_patches "$source_path" 2>&4
+
     configure_package "$source_path"
 
     trigger_before_install "$source_path" 2>&4
-
-    apply_patches "$source_path" 2>&4
 
     log "Compiling" "$source_path"
 
@@ -553,6 +553,10 @@ function configure_package() {
     if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 11 ] && [ -n "$(which brew)" ] && [ -e "$(brew --prefix openssl)" ] && [ -e "$(brew --prefix libxml2)" ]; then
         configure_option -R "--with-openssl" "$(brew --prefix openssl)"
         configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
+    fi
+
+    if is_osx && [ -n "$(which brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
+        configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
     fi
 
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS $CONFIGURE_OPTS"
