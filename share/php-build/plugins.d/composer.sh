@@ -20,15 +20,15 @@ download_composer() {
         composer_url="https://getcomposer.org/composer.phar"
     fi
 
-    if [ ! -f "$TMP/packages/composer.phar" ]; then
+    if [ ! -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
         log Composer "Downloading from $composer_url"
-        wget -P "$TMP/packages" $composer_url
+        wget -P "$PHP_BUILD_TMPDIR/packages" $composer_url
     else
-        log Composer "self updating in $TMP/packages/composer.phar"
-        $PHP $TMP/packages/composer.phar self-update
+        log Composer "self updating in $PHP_BUILD_TMPDIR/packages/composer.phar"
+        $PHP $PHP_BUILD_TMPDIR/packages/composer.phar self-update
     fi
 }
 
 copy_composer_phar() {
-    yes | cp "$TMP/packages/composer.phar" "$PREFIX/bin/composer.phar"
+    yes | cp "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer.phar"
 }
