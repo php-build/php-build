@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
 # Downloads a PHP Source Tarball from GitHub and extracts it to
-# `${TMP}/source/${DEFINITION}`.
+# `${PHP_BUILD_TMPDIR}/source/${DEFINITION}`.
 function download_from_github() {
     local branch=${1}
     local repository_name=${2}
-    local package_file="${TMP}/packages/${branch}.tar.gz"
+    local package_file="${PHP_BUILD_TMPDIR}/packages/${branch}.tar.gz"
     local package_url="https://github.com/${repository_name}/tarball/${branch}"
-    local package_temporary="${TMP}/${branch}.tar.gz"
+    local package_temporary="${PHP_BUILD_TMPDIR}/${branch}.tar.gz"
 
-    if [ -d "${TMP}/source/${DEFINITION}" ]; then
+    if [ -d "${PHP_BUILD_TMPDIR}/source/${DEFINITION}" ]; then
         log "Removing" "Already downloaded and extracted ${package_url}"
-        rm -rf "${TMP}/source/${DEFINITION}"
+        rm -rf "${PHP_BUILD_TMPDIR}/source/${DEFINITION}"
     fi
 
     log "Downloading" "${package_url}"
@@ -22,21 +22,21 @@ function download_from_github() {
     fi
 
     http get "${package_url}" > ${package_temporary}
-    cp "${package_temporary}" "${TMP}/packages"
+    cp "${package_temporary}" "${PHP_BUILD_TMPDIR}/packages"
     rm "${package_temporary}"
 
-    mkdir "${TMP}/source/${DEFINITION}"
+    mkdir "${PHP_BUILD_TMPDIR}/source/${DEFINITION}"
 
-    extract_gz "${package_file}" "${TMP}/source/${DEFINITION}"
+    extract_gz "${package_file}" "${PHP_BUILD_TMPDIR}/source/${DEFINITION}"
 }
 
 # ### clone_from_github
-# Clones a source from GitHub and extracts it to `${TMP}/source/${DEFINITION}`.
+# Clones a source from GitHub and extracts it to `${PHP_BUILD_TMPDIR}/source/${DEFINITION}`.
 function clone_from_github() {
     local branch=${1}
     local repository_name=${2}
     local repository_url="git://github.com/${repository_name}.git"
-    local directory="${TMP}/source/${DEFINITION}"
+    local directory="${PHP_BUILD_TMPDIR}/source/${DEFINITION}"
 
     if [ -d "${directory}" ]; then
         log "Removing" "Already cloned branch ${branch} from ${repository_url}"
@@ -61,7 +61,7 @@ function install_package_from_github() {
 
     {
         clone_from_github ${branch} ${repository_name}
-        cd "${TMP}/source/${DEFINITION}"
+        cd "${PHP_BUILD_TMPDIR}/source/${DEFINITION}"
         build_package
         cd - > /dev/null
     } >&4 2>&1

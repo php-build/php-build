@@ -61,7 +61,17 @@ function realpath() {
 # This is the path where php-build is installed. This is treated as the base for
 # the `share/` and `tmp/` folders of php-build.
 PHP_BUILD_ROOT="$(realpath "$0")/.."
-TMP="$(dirname $(mktemp --dry-run 2>/dev/null || echo "/var/tmp/tmp_dir"))/php-build"
+
+if [ ! -d "$PHP_BUILD_TMPDIR" ]; then
+    if [ -d "$TMPDIR" ]; then
+        PHP_BUILD_TMPDIR=$TMPDIR/php-build
+    else
+        PHP_BUILD_TMPDIR="$(dirname $(mktemp --dry-run 2>/dev/null || echo "/var/tmp/tmp_dir"))/php-build"
+    fi
+fi
+
+# set ${TMP} for backward compatibility
+TMP=$PHP_BUILD_TMPDIR
 
 # This file gets copied to `$PREFIX/etc/php.ini` once the build is complete.
 # This is by default the PHP tarball's `php.ini-production`.
@@ -107,16 +117,16 @@ function display_version() {
 
 # Init the directories on first run
 function init() {
-    if [ ! -d "$TMP" ]; then
-        mkdir -p "$TMP"
+    if [ ! -d "$PHP_BUILD_TMPDIR" ]; then
+        mkdir -p "$PHP_BUILD_TMPDIR"
     fi
 
-    if [ ! -d "$TMP/packages" ]; then
-        mkdir "$TMP/packages"
+    if [ ! -d "$PHP_BUILD_TMPDIR/packages" ]; then
+        mkdir "$PHP_BUILD_TMPDIR/packages"
     fi
 
-    if [ ! -d "$TMP/source" ]; then
-        mkdir "$TMP/source"
+    if [ ! -d "$PHP_BUILD_TMPDIR/source" ]; then
+        mkdir "$PHP_BUILD_TMPDIR/source"
     fi
 
     if [ ! -d "$PHP_BUILD_ROOT/share/php-build/before-install.d" ]; then
@@ -199,19 +209,19 @@ function osx_minor {
     return 0
 }
 
-# Downloads a PHP Source Tarball and extracts it to `$TMP/source/$DEFINITION`
+# Downloads a PHP Source Tarball and extracts it to `$PHP_BUILD_TMPDIR/source/$DEFINITION`
 function download() {
     local url=$1
     local basename=$(download_filename $url)
-    local package_file="$TMP/packages/$basename"
+    local package_file="$PHP_BUILD_TMPDIR/packages/$basename"
     local archive_type=$2
-    local temp_package="$TMP/$basename"
+    local temp_package="$PHP_BUILD_TMPDIR/$basename"
 
     if [ -z $archive_type ]; then
         archive_type=${package_file##*.}
     fi
 
-    if [ -d "$TMP/source/$DEFINITION" ]; then
+    if [ -d "$PHP_BUILD_TMPDIR/source/$DEFINITION" ]; then
         log "Skipping" "Already downloaded and extracted $url"
         return
     fi
@@ -226,13 +236,13 @@ function download() {
     # Do not download a package when it's already downloaded.
     if [ ! -f "$package_file" ]; then
         http get "$url" > "$temp_package"
-        cp "$temp_package" "$TMP/packages"
+        cp "$temp_package" "$PHP_BUILD_TMPDIR/packages"
         rm "$temp_package"
     fi
 
-    mkdir "$TMP/source/$DEFINITION"
+    mkdir "$PHP_BUILD_TMPDIR/source/$DEFINITION"
 
-    "extract_$archive_type" "$package_file" "$TMP/source/$DEFINITION"
+    "extract_$archive_type" "$package_file" "$PHP_BUILD_TMPDIR/source/$DEFINITION"
 }
 
 function download_filename() {
@@ -331,7 +341,7 @@ function build_package() {
     local source_path=$1
     local cwd="$(pwd)"
     if [ -z $1 ]; then
-      local source_path="$TMP/source/$DEFINITION"
+      local source_path="$PHP_BUILD_TMPDIR/source/$DEFINITION"
     fi
 
     if [ ! -d "$PREFIX" ]; then
@@ -425,7 +435,7 @@ function install_package() {
 
     {
         download $url $archive_type
-        cd "$TMP/source/$DEFINITION"
+        cd "$PHP_BUILD_TMPDIR/source/$DEFINITION"
         build_package
         cd - > /dev/null
     } >&4 2>&1
@@ -635,7 +645,7 @@ function build_error() {
 function cleanup_abort() {
     log "Warn" "Aborting build."
 
-    make -C "$TMP/source/$DEFINITION" clean &> /dev/null
+    make -C "$PHP_BUILD_TMPDIR/source/$DEFINITION" clean &> /dev/null
 }
 
 function find_definition() {

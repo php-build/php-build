@@ -62,26 +62,26 @@ function _download_extension {
     local source_dir=$(eval basename ${url%.*})
 
      # We cache the tarballs for APC versions in `packages/`.
-    if [ ! -f "$TMP/packages/$name-$version.tgz" ]; then
-        http get "$package_url" > "$TMP/packages/$package_name.tgz"
+    if [ ! -f "$PHP_BUILD_TMPDIR/packages/$name-$version.tgz" ]; then
+        http get "$package_url" > "$PHP_BUILD_TMPDIR/packages/$package_name.tgz"
     fi
 
     # Each tarball gets extracted to `source/$name-$version`.
-    if [ -d "$TMP/source/$package_name" ]; then
-        rm -rf "$TMP/source/$package_name"
+    if [ -d "$PHP_BUILD_TMPDIR/source/$package_name" ]; then
+        rm -rf "$PHP_BUILD_TMPDIR/source/$package_name"
     fi
 
-    tar -xzf "$TMP/packages/$package_name.tgz" -C "$TMP/source"
+    tar -xzf "$PHP_BUILD_TMPDIR/packages/$package_name.tgz" -C "$PHP_BUILD_TMPDIR/source"
 
     # change the directory name for APC since it expands with an uppercase filename
-    if [[ ! -d $TMP/source/$package_name && -d $TMP/source/$source_dir ]]; then
-      mv $TMP/source/$source_dir $TMP/source/$package_name
+    if [[ ! -d $PHP_BUILD_TMPDIR/source/$package_name && -d $PHP_BUILD_TMPDIR/source/$source_dir ]]; then
+      mv $PHP_BUILD_TMPDIR/source/$source_dir $PHP_BUILD_TMPDIR/source/$package_name
     fi
 
-    [[ -f "$TMP/source/package.xml" ]] && rm "$TMP/source/package.xml"
-    [[ -f "$TMP/source/package2.xml" ]] && rm "$TMP/source/package2.xml"
+    [[ -f "$PHP_BUILD_TMPDIR/source/package.xml" ]] && rm "$PHP_BUILD_TMPDIR/source/package.xml"
+    [[ -f "$PHP_BUILD_TMPDIR/source/package2.xml" ]] && rm "$PHP_BUILD_TMPDIR/source/package2.xml"
 
-    _build_extension "$TMP/source/$package_name" $name "" "$configure_args" \
+    _build_extension "$PHP_BUILD_TMPDIR/source/$package_name" $name "" "$configure_args" \
         $extension_type "$after_install"
 }
 
@@ -93,7 +93,7 @@ function _checkout_extension {
     local configure_args="$5"
     local extension_type="$6"
     local after_install="$7"
-    local source_dir="$TMP/source/$name-master"
+    local source_dir="$PHP_BUILD_TMPDIR/source/$name-master"
 
     if [ -d "$source_dir" ] && [ -d "$source_dir/.git" ]; then
         log "$name" "Updating $name from Git Master"

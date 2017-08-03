@@ -78,7 +78,7 @@ as well as all builtin commands.
    The absolute path to the definition file which was sourced.
  * `PREFIX`:
    The path where source files will be built into.
- * `TMP`:
+ * `PHP_BUILD_TMPDIR`:
    Path for (persistent) temporary files.
  * `CONFIGURE_OPTIONS`:
    Argument list passed to `configure`, separated by line feeds.
