@@ -46,6 +46,8 @@ function clone_from_github() {
     log "Cloning" "Branch ${branch} from ${repository_url}"
 
     git clone --branch=${branch} --depth=1 --quiet --recursive ${repository_url} "${directory}" 2>&4
+
+    log "Cloning" "commit $(cd ${directory} && git rev-parse HEAD)"
 }
 
 # ### install_package_from_github
