@@ -59,11 +59,24 @@ function _download_extension {
     local after_install=$6
     local package_url=$(eval echo $url)
     local package_name="$name-$version"
+    local basename=$(eval basename $url)
     local source_dir=$(eval basename ${url%.*})
+    local temp_package="$PHP_BUILD_TMPDIR/$basename"
+    local package_file="$PHP_BUILD_TMPDIR/packages/$basename"
 
-     # We cache the tarballs for APC versions in `packages/`.
-    if [ ! -f "$PHP_BUILD_TMPDIR/packages/$name-$version.tgz" ]; then
-        http get "$package_url" > "$PHP_BUILD_TMPDIR/packages/$package_name.tgz"
+    # Remove the temp file if one exists.
+    if [ -f "$temp_package" ]; then
+        rm "$temp_package"
+    fi
+
+    # Do not download a package when it's already downloaded.
+    if [ -f "$package_file" ]; then
+        log "Skipping" "Already downloaded $package_url"
+    else
+        log "Downloading" "$package_url"
+        http get "$package_url" > "$temp_package"
+        cp "$temp_package" "$PHP_BUILD_TMPDIR/packages"
+        rm "$temp_package"
     fi
 
     # Each tarball gets extracted to `source/$name-$version`.
