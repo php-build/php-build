@@ -1,0 +1,20 @@
+diff -r -c php-5.4.12-orig/Zend/zend_API.h php-5.4.12/Zend/zend_API.h
+*** php-5.4.12-orig/Zend/zend_API.h	2017-08-13 16:41:46.000000000 +0900
+--- php-5.4.12/Zend/zend_API.h	2017-08-13 16:42:41.000000000 +0900
+***************
+*** 60,66 ****
+  	zval *object_ptr;
+  } zend_fcall_info_cache;
+  
+! #define ZEND_NS_NAME(ns, name)			ns"\\"name
+  
+  #define ZEND_FN(name) zif_##name
+  #define ZEND_MN(name) zim_##name
+--- 60,66 ----
+  	zval *object_ptr;
+  } zend_fcall_info_cache;
+  
+! #define ZEND_NS_NAME(ns, name)			ns "\\" name
+  
+  #define ZEND_FN(name) zif_##name
+  #define ZEND_MN(name) zim_##name
