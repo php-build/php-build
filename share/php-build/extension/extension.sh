@@ -132,7 +132,7 @@ function _build_extension {
     cd "$source_dir/$source_cwd"
 
     {
-        $PREFIX/bin/phpize > /dev/null
+        $PREFIX/bin/phpize 1>&2
         "$(pwd)/configure" --with-php-config=$PREFIX/bin/php-config \
             $configure_args > /dev/null
 
