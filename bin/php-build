@@ -39,6 +39,7 @@ exec 3<&2
 function realpath() {
     local path="$1"
     local cwd="$(pwd)"
+    local name=""
 
     if [ -z "$path" ]; then
         echo "realpath: Path is empty" >&3
@@ -46,12 +47,12 @@ function realpath() {
     fi
 
     while [ -n "$path" ]; do
-        cd "${path%/*}"
-        local name="${path##*/}"
+        cd $(dirname "$path")
+        name=$(basename "$path")
         path="$(readlink "$name" || true)"
     done
 
-    echo "$(pwd)"
+    echo "$(pwd)/$name"
     cd "$cwd"
 }
 
@@ -60,11 +61,11 @@ function realpath() {
 
 # This is the path where php-build is installed. This is treated as the base for
 # the `share/` and `tmp/` folders of php-build.
-PHP_BUILD_ROOT="$(realpath "$0")/.."
+PHP_BUILD_ROOT="$(realpath $(dirname "$0"))/.."
 
 if [ ! -d "$PHP_BUILD_TMPDIR" ]; then
     if [ -d "$TMPDIR" ]; then
-        PHP_BUILD_TMPDIR=$TMPDIR/php-build
+        PHP_BUILD_TMPDIR=$(realpath "$TMPDIR/php-build")
     else
         PHP_BUILD_TMPDIR="$(dirname $(mktemp --dry-run 2>/dev/null || echo "/var/tmp/tmp_dir"))/php-build"
     fi
