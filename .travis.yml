@@ -1,9 +1,22 @@
-sudo: false
-osx_image: xcode8
+language: c
 
+sudo: true
+osx_image: xcode8
 os:
+  # Ubuntu Trusty 14.04 (GCE)
   - linux
+  # Mac OS X 10.11
   - osx
+
+env:
+  - DEFINITION=5.2.17
+  - DEFINITION=5.3.29
+  - DEFINITION=5.4.45
+  - DEFINITION=5.5.38
+  - DEFINITION=5.6.31
+  - DEFINITION=7.0.22
+  - DEFINITION=7.1.8
+  - DEFINITION=7.2.0beta3
 
 addons:
   apt:
@@ -14,20 +27,11 @@ addons:
       - php5-cli
       - re2c
 
-env:
-  global:
-    - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-  matrix:
-    - DEFINITION=5.2.17
-    - DEFINITION=5.3.29
-    - DEFINITION=5.4.45
-    - DEFINITION=5.5.38
-    - DEFINITION=5.6.31
-    - DEFINITION=7.0.22
-    - DEFINITION=7.1.8
-    - DEFINITION=7.2.0beta3
+cache:
+  ccache: true
 
 before_install:
+  - export PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
   - |
     if [[ "$TRAVIS_OS_NAME" == "linux" &&
           "$DEFINITION" =~ ^("5.2.".*|"5.3."[0-6])$ ]]; then
@@ -39,11 +43,16 @@ before_install:
             export LIBS="-lssl -lcrypto"
         fi
         brew update
-        brew install re2c libmcrypt openssl libxml2 icu4c
+        brew install ccache re2c libmcrypt icu4c
+        brew outdated openssl || brew upgrade openssl
+        brew outdated libxml2 || brew upgrade libxml2
         if [[ "$DEFINITION" == "5.2.17" ]]; then
             brew install mysql
         fi
+        export PATH="/usr/local/opt/ccache/libexec:$PATH"
     fi
+  - ccache --version
+  - ccache --zero-stats
 
 install:
   - git clone https://github.com/sstephenson/bats
@@ -55,4 +64,7 @@ script:
   - ./run-tests.sh $DEFINITION
 
 after_failure:
-  - cat $(ls -r /tmp/php-build*.log | head -n 1)
+  - tail -n 5000 cat $(ls -r /tmp/php-build*.log | head -n 1)
+
+after_success:
+    - ccache --show-stats
