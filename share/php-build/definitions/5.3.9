@@ -2,6 +2,7 @@ configure_option "--with-mysql" "mysqlnd"
 
 patch_file "php-5.3.29-64bit-intl.patch"
 patch_file "php-5.4.6-libxml2-2.9.patch"
+patch_file "php-5.4.12-support-c++11.patch"
 
 install_package "https://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.3.9.tar.bz2;h=2a0bceb5f921a74433e318d638d84adcbbf14756;hb=ded0904f93cb86fbb23f5b4d5790c8df500b7bf7"
 install_xdebug "2.2.7"

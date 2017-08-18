@@ -567,6 +567,10 @@ function configure_package() {
 
     if is_osx && [ -n "$(which brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
         configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
+        # icu4c 59+ requires C++11
+        if [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "59" ]]; then
+            export CXXFLAGS="-std=c++11 -stdlib=libc++"
+        fi
     fi
 
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS $CONFIGURE_OPTS"
