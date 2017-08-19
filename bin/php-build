@@ -56,6 +56,37 @@ function realpath() {
     cd "$cwd"
 }
 
+# Uses uname to check if php-build is run on OSX. This is used later on to
+# enable specifc fixes for OSX oddnesses in library file placement.
+function is_osx {
+    local uname=$(uname)
+
+    if [ "$uname" = "Darwin" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function osx_major {
+    if is_osx ; then
+        local osxVersionString=$(sw_vers -productVersion)
+        local osx_major=${osxVersionString%%.*}
+        echo $osx_major
+    fi
+    return 0
+}
+
+function osx_minor {
+    if is_osx ; then
+        local osxVersionString=$(sw_vers -productVersion)
+        local tmp=${osxVersionString#*.}
+        local osx_minor=${tmp%%.*}
+        echo $osx_minor
+    fi
+    return 0
+}
+
 # Common Variables
 # ----------------
 
@@ -64,7 +95,11 @@ function realpath() {
 PHP_BUILD_ROOT="$(realpath $(dirname "$0"))/.."
 
 if [ ! -d "$PHP_BUILD_TMPDIR" ]; then
-    if [ -d "$TMPDIR" ]; then
+    if is_osx; then
+        # $TMPDIR has trouble for building OSS on macOS, so we use /var/tmp
+        # See also #467 ( https://github.com/php-build/php-build/pull/467 )
+        PHP_BUILD_TMPDIR="/var/tmp/php-build"
+    elif [ -d "$TMPDIR" ]; then
         PHP_BUILD_TMPDIR=$(realpath "$TMPDIR/php-build")
     else
         PHP_BUILD_TMPDIR="$(dirname $(mktemp --dry-run 2>/dev/null || echo "/var/tmp/tmp_dir"))/php-build"
@@ -177,37 +212,6 @@ function log() {
     local text="$2"
 
     echo "[$marker]: $text" >&3
-}
-
-# Uses uname to check if php-build is run on OSX. This is used later on to
-# enable specifc fixes for OSX oddnesses in library file placement.
-function is_osx {
-    local uname=$(uname)
-
-    if [ "$uname" = "Darwin" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-function osx_major {
-    if is_osx ; then
-        local osxVersionString=$(sw_vers -productVersion)
-        local osx_major=${osxVersionString%%.*}
-        echo $osx_major
-    fi
-    return 0
-}
-
-function osx_minor {
-    if is_osx ; then
-        local osxVersionString=$(sw_vers -productVersion)
-        local tmp=${osxVersionString#*.}
-        local osx_minor=${tmp%%.*}
-        echo $osx_minor
-    fi
-    return 0
 }
 
 # Downloads a PHP Source Tarball and extracts it to `$PHP_BUILD_TMPDIR/source/$DEFINITION`
