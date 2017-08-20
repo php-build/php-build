@@ -92,7 +92,7 @@ function osx_minor {
 
 # This is the path where php-build is installed. This is treated as the base for
 # the `share/` and `tmp/` folders of php-build.
-PHP_BUILD_ROOT="$(realpath $(dirname "$0"))/.."
+PHP_BUILD_ROOT="$(dirname $(realpath "$0"))/.."
 
 if [ ! -d "$PHP_BUILD_TMPDIR" ]; then
     if is_osx; then
