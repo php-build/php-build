@@ -116,8 +116,9 @@ function _checkout_extension {
         git pull origin master > /dev/null
         cd "$cwd"
     else
-        log "$name" "Fetching from Git Master"
-        git clone "$url_source" "$source_dir" > /dev/null
+        log "$name" "Fetching from $url_source"
+        git clone "$url_source" "$source_dir" 2>&4
+        log "$name" "commit $(cd ${source_dir} && git rev-parse HEAD)"
     fi
 
     if [ -n "$revision" ]; then
