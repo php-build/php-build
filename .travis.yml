@@ -40,11 +40,9 @@ before_install:
         fi
         brew update
         brew install re2c libmcrypt openssl libxml2 icu4c
+        brew upgrade pkg-config
         if [[ "$DEFINITION" == "5.2.17" ]]; then
             brew install mysql
-        fi
-        if [[ "$DEFINITION" == "7.2.0RC2" ]]; then
-            brew upgrade pkg-config
         fi
     fi
 
