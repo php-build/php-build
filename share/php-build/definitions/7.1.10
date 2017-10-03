@@ -1,0 +1,3 @@
+install_package "https://secure.php.net/distributions/php-7.1.10.tar.bz2"
+install_xdebug "2.5.5"
+enable_builtin_opcache
