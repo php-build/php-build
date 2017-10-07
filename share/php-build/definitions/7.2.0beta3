@@ -1,3 +1,0 @@
-install_package "https://downloads.php.net/~remi/php-7.2.0beta3.tar.bz2"
-install_xdebug_master
-enable_builtin_opcache
