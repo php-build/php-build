@@ -1,3 +1,3 @@
-install_package "https://downloads.php.net/~pollita/php-7.2.0RC5.tar.bz2"
+install_package "https://downloads.php.net/~pollita/php-7.2.0RC/php-7.2.0RC5.tar.bz2"
 install_xdebug_master
 enable_builtin_opcache
