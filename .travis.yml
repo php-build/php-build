@@ -25,7 +25,7 @@ env:
     - DEFINITION=5.6.33
     - DEFINITION=7.0.27
     - DEFINITION=7.1.13
-    - DEFINITION=7.2.1
+    - DEFINITION=7.2.2
 
 before_install:
   - |
