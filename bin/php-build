@@ -229,7 +229,25 @@ function log() {
     local marker="$1"
     local text="$2"
 
-    echo "[$marker]: $text" >&3
+    if [[ $marker == Info ]]; then
+        echo -e "[${txtpur}${marker}${txtrst}]: $text" >&3
+    elif [[ $marker == Skipping ]]; then
+        echo -e "[${txtylw}${marker}${txtrst}]: $text" >&3
+    elif [[ $marker == Preparing ]]; then
+        echo -e "[${txtcyn}${marker}${txtrst}]: $text" >&3
+    elif [[ $marker == Downloading ]]; then
+        echo -e "[${txtcyn}${marker}${txtrst}]: $text" >&3
+    elif [[ $marker == Success ]]; then
+        echo -e "[${btxtgrn}${marker}${txtrst}]: $text" >&3
+    elif [[ $marker == Warn ]]; then
+        echo -e "[${txtred}${marker}${txtrst}]: $text" >&3
+    elif [[ $marker == Compiling ]]; then
+        echo -e "[${btxtcyn}${marker}${txtrst}]: $text" >&3
+    elif [[ $marker == Error ]]; then
+        echo -e "[${txtred}${marker}${txtrst}]: $text" >&3
+    else
+        echo -e "[${marker}]: $text" >&3
+    fi
 }
 
 # Downloads a PHP Source Tarball and extracts it to `$PHP_BUILD_TMPDIR/source/$DEFINITION`
