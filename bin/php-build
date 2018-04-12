@@ -645,7 +645,7 @@ $CONFIGURE_OPTIONS"
         "--with-libdir"*) append_default_libdir='no' ;;
       esac
     done
-    if [ "$(uname -p)" = "x86_64" ] && [ "${append_default_libdir}" = 'yes' ]; then
+    if [ "$(lsb_release -i -s)" != Ubuntu ] && [ "$(uname -p)" = "x86_64" ] && [ "${append_default_libdir}" = 'yes' ]; then
         argv="$argv --with-libdir=lib64"
     fi
 
