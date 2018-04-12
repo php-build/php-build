@@ -31,6 +31,24 @@ if [ -n "$PHP_BUILD_DEBUG" ]; then
     set -x
 fi
 
+# colors
+txtred="\e[0;31m"
+txtgrn="\e[0;32m"
+txtylw="\e[0;33m"
+txtblu="\e[0;34m"
+txtpur="\e[0;35m"
+txtcyn="\e[0;36m"
+txtwht="\e[0;37m"
+btxtred="\e[1;31m"
+btxtgrn="\e[1;32m"
+btxtylw="\e[1;33m"
+btxtblu="\e[1;34m"
+btxtpur="\e[1;35m"
+btxtcyn="\e[1;36m"
+btxtwht="\e[1;37m"
+txtrst="\e[0m"
+
+
 # Preserve STDERR on FD3, so we can easily log build errors on FD2 to a file and
 # use FD3 for php-build's visible error messages.
 exec 3<&2
