@@ -715,17 +715,17 @@ function find_definition() {
 }
 
 function enable_builtin_opcache {
-    log Info "Enabling Opcache..."
+    log "Info" "Enabling Opcache..."
 
     local ext_dir=$("$PREFIX/bin/php-config" --extension-dir)
 
     if [ ! -f "$ext_dir/opcache.so" ]; then
-        log Info "Aborting: opcache.so not found"
+        log "Info" "Aborting: opcache.so not found"
         return 0
     fi
 
     echo "zend_extension=$ext_dir/opcache.so" >> "$PREFIX/etc/php.ini"
-    log Info "Done"
+    log "Info" "Done"
 }
 
 # Here the magic begins
@@ -754,7 +754,7 @@ if [ "$1" = "--definition" ]; then
     fi
     DEFINITION=$2
     if ! find_definition "$DEFINITION" > /dev/null; then
-        log Error "Definition $DEFINITION not found."
+        log "Error" "Definition $DEFINITION not found."
         exit $E_DEFINITION_NOT_FOUND
     fi
     cat $(find_definition "$DEFINITION")
@@ -790,7 +790,7 @@ if [ -z "$PREFIX" ]; then
 fi
 
 if ! find_definition "$DEFINITION" > /dev/null; then
-    log Error "Definition $DEFINITION not found."
+    log "Error" "Definition $DEFINITION not found."
     exit $E_DEFINITION_NOT_FOUND
 fi
 
@@ -807,14 +807,14 @@ exec 4<> "$LOG_PATH"
 
 # Load extension plugin
 source "$PHP_BUILD_ROOT/share/php-build/extension/extension.sh"
-log Info "Loaded extension plugin"
+log "Info" "Loaded extension plugin"
 
 # Load all definition plugins. Plugins register functions
 # for use whithin definitions. See the xdebug plugin examples.
 load_plugins "$PHP_BUILD_ROOT/share/php-build/plugins.d"
 
-log Info "$PHP_DEFAULT_INI gets used as php.ini"
-log Info "Building $DEFINITION into $PREFIX"
+log "Info" "$PHP_DEFAULT_INI gets used as php.ini"
+log "Info" "Building $DEFINITION into $PREFIX"
 
 # Handle script termination with.
 trap cleanup_abort SIGINT SIGTERM
