@@ -2,8 +2,8 @@
 #
 # Summary: Install a PHP version using the php-build plugin
 #
-# Usage: phpenv install [--ini|-i <environment>] <version>
-#        phpenv install [--ini|-i <environment>] <definition-file>
+# Usage: phpenv install [--ini|-i <environment>] [-v|--verbose] <version>
+#        phpenv install [--ini|-i <environment>] [-v|--verbose] <definition-file>
 #        phpenv install -l|--list
 #        phpenv install -V|--version
 #
@@ -21,6 +21,7 @@ set -e
 if [ "$1" = "--complete" ]; then
   echo --list
   echo --version
+  echo --verbose
   exec php-build --definitions
 fi
 
@@ -62,6 +63,11 @@ if [[ "$1" == '--ini' ]] || [[ "$1" == '-i' ]]; then
   shift 2
 fi
 
+if [[ "$1" == "--verbose" ]] || [[ "$1" = "-v" ]]; then
+  VERBOSE=--verbose
+  shift 1
+fi
+
 DEFINITION="$1"
 case "$DEFINITION" in
 "" | -* )
@@ -72,5 +78,5 @@ esac
 VERSION_NAME="${DEFINITION##*/}"
 PREFIX="${PHPENV_ROOT}/versions/${VERSION_NAME}"
 
-php-build --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX"
+php-build $VERBOSE --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX"
 phpenv rehash
