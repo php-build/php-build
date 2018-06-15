@@ -764,6 +764,7 @@ LOG_NAME="$(basename "$DEFINITION_PATH")"
 # Generate the Path for the build log.
 TIME="$(date "+%Y%m%d%H%M%S")"
 LOG_PATH="/tmp/php-build.$LOG_NAME.$TIME.log"
+log Info "Appending build output to $LOG_PATH"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
 # to the Log file.
