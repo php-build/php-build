@@ -362,6 +362,10 @@ function build_package() {
 
     log "Compiling" "$source_path"
 
+    MAKE_OUTPUT='/dev/null'
+    if [ "$VERBOSE" ]; then
+        MAKE_OUTPUT='4'
+    fi
     cd "$source_path"
     {
         make $PHP_BUILD_EXTRA_MAKE_ARGUMENTS
@@ -369,7 +373,7 @@ function build_package() {
         if [ "$PHP_BUILD_KEEP_OBJECT_FILES" == "off" ]; then
             make clean
         fi
-    } > /dev/null
+    } 2>&4 1>&$MAKE_OUTPUT
     cd "$cwd"
 
     # Remove .dSYM extension from executables (OSX issue).
