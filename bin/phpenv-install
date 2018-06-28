@@ -13,6 +13,7 @@
 #
 #  php-build options:
 #
+#  -k/--keep          Do not run make clean on source tree / keep object files
 #  -v/--verbose       Verbose mode: print compilation status to stdout
 #  -V/--version       Show version of php-build
 #
@@ -28,6 +29,7 @@ if [ "$1" = "--complete" ]; then
   echo --list
   echo --force
   echo --skip-existing
+  echo --keep
   echo --version
   echo --verbose
   exec php-build --definitions
@@ -49,6 +51,7 @@ indent() {
 
 unset FORCE
 unset SKIP_EXISTING
+unset KEEP
 unset VERBOSE
 
 if [ -z "$PHPENV_ROOT" ]; then
@@ -87,6 +90,11 @@ fi
 
 if [[ "$1" == "--force" ]] || [[ "$1" = "-f" ]]; then
   FORCE=true
+  shift 1
+fi
+
+if [[ "$1" == "--keep" ]] || [[ "$1" = "-k" ]]; then
+  KEEP=--keep
   shift 1
 fi
 
@@ -154,7 +162,7 @@ for hook in "${before_hooks[@]}"; do eval "$hook"; done
 
 # Invoke `php-build and record the exit status in $STATUS
 STATUS=0
-php-build $VERBOSE --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX" || STATUS="$?"
+php-build $VERBOSE $KEEP --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX" || STATUS="$?"
 
 # Execute `after_install` hooks
 for hook in "${after_hooks[@]}"; do eval "$hook"; done

@@ -17,6 +17,7 @@ set -e
 #/   --definitions      Lists all available definitions and exit
 #/   --definition       Display contents of the specified <definition> file.
 #/   -h|--help          Display this help and exit
+#/   -k|--keep          Do not remove previously compiled object files
 #/   -i|--ini <env>     php.ini to use. If <env> is a file then this file is
 #/                      used, otherwise php.ini-<env> from the source
 #/                      distribution is used. Defaults to "production".
@@ -123,9 +124,6 @@ CONFIGURE_OPTIONS=$(cat "$PHP_BUILD_ROOT/share/php-build/default_configure_optio
 
 # Patches to be applied at the source
 PATCH_FILES=""
-
-# Whether do "make clean" after installation or not
-[ -z "$PHP_BUILD_KEEP_OBJECT_FILES" ] && PHP_BUILD_KEEP_OBJECT_FILES=off
 
 [ -z "$PHP_BUILD_EXTRA_MAKE_ARGUMENTS" ] && PHP_BUILD_EXTRA_MAKE_ARGUMENTS=""
 
@@ -716,6 +714,12 @@ if [ "$1" = "-v" ] || [ "$1" = "--verbose" ]; then
     VERBOSE=y
     shift 1
 fi
+
+# Whether do "make clean" after installation or not
+if [ "$1" = "-k" ] || [ "$1" = "--keep" ]; then
+    PHP_BUILD_KEEP_OBJECT_FILES=on
+fi
+[ -z "$PHP_BUILD_KEEP_OBJECT_FILES" ] && PHP_BUILD_KEEP_OBJECT_FILES=off
 
 if [ "$1" = "--definitions" ]; then
     list_definitions
