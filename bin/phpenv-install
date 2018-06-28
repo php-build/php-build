@@ -75,6 +75,23 @@ case "$DEFINITION" in
   ;;
 esac
 
+# Define `before_install` and `after_install` functions that allow
+# phpenv plugins to register code for execution before or after
+# the installation process
+# note that these are distinct from user-defined scripts in
+# share/php-build/{before,after}-install.d
+declare -a before_hooks after_hooks
+
+before_install() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_install() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
 # run user-defined hooks defined in $PHPENV_ROOT/phpenv.d/install
 # and phpenv plugin-defined hooks in $PLUGIN_ROOT/etc/phpenv.d/install
 OLDIFS="$IFS"
@@ -88,5 +105,20 @@ for script in "${scripts[@]}"; do source "$script"; done
 VERSION_NAME="${DEFINITION##*/}"
 PREFIX="${PHPENV_ROOT}/versions/${VERSION_NAME}"
 
-php-build $VERBOSE --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX"
-phpenv rehash
+
+# Execute `before_install` hooks
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
+
+# Invoke `php-build and record the exit status in $STATUS
+STATUS=0
+php-build $VERBOSE --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX" || STATUS="$?"
+
+# Execute `after_install` hooks
+for hook in "${after_hooks[@]}"; do eval "$hook"; done
+
+# Run `phpenv-rehash` after a successful installation
+if [ "$STATUS" == "0" ]; then
+  phpenv rehash
+fi
+
+exit "$STATUS"
