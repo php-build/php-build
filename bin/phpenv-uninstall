@@ -45,6 +45,13 @@ if [[ "${1}" == '--force' ]] || [[ "${1}" == '-f' ]]; then
   shift
 fi
 
+# run user-defined hooks defined in $PHPENV_ROOT/phpenv.d/uninstall
+# and phpenv plugin-defined hooks in $PLUGIN_ROOT/etc/phpenv.d/uninstall
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`phpenv-hooks uninstall`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
+
 VERSION="${1##*/}"
 VERSION_DIRECTORY="${PHPENV_ROOT}/versions/${VERSION}"
 

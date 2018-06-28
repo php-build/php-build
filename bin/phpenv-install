@@ -75,6 +75,16 @@ case "$DEFINITION" in
   ;;
 esac
 
+# run user-defined hooks defined in $PHPENV_ROOT/phpenv.d/install
+# and phpenv plugin-defined hooks in $PLUGIN_ROOT/etc/phpenv.d/install
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`phpenv-hooks install`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
+
+
+# Set VERSION_NAME from $DEFINITION, if it is not already set. Then
+# compute the installation prefix
 VERSION_NAME="${DEFINITION##*/}"
 PREFIX="${PHPENV_ROOT}/versions/${VERSION_NAME}"
 
