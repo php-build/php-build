@@ -718,6 +718,7 @@ fi
 # Whether do "make clean" after installation or not
 if [ "$1" = "-k" ] || [ "$1" = "--keep" ]; then
     PHP_BUILD_KEEP_OBJECT_FILES=on
+    shift 1
 fi
 [ -z "$PHP_BUILD_KEEP_OBJECT_FILES" ] && PHP_BUILD_KEEP_OBJECT_FILES=off
 
