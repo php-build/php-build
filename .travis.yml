@@ -8,10 +8,13 @@ os:
 
 addons:
   apt:
+    sources:
+      - sourceline: 'ppa:ondrej/php'
     packages:
       - libmcrypt-dev
       - libtidy-dev
       - libicu-dev
+      - libzip-dev
       - php5-cli
       - re2c
 
@@ -23,10 +26,11 @@ env:
     - DEFINITION=5.3.29
     - DEFINITION=5.4.45
     - DEFINITION=5.5.38
-    - DEFINITION=5.6.36
-    - DEFINITION=7.0.30
-    - DEFINITION=7.1.19
-    - DEFINITION=7.2.7
+    - DEFINITION=5.6.37
+    - DEFINITION=7.0.31
+    - DEFINITION=7.1.20
+    - DEFINITION=7.2.8
+    - DEFINITION=7.3.0alpha4
 
 before_install:
   - |
@@ -40,7 +44,7 @@ before_install:
             export LIBS="-lssl -lcrypto"
         fi
         brew update
-        brew install re2c libmcrypt openssl libxml2 icu4c
+        brew install re2c libmcrypt openssl libxml2 icu4c libzip
         brew upgrade pkg-config
         if [[ "$DEFINITION" == "5.2.17" ]]; then
             brew install mysql@5.7
