@@ -45,6 +45,31 @@ if [[ "${1}" == '--force' ]] || [[ "${1}" == '-f' ]]; then
   shift
 fi
 
+# Define `before_uninstall` and `after_uninstall` functions that allow
+# phpenv plugins to register code for execution before or after
+# the installation process
+# note that these are distinct from user-defined scripts in
+# share/php-build/{before,after}-install.d
+declare -a before_hooks after_hooks
+
+before_uninstall() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_uninstall() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+
+# run user-defined hooks defined in $PHPENV_ROOT/phpenv.d/uninstall
+# and phpenv plugin-defined hooks in $PLUGIN_ROOT/etc/phpenv.d/uninstall
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`phpenv-hooks uninstall`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
+
 VERSION="${1##*/}"
 VERSION_DIRECTORY="${PHPENV_ROOT}/versions/${VERSION}"
 
@@ -74,8 +99,14 @@ if [[ ${CONFIRM} -eq 0 ]]; then
 fi
 
 if [[ ${CONFIRM} -gt 0 ]]; then
+  # Execute `before_uninstall` hooks
+  for hook in "${before_hooks[@]}"; do eval "$hook"; done
+
   rm -rf "${VERSION_DIRECTORY}"
   echo "Version ‘${VERSION}’ (${VERSION_DIRECTORY}) successfully removed."
+
+  # Execute `after_uninstall` hooks
+  for hook in "${after_hooks[@]}"; do eval "$hook"; done
   exit
 fi
 

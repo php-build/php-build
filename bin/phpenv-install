@@ -2,13 +2,20 @@
 #
 # Summary: Install a PHP version using the php-build plugin
 #
-# Usage: phpenv install [--ini|-i <environment>] [-v|--verbose] <version>
-#        phpenv install [--ini|-i <environment>] [-v|--verbose] <definition-file>
+# Usage: phpenv install [--ini|-i <environment>] [-v|--verbose] [-f|-s] <version>
+#        phpenv install [--ini|-i <environment>] [-v|--verbose] [-f|-s] <definition-file>
 #        phpenv install -l|--list
 #        phpenv install -V|--version
 #
-#  -l/--list     List all available versions
-#  -V/--version  Show version of php-build
+#  -l/--list          List all available versions
+#  -f/--force         Install even if the version appears to be installed already
+#  -s/--skip-existing Skip if the version appears to be installed already
+#
+#  php-build options:
+#
+#  -k/--keep          Do not run make clean on source tree / keep object files
+#  -v/--verbose       Verbose mode: print compilation status to stdout
+#  -V/--version       Show version of php-build
 #
 # For detailed information on installing PHP versions with
 # php-build, including a list of environment variables for adjusting
@@ -20,6 +27,9 @@ set -e
 # Provide phpenv completions
 if [ "$1" = "--complete" ]; then
   echo --list
+  echo --force
+  echo --skip-existing
+  echo --keep
   echo --version
   echo --verbose
   exec php-build --definitions
@@ -38,6 +48,11 @@ definitions() {
 indent() {
   sed 's/^/  /'
 }
+
+unset FORCE
+unset SKIP_EXISTING
+unset KEEP
+unset VERBOSE
 
 if [ -z "$PHPENV_ROOT" ]; then
   PHPENV_ROOT="${HOME}/.phpenv"
@@ -68,6 +83,21 @@ if [[ "$1" == "--verbose" ]] || [[ "$1" = "-v" ]]; then
   shift 1
 fi
 
+if [[ "$1" == "--skip-existing" ]] || [[ "$1" = "-s" ]]; then
+  SKIP_EXISTING=true
+  shift 1
+fi
+
+if [[ "$1" == "--force" ]] || [[ "$1" = "-f" ]]; then
+  FORCE=true
+  shift 1
+fi
+
+if [[ "$1" == "--keep" ]] || [[ "$1" = "-k" ]]; then
+  KEEP=--keep
+  shift 1
+fi
+
 DEFINITION="$1"
 case "$DEFINITION" in
 "" | -* )
@@ -75,8 +105,71 @@ case "$DEFINITION" in
   ;;
 esac
 
+# Define `before_install` and `after_install` functions that allow
+# phpenv plugins to register code for execution before or after
+# the installation process
+# note that these are distinct from user-defined scripts in
+# share/php-build/{before,after}-install.d
+declare -a before_hooks after_hooks
+
+before_install() {
+  local hook="$1"
+  before_hooks["${#before_hooks[@]}"]="$hook"
+}
+
+after_install() {
+  local hook="$1"
+  after_hooks["${#after_hooks[@]}"]="$hook"
+}
+
+# run user-defined hooks defined in $PHPENV_ROOT/phpenv.d/install
+# and phpenv plugin-defined hooks in $PLUGIN_ROOT/etc/phpenv.d/install
+OLDIFS="$IFS"
+IFS=$'\n' scripts=(`phpenv-hooks install`)
+IFS="$OLDIFS"
+for script in "${scripts[@]}"; do source "$script"; done
+
+
+# Set VERSION_NAME from $DEFINITION, if it is not already set. Then
+# compute the installation prefix
 VERSION_NAME="${DEFINITION##*/}"
 PREFIX="${PHPENV_ROOT}/versions/${VERSION_NAME}"
 
-php-build $VERBOSE --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX"
-phpenv rehash
+[ -d "${PREFIX}" ] && PREFIX_EXISTS=1
+
+# If the installation prefix exists, prompt for confirmation unless
+# the --force option was specified.
+if [ -d "${PREFIX}/bin" ]; then
+  if [ -z "$FORCE" ] && [ -z "$SKIP_EXISTING" ]; then
+    echo "phpenv: $PREFIX already exists" >&2
+    read -p "continue with installation? (y/N) "
+
+    case "$REPLY" in
+    y* | Y* ) ;;
+    * ) exit 1 ;;
+    esac
+  elif [ -n "$SKIP_EXISTING" ]; then
+    # Since we know the ruby version is already installed, and are opting to
+    # not force installation of existing versions, we just `exit 0` here to
+    # leave things happy
+    exit 0
+  fi
+fi
+
+
+# Execute `before_install` hooks
+for hook in "${before_hooks[@]}"; do eval "$hook"; done
+
+# Invoke `php-build and record the exit status in $STATUS
+STATUS=0
+php-build $VERBOSE $KEEP --ini "$ENVIRONMENT" "$DEFINITION" "$PREFIX" || STATUS="$?"
+
+# Execute `after_install` hooks
+for hook in "${after_hooks[@]}"; do eval "$hook"; done
+
+# Run `phpenv-rehash` after a successful installation
+if [ "$STATUS" == "0" ]; then
+  phpenv rehash
+fi
+
+exit "$STATUS"
