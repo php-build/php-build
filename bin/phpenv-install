@@ -125,7 +125,7 @@ after_install() {
 # run user-defined hooks defined in $PHPENV_ROOT/phpenv.d/install
 # and phpenv plugin-defined hooks in $PLUGIN_ROOT/etc/phpenv.d/install
 OLDIFS="$IFS"
-IFS=$'\n' scripts=(`phpenv-hooks install`)
+IFS=$'\n' scripts=(`type phpenv-hooks >/dev/null 2>&1 && phpenv-hooks install || true`)
 IFS="$OLDIFS"
 for script in "${scripts[@]}"; do source "$script"; done
 
