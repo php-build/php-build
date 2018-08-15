@@ -15,17 +15,17 @@ php-build is a utility for building versions of PHP to use them side by side wit
 
 ### As `phpenv` plugin
 
-#### With CHH/[phpenv] via installer
+#### With madumlao/[phpenv] via installer
 
 It's the standard way: installs `phpenv` in $HOME/.phpenv (default
 $PHPENV_ROOT value).
 
 ```shell
-curl -L http://git.io/phpenv-installer \
+curl -L https://raw.githubusercontent.com/madumlao/phpenv-installer/master/bin/phpenv-installer \
     | bash
 ```
 
-See more on https://github.com/rogeriopradoj/phpenv-installer: install [CHH/phpenv](https://github.com/CHH/phpenv) +
+See more on https://github.com/madumlao/phpenv-installer: install [madumlao/phpenv](https://github.com/madumlao/phpenv) +
 [php-build/php-build](https://github.com/php-build/php-build) (and
 other plugins), updating all of them when you want to!
 
@@ -92,5 +92,5 @@ php-build is released under the [MIT License][license].
 [contributors]: https://github.com/php-build/php-build/graphs/contributors
 [Gittipp-ing]: https://gratipay.com/~CHH/
 [license]: LICENSE
-[phpenv]: https://github.com/CHH/phpenv
+[phpenv]: https://github.com/madumlao/phpenv
 [ruby-build]: https://github.com/rbenv/ruby-build
