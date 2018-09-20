@@ -395,6 +395,7 @@ function build_package() {
     if [ -f "$source_path/sapi/fpm/init.d.php-fpm" ]; then
         mkdir -p "$PREFIX/etc/init.d"
         cp "$source_path/sapi/fpm/init.d.php-fpm" "$PREFIX/etc/init.d/php-fpm"
+        chmod +x "$PREFIX/etc/init.d/php-fpm"
     fi
 
     if [ -f "$source_path/sapi/fpm/php-fpm.service" ]; then
