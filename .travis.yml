@@ -26,11 +26,11 @@ env:
     - DEFINITION=5.3.29
     - DEFINITION=5.4.45
     - DEFINITION=5.5.38
-    - DEFINITION=5.6.37
-    - DEFINITION=7.0.31
-    - DEFINITION=7.1.20
-    - DEFINITION=7.2.8
-    - DEFINITION=7.3.0alpha4
+    - DEFINITION=5.6.38
+    - DEFINITION=7.0.32
+    - DEFINITION=7.1.22
+    - DEFINITION=7.2.10
+    - DEFINITION=7.3.0RC1
 
 before_install:
   - |
