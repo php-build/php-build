@@ -392,6 +392,15 @@ function build_package() {
         fi
     fi
 
+    # Create php-fpm.conf from php-fpm.conf.default
+    if [ -f "$PREFIX/etc/php-fpm.conf.default" ]; then
+        cp "$PREFIX/etc/php-fpm.conf"{.default,}
+
+        if [ -f "$PREFIX/etc/php-fpm.d/www.conf.default" ]; then
+            cp "$PREFIX/etc/php-fpm.d/www.conf"{.default,}
+        fi
+    fi
+
     # Comment out 'extension_dir' in old default php.ini files (PHP 5.2). In
     # newer ones (>= 5.3) this is already the default.
     if [ -f "$PREFIX/etc/php.ini" ]; then
