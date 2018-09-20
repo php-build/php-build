@@ -401,6 +401,19 @@ function build_package() {
         fi
     fi
 
+    # copy the init script
+    if [ -f "$source_path/sapi/fpm/init.d.php-fpm" ]; then
+        mkdir -p "$PREFIX/etc/init.d"
+        cp "$source_path/sapi/fpm/init.d.php-fpm" "$PREFIX/etc/init.d/php-fpm"
+        chmod +x "$PREFIX/etc/init.d/php-fpm"
+    fi
+
+    # copy the systemd unit
+    if [ -f "$source_path/sapi/fpm/php-fpm.service" ]; then
+        mkdir -p "$PREFIX/etc/systemd/system"
+        cp "$source_path/sapi/fpm/php-fpm.service" "$PREFIX/etc/systemd/system/php-fpm.service"
+    fi
+
     # Comment out 'extension_dir' in old default php.ini files (PHP 5.2). In
     # newer ones (>= 5.3) this is already the default.
     if [ -f "$PREFIX/etc/php.ini" ]; then
