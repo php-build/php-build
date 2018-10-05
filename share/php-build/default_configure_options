@@ -11,7 +11,6 @@
 --enable-intl
 --with-kerberos
 --with-openssl
---with-mcrypt=/usr
 --enable-soap
 --enable-xmlreader
 --with-xsl
