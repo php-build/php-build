@@ -30,7 +30,7 @@ env:
     - DEFINITION=7.0.32
     - DEFINITION=7.1.22
     - DEFINITION=7.2.10
-    - DEFINITION=7.3.0RC1
+    - DEFINITION=7.3.0RC2
 
 before_install:
   - |
