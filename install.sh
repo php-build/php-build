@@ -26,7 +26,7 @@ echo " done."
 
 echo -n "  - copying files..."
 
-cp -r "$DIR/bin/php*" "$PREFIX/bin"
+cp -r "$DIR/bin/php"* "$PREFIX/bin"
 cp -r "$DIR/share" "$PREFIX/"
 cp "$DIR/man/php-build.1" "$MAN_DIR/man1/"
 cp "$DIR/man/php-build.5" "$MAN_DIR/man5/"
