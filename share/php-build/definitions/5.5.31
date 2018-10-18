@@ -1,4 +1,5 @@
 configure_option "--with-mysql" "mysqlnd"
+configure_option "--with-mcrypt" "/usr"
 
 install_package "https://secure.php.net/distributions/php-5.5.31.tar.bz2"
 install_xdebug "2.5.5"
