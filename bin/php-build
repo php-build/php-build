@@ -220,9 +220,14 @@ function download() {
     local package_file="$PHP_BUILD_TMPDIR/packages/$basename"
     local archive_type=$2
     local temp_package="$PHP_BUILD_TMPDIR/$basename"
+    local package_name=$(definition_package_name)
 
-    if [ -z $archive_type ]; then
+    if [ -z "$archive_type" ]; then
         archive_type=${package_file##*.}
+    fi
+
+    if has_patch $package_name; then
+        rm -rf "$PHP_BUILD_TMPDIR/source/$DEFINITION"
     fi
 
     if [ -d "$PHP_BUILD_TMPDIR/source/$DEFINITION" ]; then
@@ -344,7 +349,8 @@ function load_plugins() {
 function build_package() {
     local source_path=$1
     local cwd="$(pwd)"
-    if [ -z $1 ]; then
+
+    if [ -z "$source_path" ]; then
       local source_path="$PHP_BUILD_TMPDIR/source/$DEFINITION"
     fi
 
@@ -471,6 +477,20 @@ function install_package() {
     } >&4 2>&1
 }
 
+function is_php_package() {
+    local package_name=$1
+
+    case "$package_name" in
+    php-* ) return 0 ;;
+    esac
+
+    return 1
+}
+
+function definition_package_name() {
+    echo "php-$DEFINITION"
+}
+
 # ### configure_option
 #
 # This function sets and unsets arguments for `configure`. Pass it
@@ -531,6 +551,16 @@ function patch_file() {
     fi
 }
 
+function has_patch() {
+    local package_name=$1
+
+    if is_php_package $package_name; then
+        [ -n "$PATCH_FILES" ]
+    else
+        return 1
+    fi
+}
+
 # ### with_openssl
 #
 # Configures PHP with OpenSSL support.
@@ -563,10 +593,13 @@ function with_apxs2() {
 function configure_package() {
     local source_path=$1
     local backup_pwd=$(pwd)
+    local package_name="$(definition_package_name)"
 
     cd "$source_path"
 
-    if [ ! -f ./configure ]; then
+    if has_patch $package_name; then
+        ./buildconf --force
+    elif [ ! -f ./configure ]; then
         ./buildconf
     fi
 
