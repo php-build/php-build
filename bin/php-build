@@ -61,35 +61,19 @@ function realpath() {
     cd "$cwd"
 }
 
-# Uses uname to check if php-build is run on OSX. This is used later on to
-# enable specifc fixes for OSX oddnesses in library file placement.
-function is_osx {
-    local uname=$(uname)
-
-    if [ "$uname" = "Darwin" ]; then
-        return 0
-    else
-        return 1
-    fi
+is_mac() {
+    [ "$(uname -s)" = "Darwin" ] || return 1
+    [ $# -eq 0 ] || [ "$(osx_version)" "$@" ]
 }
 
-function osx_major {
-    if is_osx ; then
-        local osxVersionString=$(sw_vers -productVersion)
-        local osx_major=${osxVersionString%%.*}
-        echo $osx_major
-    fi
-    return 0
-}
-
-function osx_minor {
-    if is_osx ; then
-        local osxVersionString=$(sw_vers -productVersion)
-        local tmp=${osxVersionString#*.}
-        local osx_minor=${tmp%%.*}
-        echo $osx_minor
-    fi
-    return 0
+#  9.1  -> 901
+# 10.9  -> 1009
+# 10.10 -> 1010
+osx_version() {
+    local -a ver
+    IFS=. ver=( `sw_vers -productVersion` )
+    IFS="$OLDIFS"
+    echo $(( ${ver[0]}*100 + ${ver[1]} ))
 }
 
 # Common Variables
@@ -100,7 +84,7 @@ function osx_minor {
 PHP_BUILD_ROOT="$(dirname $(realpath "$0"))/.."
 
 if [ ! -d "$PHP_BUILD_TMPDIR" ]; then
-    if is_osx; then
+    if is_mac; then
         # $TMPDIR has trouble for building OSS on macOS, so we use /var/tmp
         # See also #467 ( https://github.com/php-build/php-build/pull/467 )
         PHP_BUILD_TMPDIR="/var/tmp/php-build"
@@ -179,33 +163,53 @@ function init() {
 # Credits to Sam Stephenson
 function http() {
     local method="$1"
-    local url="$2"
-    [ -n "$url" ] || return 1
+    [ -n "$2" ] || return 1
+    shift 1
 
-    if type curl &>/dev/null; then
-        "http_${method}_curl" "$url"
-    elif type wget &>/dev/null; then
-        "http_${method}_wget" "$url"
+    "http_${method}_${PHP_BUILD_HTTP_CLIENT}" "$@"
+}
+
+function detect_http_client() {
+    local client
+    for client in aria2c curl wget; do
+        if check_executable "$client"; then
+            echo "$client"
+            return
+        fi
+    done
+
+    echo "error: please install \`aria2c\`, \`curl\`, or \`wget\` and try again" >&2
+    return 1
+}
+
+function http_head_aria2c() {
+    aria2c --dry-run --no-conf=true ${ARIA2_OPTS} "$1" 2>&1
+}
+
+function http_get_aria2c() {
+    local out="${2:-$(mktemp "out.XXXXXX")}"
+
+    if aria2c --allow-overwrite=true --no-conf=true -o "${out}" ${ARIA2_OPTS} "$1" >&4; then
+        [ -n "$2" ] || cat "${out}"
     else
-        echo "error: please install \`curl\` or \`wget\` and try again" >&2
-        exit 1
+        false
     fi
 }
 
 function http_head_curl() {
-    curl -qsILf "$1"
+    curl -qsILf ${CURL_OPTS} "$1" 2>&1
 }
 
 function http_get_curl() {
-    curl -qsSLf "$1"
+    curl -q -o "${2:--}" -sSLf ${CURL_OPTS} "$1"
 }
 
 function http_head_wget() {
-    wget -q --server-response --spider "$1" 2>&1
+    wget -q --spider ${WGET_OPTS} "$1" 2>&1
 }
 
 function http_get_wget() {
-    wget -nv -O- "$1"
+    wget -nv ${WGET_OPTS} -O "${2:--}" "$1"
 }
 
 # Logs a given log text with a [marker] to STDERR
@@ -494,6 +498,515 @@ function definition_package_name() {
     echo "php-$DEFINITION"
 }
 
+# new generation codes (from ruby-build)
+
+function capitalize() {
+    printf "%s" "$1" | tr a-z A-Z
+}
+
+function logging_output_fd() {
+    if [ "$VERBOSE" ]; then
+        echo '4'
+    else
+        echo '5'
+    fi
+}
+
+function check_executable() {
+    type -p "$1" >/dev/null
+}
+
+function detect_make() {
+    if [ "FreeBSD" = "$(uname -s)" ]; then
+        if [ "$(uname -r | sed 's/[^[:digit:]].*//')" -lt 10 ]; then
+            echo "gmake"
+        else
+            echo "make"
+        fi
+    else
+        echo "make"
+    fi
+}
+
+function num_cpu_cores() {
+    local num
+
+    case "$(uname -s)" in
+    Darwin | *BSD )
+        num="$(sysctl -n hw.ncpu 2>/dev/null || true)"
+        ;;
+    SunOS )
+        num="$(getconf NPROCESSORS_ONLN 2>/dev/null || true)"
+        ;;
+    * )
+        num="$({ getconf _NPROCESSORS_ONLN ||
+                grep -c ^processor /proc/cpuinfo; } 2>/dev/null)"
+        num="${num#0}"
+        ;;
+    esac
+
+    echo "${num:-2}"
+}
+
+function verify_checksum() {
+    local checksum_command
+    local filename="$1"
+    local expected_checksum="$(echo "$2" | tr [A-Z] [a-z])"
+
+    # If the specified filename doesn't exist, return success
+    [ -e "$filename" ] || return 0
+
+    case "${#expected_checksum}" in
+    0) return 0 ;; # empty checksum; return success
+    32) checksum_command="compute_md5" ;;
+    64) checksum_command="compute_sha2" ;;
+    *)
+        {
+            echo "unexpected checksum length: ${#expected_checksum} (${expected_checksum})"
+            echo "expected 0 (no checksum), 32 (MD5), or 64 (SHA2-256)"
+        } >&2
+        return 1 ;;
+    esac
+
+    # If chosen provided checksum algorithm isn't supported, return success
+    has_checksum_support "$checksum_command" || return 0
+
+    # If the computed checksum is empty, return failure
+    local computed_checksum=`echo "$($checksum_command < "$filename")" | tr [A-Z] [a-z]`
+    [ -n "$computed_checksum" ] || return 1
+
+    if [ "$expected_checksum" != "$computed_checksum" ]; then
+        {
+            echo "checksum mismatch: ${filename} (file is corrupt)"
+            echo "expected $expected_checksum, got $computed_checksum"
+        } >&2
+        return 1
+    fi
+}
+
+function has_checksum_support() {
+    local checksum_command="$1"
+    local has_checksum_var="HAS_CHECKSUM_SUPPORT_${checksum_command}"
+
+    if [ -z "${!has_checksum_var+defined}" ]; then
+        printf -v "$has_checksum_var" "$(echo test | "$checksum_command" >/dev/null; echo $?)"
+    fi
+    return "${!has_checksum_var}"
+}
+
+function openssl_command() {
+    if check_executable brew && brew --prefix openssl >/dev/null 2>&1; then
+        echo "$(brew --prefix openssl)/bin/openssl"
+    elif check_executable openssl; then
+        echo 'openssl'
+    else
+        exit 1
+    fi
+}
+
+function compute_sha2() {
+    local output
+    local openssl="$(openssl_command || true)"
+
+    if check_executable shasum; then
+        output="$(shasum -a 256 -b)" || return 1
+        echo "${output% *}"
+    elif check_executable $openssl; then
+        output="$("$openssl" dgst -sha256 2>/dev/null)" || return 1
+        echo "${output##* }"
+    elif check_executable sha256sum; then
+        output="$(sha256sum -b)" || return 1
+        echo "${output%% *}"
+    else
+        return 1
+    fi
+}
+
+function compute_md5() {
+    local output
+    local openssl="$(openssl_command || true)"
+
+    if check_executable md5; then
+        md5 -q
+    elif check_executable $openssl; then
+        output="$("$openssl" md5)" || return 1
+        echo "${output##* }"
+    elif check_executable md5sum; then
+        output="$(md5sum -b)" || return 1
+        echo "${output%% *}"
+    else
+        return 1
+    fi
+}
+
+function ng_install_package() {
+    ng_install_package_using "tarball" 1 "$@"
+}
+
+function ng_install_package_using() {
+    local package_type="$1"
+    local package_type_nargs="$2"
+    local package_name="$3"
+    local package_version="$4"
+    shift 4
+
+    local fetch_args=( "$package_name" "$package_version" "${@:1:$package_type_nargs}" )
+    local make_args=( "$package_name" "$package_version" )
+    
+    local arg last_arg
+    for arg in "${@:$(( $package_type_nargs + 1 ))}"; do
+        if [ "$last_arg" = "--if" ]; then
+        "$arg" || return 0
+        elif [ "$arg" != "--if" ]; then
+        make_args["${#make_args[@]}"]="$arg"
+        fi
+        last_arg="$arg"
+    done
+
+    pushd "$BUILD_PATH" >&$(logging_output_fd)
+    "ng_fetch_${package_type}" "${fetch_args[@]}"
+    ng_make_package "${make_args[@]}"
+    popd >&$(logging_output_fd)
+
+    log "Info" "Installed ${package_name}-${package_version} to ${PREFIX}"
+}
+
+function ng_fetch_tarball() {
+    local package_name="$1"
+    local package_version="$2"
+    local package_url="$3"
+    local checksum
+    local extracted_dir
+
+    if [ "$package_url" != "${package_url/\#}" ]; then
+        checksum="${package_url#*#}"
+        package_url="${package_url%%#*}"
+    fi
+
+    local tar_args="xzf"
+    local package_filename="${package_name}-${package_version}.tar.gz"
+    local package_dirname="${package_name}-${package_version}"
+
+    if [ "$package_url" != "${package_url%bz2}" ]; then
+        if ! check_executable bzip2; then
+            log "Warn" "bzip2 not found; consider installing \`bzip2\` package."
+        fi
+        package_filename="${package_filename%.gz}.bz2"
+        tar_args="${tar_args/z/j}"
+    fi
+
+    if ! ng_reuse_existing_tarball "$package_filename" "$checksum"; then
+        local tarball_filename="$(basename "$package_url")"
+        log "Info" "Downloading ${tarball_filename}..."
+        ng_download_tarball "$package_url" "$package_filename" "$checksum"
+    fi
+
+    {
+        if tar $tar_args "$package_filename"; then
+            if [ ! -d "$package_dirname" ]; then
+                extracted_dir="$(ng_find_extracted_directory)"
+                mv "$extracted_dir" "$package_dirname"
+            fi
+
+            if [ -z "$KEEP_BUILD_PATH" ]; then
+                rm -f "$package_filename"
+            fi
+        fi
+    } >&$(logging_output_fd) 2>&1
+}
+
+function ng_find_extracted_directory() {
+    local f
+    for f in *; do
+        if [ -d "$f" ]; then
+            echo "$f"
+            return
+        fi
+    done
+
+    echo "Extracted directory not found" >&2
+    return 1
+}
+
+function ng_reuse_existing_tarball() {
+    local package_filename="$1"
+    local checksum="$2"
+
+    # Reuse existing file in build location
+    if [ -e "$package_filename" ] && verify_checksum "$package_filename" "$checksum"; then
+        return 0
+    fi
+
+    # Reuse previously downloaded file in cache location
+    [ -n "$PHP_BUILD_TMPDIR" ] || return 1
+    local cached_package_filename="${PHP_BUILD_TMPDIR}/packages/$package_filename"
+
+    [ -e "$cached_package_filename" ] || return 1
+    verify_checksum "$cached_package_filename" "$checksum" >&4 2>&1 || return 1
+    ln -s "$cached_package_filename" "$package_filename" >&4 2>&1 || return 1
+}
+
+function ng_download_tarball() {
+    local package_url="$1"
+    local package_filename="$2"
+    local checksum="$3"
+
+    log "Info" "-> $package_url"
+
+    if http get "$package_url" "$package_filename" >&4 2>&1; then
+        verify_checksum "$package_filename" "$checksum" >&4 2>&1 || return 1
+    else
+        echo "error: failed to download $package_filename" >&2
+        return 1
+    fi
+
+    if [ -n "$PHP_BUILD_TMPDIR" ]; then
+        local cached_package_filename="${PHP_BUILD_TMPDIR}/packages/$package_filename"
+        {
+            mv "$package_filename" "$cached_package_filename"
+            ln -s "$cached_package_filename" "$package_filename"
+        } >&4 2>&1 || return 1
+    fi
+}
+
+function ng_make_package() {
+    local package_name="$1"
+    local package_version="$2"
+    shift 2
+
+    pushd "$package_name-$package_version" >&$(logging_output_fd)
+    ng_before_install_package "$package_name" "$package_version"
+    ng_build_package "$package_name" "$package_version" "$@"
+    ng_after_install_package "$package_name" "$package_version"
+    ng_fix_directory_permissions "$PREFIX"
+    popd >&$(logging_output_fd)
+}
+
+function ng_before_install_package() {
+    local stub=1
+}
+
+function ng_after_install_package() {
+    local stub=1
+}
+
+function ng_fix_directory_permissions() {
+    local target_dir="$1"
+
+    # Ensure installed directories are not world-writable to avoid some warnings
+    find "$target_dir" -type d \( -perm -020 -o -perm -002 \) -exec chmod go-w {} \;
+}
+
+function ng_build_package() {
+    local package_name="$1"
+    local package_version="$2"
+    shift 2
+
+    local commands
+    if [ "$#" -eq 0 ]; then
+        commands="standard"
+    else
+        commands="$@"
+    fi
+
+    log "Info" "Installing ${package_name}-${package_version}..." >&2
+
+    if ng_has_patch "$package_name" "$package_version"; then
+        ng_apply_patch "$package_name" "$package_version"
+    fi
+
+    local command
+    for command in $commands; do
+        "ng_build_package_${command}" "$package_name" "$package_version"
+    done
+}
+
+function ng_package_option() {
+    local package_name="$1"
+    local command_name="$2"
+    local variable="$(capitalize "${package_name}_${command_name}")_OPTS_ARRAY"
+    local array="$variable[@]"
+    shift 2
+
+    local value=( "${!array}" "$@" )
+    eval "$variable=( \"\${value[@]}\" )"
+
+    if [ $package_name = "php" ] && [ $command_name = "configure" ]; then
+        for opt in "$@"; do
+            if [ "${opt%%=*}" = "${opt}" ]; then
+                configure_option "$opt" ""
+            else
+                configure_option "${opt%%=*}" "${opt##*=}"
+            fi
+        done
+    fi
+}
+
+function ng_has_package_option() {
+    local package_name="$1"
+    local command_name="$2"
+    local variable="$(capitalize "${package_name}_${command_name}")_OPTS_ARRAY"
+    local array="$variable[@]"
+    shift 2
+
+    if include_command_option "$array" "$@"; then
+        return 0
+    fi
+
+    if [ $package_name = "php" ] && [ $command_name = "configure" ]; then
+        if include_command_option "$PHP_CONFIGURE_OPTS" "$@" ||
+           include_command_option "$CONFIGURE_OPTIONS" "$@" ; then
+            return 0
+        fi
+    fi
+
+    return 1
+}
+
+function include_command_option() {
+    local options="$1"
+    local option_name="$2"
+
+    if [ $# -gt 2 ] && [ -n "$3" ]; then
+        [[ "$options" = *"${option_name}="$3 ]] ||
+        [[ "$options" = *"${option_name}="$3[:space:]* ]]
+    else
+        [[ "$options" = *"${option_name}" ]] ||
+        [[ "$options" = *"${option_name}"[:space:]* ]] ||
+        [[ "$options" = *"${option_name}="* ]]
+    fi
+}
+
+function ng_has_patch() {
+    local package_name="$1"
+    local package_version="$2"
+
+    return 1
+}
+
+function ng_apply_patch() {
+    local package_name="$1"
+    local package_version="$2"
+
+    echo "Not implemented!" >&2
+    return 1
+}
+
+function ng_build_package_standard() {
+    ng_build_package_standard_build "$@"
+    ng_build_package_standard_install "$@"
+}
+
+function ng_build_package_standard_build() {
+    local package_name="$1"
+    local package_version="$2"
+
+    if [ "${MAKEOPTS+defined}" ]; then
+        MAKE_OPTS="$MAKEOPTS"
+    elif [ -z "${MAKE_OPTS+defined}" ]; then
+        MAKE_OPTS="-j $(num_cpu_cores)"
+    fi
+
+    # Support OPENSSL_CONFIGURE_OPTS, PHP_CONFIGURE_OPTS, etc.
+    local package_var_name="$(capitalize "${package_name}")"
+    local PACKAGE_CONFIGURE="${package_var_name}_CONFIGURE"
+    local PACKAGE_PREFIX_PATH="${package_var_name}_PREFIX_PATH"
+    local PACKAGE_CONFIGURE_OPTS="${package_var_name}_CONFIGURE_OPTS"
+    local PACKAGE_CONFIGURE_OPTS_ARRAY="${package_var_name}_CONFIGURE_OPTS_ARRAY[@]"
+    local PACKAGE_MAKE_OPTS="${package_var_name}_MAKE_OPTS"
+    local PACKAGE_MAKE_OPTS_ARRAY="${package_var_name}_MAKE_OPTS_ARRAY[@]"
+    local PACKAGE_CFLAGS="${package_var_name}_CFLAGS"
+
+    {
+        if [ "${CFLAGS+defined}" ] || [ "${!PACKAGE_CFLAGS+defined}" ]; then
+            export CFLAGS="$CFLAGS ${!PACKAGE_CFLAGS}"
+        fi
+        if [ -z "$CC" ] && is_mac -ge 1010; then
+            export CC="clang"
+        fi
+        ${!PACKAGE_CONFIGURE:-./configure} --prefix="${!PACKAGE_PREFIX_PATH:-$PREFIX_PATH}" \
+            $CONFIGURE_OPTS ${!PACKAGE_CONFIGURE_OPTS} "${!PACKAGE_CONFIGURE_OPTS_ARRAY}" \
+            || return 1
+    } >&$(logging_output_fd) 2>&4
+
+    {
+        "$MAKE" $MAKE_OPTS ${!PACKAGE_MAKE_OPTS} "${!PACKAGE_MAKE_OPTS_ARRAY}"
+    } >&$(logging_output_fd) 2>&4
+}
+
+function ng_build_package_standard_install() {
+  local package_name="$1"
+  local package_var_name="$(capitalize "${package_name}")"
+
+  local PACKAGE_MAKE_INSTALL_OPTS="${package_var_name}_MAKE_INSTALL_OPTS"
+  local PACKAGE_MAKE_INSTALL_OPTS_ARRAY="${package_var_name}_MAKE_INSTALL_OPTS_ARRAY[@]"
+
+  {
+      "$MAKE" install $MAKE_INSTALL_OPTS ${!PACKAGE_MAKE_INSTALL_OPTS} "${!PACKAGE_MAKE_INSTALL_OPTS_ARRAY}"
+  } >&$(logging_output_fd) 2>&4
+}
+
+function ng_build_package_mac_openssl() {
+    local package_name="$1"
+    local package_version="$2"
+
+    if [ "$package_name" != "openssl" ]; then
+        return 1
+    fi
+
+    # Install to a subdirectory since we don't want shims for bin/openssl.
+    export OPENSSL_PREFIX_PATH="${PREFIX}/openssl"
+
+    # Put openssl.conf, certs, etc in $PREFIX/openssl/ssl
+    OPENSSL_DIR="${OPENSSL_DIR:-$OPENSSL_PREFIX_PATH/ssl}"
+
+    # Tell PHP to use this openssl for its extension.
+    ng_package_option php configure --with-openssl="$OPENSSL_PREFIX_PATH"
+
+    # Make sure pkg-config finds our build first.
+    export PKG_CONFIG_PATH="${OPENSSL_PREFIX_PATH}/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+
+    # Hint OpenSSL that we prefer a 64-bit build.
+    export KERNEL_BITS="64"
+    OPENSSL_CONFIGURE="${OPENSSL_CONFIGURE:-./config}"
+
+    local nokerberos
+    [[ "$package_version" != 1.0.* ]] || nokerberos=1
+
+    # Compile a shared lib with zlib dynamically linked.
+    ng_package_option $package_name configure \
+        --openssldir="$OPENSSL_DIR" zlib-dynamic no-ssl3 shared ${nokerberos:+no-ssl2 no-krb5}
+
+    # Default MAKE_OPTS are -j 2 which can confuse the build. Thankfully, make
+    # gives precedence to the last -j option, so we can override that.
+    ng_package_option $package_name make -j 1
+
+    ng_build_package_standard "$@"
+
+    # Extract root certs from the system keychain in .pem format and rehash.
+    local pem_file="$OPENSSL_DIR/cert.pem"
+    security find-certificate -a -p /Library/Keychains/System.keychain > "$pem_file"
+    security find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain >> "$pem_file"
+}
+
+function has_broken_mac_openssl() {
+    is_mac || return 1
+    local openssl_version="$(openssl version 2>/dev/null || true)"
+    [[ $openssl_version = "OpenSSL 0.9.8"?* || $openssl_version = "LibreSSL"* ]] &&
+    ! ng_has_package_option "php" "configure" "--with-openssl" "*" &&
+    ! use_homebrew_openssl
+}
+
+function use_homebrew_openssl() {
+    local ssldir="$(brew --prefix openssl 2>/dev/null || true)"
+    if [ -d "$ssldir" ]; then
+        log "Info" "Use openssl from homebrew"
+        ng_package_option php configure --with-openssl="$ssldir"
+    else
+        return 1
+    fi
+}
+
 # ### configure_option
 #
 # This function sets and unsets arguments for `configure`. Pass it
@@ -618,7 +1131,7 @@ function configure_package() {
     #
     # This currently builds PHP without the `gettext` and `readline`
     # extensions, as I've currently not got them to work on my machine.
-    if is_osx; then
+    if is_mac; then
         configure_option -D "--with-gettext"
         configure_option -D "--with-readline"
         configure_option "--with-libedit"
@@ -631,14 +1144,7 @@ function configure_package() {
         log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
     fi
 
-    # Override `--with-openssl` and `--with-libxml-dir`
-    # if Homebrew's openssl and libxml2 exist on Mac OS X 10.11+.
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 11 ] && [ -n "$(which brew)" ] && [ -e "$(brew --prefix openssl)" ] && [ -e "$(brew --prefix libxml2)" ]; then
-        configure_option -R "--with-openssl" "$(brew --prefix openssl)"
-        configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
-    fi
-
-    if is_osx && [ -n "$(which brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
+    if is_mac && [ -n "$(which brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
         configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
         # icu4c 59+ requires C++11
         if [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "61" ]]; then
@@ -684,7 +1190,7 @@ $CONFIGURE_OPTIONS"
     # Avoid installing PHP binary as "php.dSYM" on MacOSX 10.7 and 10.8.
     # PHP 5.2 and 5.3 has the problem.
     # See https://github.com/php/php-src/pull/135
-    if is_osx; then
+    if is_mac; then
         export ac_cv_exeext=''
     fi
 
@@ -863,8 +1369,11 @@ DEFINITION_PATH="$(find_definition "$DEFINITION")"
 DEFINITION="$(basename "$DEFINITION_PATH")"
 LOG_NAME="$(basename "$DEFINITION_PATH")"
 # Generate the Path for the build log.
+SEED="$(date "+%Y%m%d%H%M%S").$$"
 TIME="$(date "+%Y%m%d%H%M%S")"
 LOG_PATH="/tmp/php-build.$LOG_NAME.$TIME.log"
+
+BUILD_PATH="${PHP_BUILD_BUILD_PATH:-"${TMP}/php-build.${SEED}"}"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
 # to the Log file.
@@ -872,6 +1381,18 @@ if [ "$VERBOSE" ]; then
     exec 4> >(tee $LOG_PATH)
 else
     exec 4<> "$LOG_PATH"
+fi
+
+PHP_BUILD_HTTP_CLIENT="${PHP_BUILD_HTTP_CLIENT:-$(detect_http_client)}"
+if [ -z "$PHP_BUILD_HTTP_CLIENT" ]; then
+    echo "Cannot find http client." >&4
+    exit 1
+fi
+
+MAKE="${MAKE:-$(detect_make)}"
+if [ -z "$MAKE" ]; then
+    echo "Cannot find make." >&4
+    exit 1
 fi
 
 # Load extension plugin
@@ -890,6 +1411,8 @@ trap cleanup_abort SIGINT SIGTERM
 
 # Handle Script Errors.
 trap build_error ERR EXIT
+
+mkdir -p $BUILD_PATH
 
 # Source the definition file
 source "$DEFINITION_PATH"
