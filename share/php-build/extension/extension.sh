@@ -141,17 +141,22 @@ function _build_extension {
     local after_install=$6
     local cwd=$(pwd)
 
+    BUILD_EXTENSION_OUTPUT='/dev/null'
+    if [ "$VERBOSE" ]; then
+        BUILD_EXTENSION_OUTPUT='&4'
+    fi
+
     log "$name" "Compiling $name in $source_dir"
 
     cd "$source_dir/$source_cwd"
 
     {
-        $PREFIX/bin/phpize 1>&2
+        $PREFIX/bin/phpize 1>$BUILD_EXTENSION_OUTPUT
         "$(pwd)/configure" --with-php-config=$PREFIX/bin/php-config \
-            $configure_args > /dev/null
+            $configure_args 1>$BUILD_EXTENSION_OUTPUT
 
-        make > /dev/null
-        make install > /dev/null
+        make 1>$BUILD_EXTENSION_OUTPUT
+        make install 1>$BUILD_EXTENSION_OUTPUT
     } >&4 2>&1
 
     local extension_home="$PREFIX/share/$name"
