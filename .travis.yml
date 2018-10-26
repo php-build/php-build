@@ -6,6 +6,11 @@ os:
   - linux
   - osx
 
+cache:
+  apt: true
+  directories:
+    - $HOME/Library/Caches/Homebrew
+
 addons:
   apt:
     sources:
