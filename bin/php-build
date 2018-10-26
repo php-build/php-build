@@ -1110,6 +1110,7 @@ function configure_package() {
     local source_path=$1
     local backup_pwd=$(pwd)
     local package_name="$(definition_package_name)"
+    local package_version="$DEFINITION"
 
     CONFIGURE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
@@ -1144,6 +1145,12 @@ function configure_package() {
         log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
     fi
 
+    if is_mac && has_broken_mac_openssl; then
+        echo "error: This version is not supported without Homebrew's OpenSSL." >&2
+        echo "       Please, install Homebrew and run \`brew install openssl\`." >&2
+        exit 1
+    fi
+
     if is_mac && [ -n "$(which brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
         configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
         # icu4c 59+ requires C++11
@@ -1152,6 +1159,13 @@ function configure_package() {
             export CXXFLAGS="-std=c++11 -stdlib=libc++ -DU_USING_ICU_NAMESPACE=1"
         elif [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "59" ]]; then
             export CXXFLAGS="-std=c++11 -stdlib=libc++"
+        fi
+    fi
+
+    if is_mac && [ -z "$YACC" ] && [ -n "$(which brew)" ] && [ -e "$(brew --prefix bison)" ]; then
+        if [ "$package_version" != 5.*.* ]; then
+            log "Info" "Use bison from homebrew"
+            export YACC="$(brew --prefix bison)/bin/bison"
         fi
     fi
 
