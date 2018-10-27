@@ -37,6 +37,9 @@ fi
 # use FD3 for php-build's visible error messages.
 exec 3<&2
 
+# Use FD5 to dump messages
+exec 5>/dev/null
+
 # Simple function for resolving a relative path to an absolute one
 function realpath() {
     local path="$1"
@@ -366,9 +369,9 @@ function build_package() {
 
     log "Compiling" "$source_path"
 
-    MAKE_OUTPUT='/dev/null'
+    MAKE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
-        MAKE_OUTPUT='&4'
+        MAKE_OUTPUT='4'
     fi
     cd "$source_path"
     {
@@ -377,7 +380,7 @@ function build_package() {
         if [ "$PHP_BUILD_KEEP_OBJECT_FILES" == "off" ]; then
             make clean
         fi
-    } 2>&4 1>$MAKE_OUTPUT
+    } 1>&$MAKE_OUTPUT
     cd "$cwd"
 
     # Remove .dSYM extension from executables (OSX issue).
@@ -595,9 +598,9 @@ function configure_package() {
     local backup_pwd=$(pwd)
     local package_name="$(definition_package_name)"
 
-    CONFIGURE_OUTPUT='/dev/null'
+    CONFIGURE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
-        CONFIGURE_OUTPUT='&4'
+        CONFIGURE_OUTPUT='4'
     fi
 
     cd "$source_path"
@@ -608,7 +611,7 @@ function configure_package() {
         elif [ ! -f ./configure ]; then
             buildconf_wrapper
         fi
-    } 1>$CONFIGURE_OUTPUT
+    } 1>&$CONFIGURE_OUTPUT
 
     # Mac OSX stores some libraries (for example `libpng`)
     # in `/usr/X11/lib` instead of `/usr/lib`.
@@ -685,7 +688,7 @@ $CONFIGURE_OPTIONS"
         export ac_cv_exeext=''
     fi
 
-    ./configure $argv 1>$CONFIGURE_OUTPUT
+    ./configure $argv 1>&$CONFIGURE_OUTPUT
 
     # Use php-build prefix for the Apache libexec folder
     if [ -n "$PHP_BUILD_APXS" ]; then
