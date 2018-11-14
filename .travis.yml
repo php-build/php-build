@@ -1,10 +1,5 @@
 sudo: false
-osx_image: xcode8
 language: c
-
-os:
-  - linux
-  - osx
 
 cache:
   apt: true
@@ -36,16 +31,82 @@ addons:
 env:
   global:
     - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-  matrix:
+
+matrix:
+  include:
+  - os: linux
+    env:
     - DEFINITION=5.2.17
+  - os: linux
+    env:
     - DEFINITION=5.3.29
+  - os: linux
+    env:
     - DEFINITION=5.4.45
+  - os: linux
+    env:
     - DEFINITION=5.5.38
+  - os: linux
+    env:
     - DEFINITION=5.6.38
+  - os: linux
+    env:
     - DEFINITION=7.0.32
+  - os: linux
+    env:
     - DEFINITION=7.1.24
+  - os: linux
+    env:
     - DEFINITION=7.2.12
+  - os: linux
+    env:
     - DEFINITION=7.3.0RC5
+  - os: osx
+    osx_image: xcode8
+    env:
+    - DEFINITION=5.2.17
+  - os: osx
+    osx_image: xcode8.3
+    env:
+    - DEFINITION=5.3.29
+  - os: osx
+    osx_image: xcode8.3
+    env:
+    - DEFINITION=5.4.45
+  - os: osx
+    osx_image: xcode8.3
+    env:
+    - DEFINITION=5.5.38
+  - os: osx
+    osx_image: xcode9.4
+    env:
+    - DEFINITION=5.6.38
+  - os: osx
+    osx_image: xcode9.4
+    env:
+    - DEFINITION=7.0.32
+  - os: osx
+    osx_image: xcode10
+    env:
+    - DEFINITION=7.1.24
+  - os: osx
+    osx_image: xcode10
+    env:
+    - DEFINITION=7.2.12
+  - os: osx
+    osx_image: xcode10
+    env:
+    - DEFINITION=7.3.0RC5
+  - os: osx
+    osx_image: xcode10
+    env:
+    - DEFINITION=7.2.12
+    - USE_HOMEBREW_OPENSSL=no
+  - os: osx
+    osx_image: xcode10
+    env:
+    - DEFINITION=7.3.0RC5
+    - USE_HOMEBREW_OPENSSL=no
 
 before_install:
   - |
@@ -71,6 +132,12 @@ before_install:
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
         fi
+        if [[ "$TRAVIS_OSX_IMAGE" =~ "xcode"("7"|"8")("."|$) ]] || [[ "$TRAVIS_OSX_IMAGE" =~ "xcode9"$ ]]; then
+            brew link --force libxml2
+        fi
+        if [[ "$USE_HOMEBREW_OPENSSL" = "no" ]]; then
+            brew uninstall --ignore-dependencies openssl
+        fi
     fi
 
 install:
@@ -83,4 +150,13 @@ script:
   - ./run-tests.sh $DEFINITION
 
 after_failure:
-  - head -1000 $(ls -r /tmp/php-build*.log | head -n 1)
+  - |
+    export PHP_CONFIG_LOG_PATH="$(ls -r /var/tmp/php-build/source/*/config.log | head -n 1)"
+    if [[ -n "$PHP_CONFIG_LOG_PATH" ]]; then
+      tail -1000 $PHP_CONFIG_LOG_PATH
+    fi
+  - |
+    export PHP_BUILD_LOG_PATH="$(ls -r /tmp/php-build*.log | head -n 1)"
+    if [[ -n "$PHP_BUILD_LOG_PATH" ]]; then
+      tail -1000 $PHP_BUILD_LOG_PATH
+    fi

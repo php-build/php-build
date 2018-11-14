@@ -1,2 +1,4 @@
+ng_install_package "openssl" "1.1.0i" "https://www.openssl.org/source/openssl-1.1.0i.tar.gz#ebbfc844a8c8cc0ea5dc10b86c9ce97f401837f3fa08c17b2cdadc118253cf99" mac_openssl --if has_broken_mac_openssl
+
 install_package "https://downloads.php.net/~cmb/php-7.3.0alpha3.tar.bz2"
 enable_builtin_opcache
