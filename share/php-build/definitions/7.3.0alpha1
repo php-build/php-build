@@ -1,2 +1,0 @@
-install_package "https://downloads.php.net/~stas/php-7.3.0alpha1.tar.bz2"
-enable_builtin_opcache
