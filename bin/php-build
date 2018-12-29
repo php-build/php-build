@@ -657,6 +657,8 @@ function configure_package() {
 --with-config-file-scan-dir="$PREFIX/etc/conf.d" \
 --prefix=$PREFIX \
 --libexecdir=$PREFIX/libexec \
+--datadir=$PREFIX/share/php \
+--mandir=$PREFIX/share/man \
 $CONFIGURE_OPTIONS"
 
     log "Preparing" "$source_path"
