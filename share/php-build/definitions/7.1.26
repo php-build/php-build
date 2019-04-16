@@ -1,0 +1,5 @@
+configure_option "--with-mcrypt" "/usr"
+
+install_package "https://secure.php.net/distributions/php-7.1.26.tar.bz2"
+install_xdebug "2.7.1"
+enable_builtin_opcache

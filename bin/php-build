@@ -37,6 +37,9 @@ fi
 # use FD3 for php-build's visible error messages.
 exec 3<&2
 
+# Use FD5 to dump messages
+exec 5>/dev/null
+
 # Simple function for resolving a relative path to an absolute one
 function realpath() {
     local path="$1"
@@ -220,9 +223,14 @@ function download() {
     local package_file="$PHP_BUILD_TMPDIR/packages/$basename"
     local archive_type=$2
     local temp_package="$PHP_BUILD_TMPDIR/$basename"
+    local package_name=$(definition_package_name)
 
-    if [ -z $archive_type ]; then
+    if [ -z "$archive_type" ]; then
         archive_type=${package_file##*.}
+    fi
+
+    if has_patch $package_name; then
+        rm -rf "$PHP_BUILD_TMPDIR/source/$DEFINITION"
     fi
 
     if [ -d "$PHP_BUILD_TMPDIR/source/$DEFINITION" ]; then
@@ -344,7 +352,8 @@ function load_plugins() {
 function build_package() {
     local source_path=$1
     local cwd="$(pwd)"
-    if [ -z $1 ]; then
+
+    if [ -z "$source_path" ]; then
       local source_path="$PHP_BUILD_TMPDIR/source/$DEFINITION"
     fi
 
@@ -360,7 +369,7 @@ function build_package() {
 
     log "Compiling" "$source_path"
 
-    MAKE_OUTPUT='/dev/null'
+    MAKE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
         MAKE_OUTPUT='4'
     fi
@@ -371,7 +380,7 @@ function build_package() {
         if [ "$PHP_BUILD_KEEP_OBJECT_FILES" == "off" ]; then
             make clean
         fi
-    } 2>&4 1>&$MAKE_OUTPUT
+    } 1>&$MAKE_OUTPUT
     cd "$cwd"
 
     # Remove .dSYM extension from executables (OSX issue).
@@ -471,6 +480,20 @@ function install_package() {
     } >&4 2>&1
 }
 
+function is_php_package() {
+    local package_name=$1
+
+    case "$package_name" in
+    php-* ) return 0 ;;
+    esac
+
+    return 1
+}
+
+function definition_package_name() {
+    echo "php-$DEFINITION"
+}
+
 # ### configure_option
 #
 # This function sets and unsets arguments for `configure`. Pass it
@@ -531,6 +554,16 @@ function patch_file() {
     fi
 }
 
+function has_patch() {
+    local package_name=$1
+
+    if is_php_package $package_name; then
+        [ -n "$PATCH_FILES" ]
+    else
+        return 1
+    fi
+}
+
 # ### with_openssl
 #
 # Configures PHP with OpenSSL support.
@@ -563,12 +596,22 @@ function with_apxs2() {
 function configure_package() {
     local source_path=$1
     local backup_pwd=$(pwd)
+    local package_name="$(definition_package_name)"
+
+    CONFIGURE_OUTPUT='5'
+    if [ "$VERBOSE" ]; then
+        CONFIGURE_OUTPUT='4'
+    fi
 
     cd "$source_path"
 
-    if [ ! -f ./configure ]; then
-        ./buildconf
-    fi
+    {
+        if has_patch $package_name; then
+            buildconf_wrapper --force
+        elif [ ! -f ./configure ]; then
+            buildconf_wrapper
+        fi
+    } 1>&$CONFIGURE_OUTPUT
 
     # Mac OSX stores some libraries (for example `libpng`)
     # in `/usr/X11/lib` instead of `/usr/lib`.
@@ -614,6 +657,8 @@ function configure_package() {
 --with-config-file-scan-dir="$PREFIX/etc/conf.d" \
 --prefix=$PREFIX \
 --libexecdir=$PREFIX/libexec \
+--datadir=$PREFIX/share/php \
+--mandir=$PREFIX/share/man \
 $CONFIGURE_OPTIONS"
 
     log "Preparing" "$source_path"
@@ -645,7 +690,7 @@ $CONFIGURE_OPTIONS"
         export ac_cv_exeext=''
     fi
 
-    ./configure $argv > /dev/null
+    ./configure $argv 1>&$CONFIGURE_OUTPUT
 
     # Use php-build prefix for the Apache libexec folder
     if [ -n "$PHP_BUILD_APXS" ]; then
@@ -654,6 +699,26 @@ $CONFIGURE_OPTIONS"
     fi
 
     cd "$backup_pwd"
+}
+
+function buildconf_wrapper() {
+    local buildconf_log_path="$(mktemp "${PHP_BUILD_TMPDIR}/buildconf_XXXXXX.log")"
+    local result
+
+    set +e
+    ./buildconf "$@" >$buildconf_log_path
+    result=$?
+    set -e
+
+    if [ $result -eq 0 ]; then
+        cat $buildconf_log_path
+    else
+        echo "Failed to run 'buildconf'." 1>&2
+        cat $buildconf_log_path 1>&2
+    fi
+    rm -f $buildconf_log_path
+
+    return $result
 }
 
 # Handles build errors, and displays the last 10 lines of the build log
@@ -802,7 +867,6 @@ LOG_NAME="$(basename "$DEFINITION_PATH")"
 # Generate the Path for the build log.
 TIME="$(date "+%Y%m%d%H%M%S")"
 LOG_PATH="/tmp/php-build.$LOG_NAME.$TIME.log"
-log Info "Appending build output to $LOG_PATH"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
 # to the Log file.
@@ -843,10 +907,12 @@ trap - ERR
 trap - EXIT
 
 # Display a notice if build warnings got logged.
-if [ -n $LOG_PATH ]; then
+if [ -n "$LOG_PATH" ] && [ -n "$(head -100 $LOG_PATH)" ]; then
     log "Info" "The Log File is not empty, but the Build did not fail.\
  Maybe just warnings got logged.\
- You can review the log in $LOG_PATH"
+ You can review the log in $LOG_PATH or rebuild with '--verbose' option"
+elif [ -f "$LOG_PATH" ]; then
+    rm -rf "$LOG_PATH"
 fi
 
 log "Success" "Built $DEFINITION successfully."

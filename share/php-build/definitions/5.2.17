@@ -1,5 +1,6 @@
 
 configure_option "--enable-fastcgi"
+configure_option "--with-mcrypt" "/usr"
 
 configure_option -R "--with-mysql"
 configure_option -R "--with-mysqli"

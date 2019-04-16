@@ -1,4 +1,5 @@
 configure_option "--with-mysql" "mysqlnd"
+configure_option "--with-mcrypt" "/usr"
 
 patch_file "php-5.3.29-64bit-intl.patch"
 patch_file "php-5.4.6-libxml2-2.9.patch"

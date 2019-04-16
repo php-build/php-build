@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Update this when a new stable version comes around
-STABLE_DEFINITIONS="5.3.29 5.4.45 5.5.38 5.6.38 7.0.32 7.1.23 7.2.11 7.3.0RC3"
+STABLE_DEFINITIONS="5.3.29 5.4.45 5.5.38 5.6.40 7.0.33 7.1.28 7.2.17 7.3.4"
 
 TIME="$(date "+%Y%m%d%H%M%S")"
 

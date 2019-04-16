@@ -1,2 +1,3 @@
 install_package_from_github PHP-7.3
+install_xdebug "2.7.1"
 enable_builtin_opcache

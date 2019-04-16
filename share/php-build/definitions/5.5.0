@@ -1,4 +1,5 @@
 configure_option "--with-mysql" "mysqlnd"
+configure_option "--with-mcrypt" "/usr"
 
 install_package "https://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.5.0.tar.bz2;h=a9d7b5dbc92f9ff99fcaf911047d8c7d465160cf;hb=01253f21cc75bf10e8698d0be9a904ee4f020a99"
 install_xdebug "2.5.5"

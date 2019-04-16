@@ -6,6 +6,11 @@ os:
   - linux
   - osx
 
+cache:
+  apt: true
+  directories:
+    - $HOME/Library/Caches/Homebrew
+
 addons:
   apt:
     sources:
@@ -17,6 +22,16 @@ addons:
       - libzip-dev
       - php5-cli
       - re2c
+    update: true
+  homebrew:
+    packages:
+      - re2c
+      - libmcrypt
+      - openssl
+      - libxml2
+      - icu4c
+      - libzip
+    update: true
 
 env:
   global:
@@ -26,29 +41,35 @@ env:
     - DEFINITION=5.3.29
     - DEFINITION=5.4.45
     - DEFINITION=5.5.38
-    - DEFINITION=5.6.38
-    - DEFINITION=7.0.32
-    - DEFINITION=7.1.23
-    - DEFINITION=7.2.11
-    - DEFINITION=7.3.0RC3
+    - DEFINITION=5.6.40
+    - DEFINITION=7.0.33
+    - DEFINITION=7.1.28
+    - DEFINITION=7.2.17
+    - DEFINITION=7.3.4
 
 before_install:
   - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" &&
-          "$DEFINITION" =~ ^("5.2.".*|"5.3."[0-6])$ ]]; then
-        export PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        if [[ "$DEFINITION" =~ ^("5.2.".*|"5.3."[0-6])$ ]]; then
+            export PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
+        fi
+        if [[ "$DEFINITION" =~ ^("5.2.".*|"5.3.".*)$ ]]; then
+            sudo apt-get install -y autoconf2.13
+            export PHP_AUTOCONF=/usr/bin/autoconf2.13
+        fi
     fi
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
         if [[ "$DEFINITION" =~ ^("5."[23]|"5.4."([0-9]|1[0-4])$) ]]; then
             export LIBS="-lssl -lcrypto"
         fi
-        brew update
-        brew install re2c libmcrypt openssl libxml2 icu4c libzip
-        brew upgrade pkg-config
         if [[ "$DEFINITION" == "5.2.17" ]]; then
-            brew install mysql@5.7
+            brew install --verbose mysql@5.7 | awk '/^==>/ { print $0 } NR % 100 == 0 { printf "." ; fflush() }'
             export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-mysql=$(brew --prefix mysql@5.7) --with-mysqli=$(brew --prefix mysql@5.7)/bin/mysql_config --with-pdo-mysql=$(brew --prefix mysql@5.7)"
+        fi
+        if [[ "$DEFINITION" =~ ^("5.2.".*|"5.3.".*)$ ]]; then
+            brew install autoconf@2.13
+            export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
         fi
     fi
 
@@ -62,4 +83,4 @@ script:
   - ./run-tests.sh $DEFINITION
 
 after_failure:
-  - cat $(ls -r /tmp/php-build*.log | head -n 1)
+  - head -1000 $(ls -r /tmp/php-build*.log | head -n 1)
