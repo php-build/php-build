@@ -64,8 +64,7 @@ before_install:
             export LIBS="-lssl -lcrypto"
         fi
         if [[ "$DEFINITION" == "5.2.17" ]]; then
-            brew install --verbose mysql@5.7 | awk '/^==>/ { print $0 } NR % 100 == 0 { printf "." ; fflush() }'
-            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-mysql=$(brew --prefix mysql@5.7) --with-mysqli=$(brew --prefix mysql@5.7)/bin/mysql_config --with-pdo-mysql=$(brew --prefix mysql@5.7)"
+            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --without-mysql --without-mysqli --without-pdo-mysql"
         fi
         if [[ "$DEFINITION" =~ ^("5.2.".*|"5.3.".*)$ ]]; then
             brew install autoconf@2.13
