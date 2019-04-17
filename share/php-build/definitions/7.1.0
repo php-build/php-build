@@ -1,5 +1,7 @@
 configure_option "--with-mcrypt" "/usr"
 
+patch_file "php-7.1.0-for-mojave.patch"
+
 install_package "https://secure.php.net/distributions/php-7.1.0.tar.bz2"
 install_xdebug "2.7.1"
 enable_builtin_opcache

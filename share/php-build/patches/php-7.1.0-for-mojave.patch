@@ -1,5 +1,5 @@
 diff --git a/acinclude.m4 b/acinclude.m4
-index 1a692b72f4..cf7f78a2a0 100644
+index ff814fb059..61f644f43b 100644
 --- a/acinclude.m4
 +++ b/acinclude.m4
 @@ -444,7 +444,18 @@ dnl
@@ -29,7 +29,7 @@ index 1a692b72f4..cf7f78a2a0 100644
  AC_DEFUN([PHP_ADD_INCLUDE],[
 -  if test "$1" != "/usr/include"; then
 +  is_system_incpath='no'
-+  if test "$is_system_incpath" = 'no'; then
++  if test $is_system_incpath = 'no'; then
 +    for i in $SYSTEM_SHLIBDIR_PATHS; do
 +      if test "$1" = "$i/include"; then
 +        is_system_incpath='yes'
@@ -140,7 +140,7 @@ index 1a692b72f4..cf7f78a2a0 100644
  dnl
  dnl PHP_CHECK_64BIT([do if 32], [do if 64])
  dnl
-@@ -2274,11 +2353,12 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
+@@ -2271,11 +2350,12 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
    if test "$found_kerberos" = "no"; then
  
      if test "$PHP_KERBEROS" = "yes"; then
@@ -155,7 +155,7 @@ index 1a692b72f4..cf7f78a2a0 100644
          PHP_KERBEROS_DIR=$i
          break
        fi
-@@ -2350,14 +2430,15 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
+@@ -2347,14 +2427,15 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
    if test "$found_openssl" = "no"; then
    
      if test "$PHP_OPENSSL_DIR" = "yes"; then
@@ -173,7 +173,7 @@ index 1a692b72f4..cf7f78a2a0 100644
          OPENSSL_LIBDIR=$i/$PHP_LIBDIR
        fi
        test -n "$OPENSSL_INCDIR" && test -n "$OPENSSL_LIBDIR" && break
-@@ -2470,7 +2551,7 @@ AC_DEFUN([PHP_SETUP_ICONV], [
+@@ -2467,7 +2548,7 @@ AC_DEFUN([PHP_SETUP_ICONV], [
    dnl
    if test "$found_iconv" = "no"; then
  
@@ -182,7 +182,7 @@ index 1a692b72f4..cf7f78a2a0 100644
        if test -r $i/include/giconv.h; then
          AC_DEFINE(HAVE_GICONV_H, 1, [ ])
          ICONV_DIR=$i
-@@ -2486,10 +2567,9 @@ AC_DEFUN([PHP_SETUP_ICONV], [
+@@ -2483,10 +2564,9 @@ AC_DEFUN([PHP_SETUP_ICONV], [
      if test -z "$ICONV_DIR"; then
        AC_MSG_ERROR([Please specify the install prefix of iconv with --with-iconv=<DIR>])
      fi
@@ -196,20 +196,20 @@ index 1a692b72f4..cf7f78a2a0 100644
        PHP_CHECK_LIBRARY($iconv_lib_name, libiconv, [
          found_iconv=yes
          PHP_DEFINE(HAVE_LIBICONV,1,[ext/iconv])
-@@ -2531,7 +2611,7 @@ AC_DEFUN([PHP_SETUP_LIBXML], [
-   dnl First try to find xml2-config
-   AC_CACHE_CHECK([for xml2-config path], ac_cv_php_xml2_config_path,
-   [
--    for i in $PHP_LIBXML_DIR /usr/local /usr; do
-+    for i in $PHP_LIBXML_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
-       if test -x "$i/bin/xml2-config"; then
-         ac_cv_php_xml2_config_path="$i/bin/xml2-config"
-         break
-diff --git a/configure.ac b/configure.ac
-index 0ff8641de7..785f0a388b 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -342,6 +342,7 @@ dnl -------------------------------------------------------------------------
+@@ -2525,7 +2605,7 @@ dnl
+ AC_DEFUN([PHP_SETUP_LIBXML], [
+ AC_CACHE_CHECK([for xml2-config path], ac_cv_php_xml2_config_path,
+ [
+-  for i in $PHP_LIBXML_DIR /usr/local /usr; do
++  for i in $PHP_LIBXML_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -x "$i/bin/xml2-config"; then
+       ac_cv_php_xml2_config_path="$i/bin/xml2-config"
+       break
+diff --git a/configure.in b/configure.in
+index 7d65b63..9e957f3 100644
+--- a/configure.in
++++ b/configure.in
+@@ -373,6 +373,7 @@ dnl -------------------------------------------------------------------------
  PTHREADS_CHECK
  PHP_HELP_SEPARATOR([SAPI modules:])
  PHP_SHLIB_SUFFIX_NAMES
@@ -217,7 +217,7 @@ index 0ff8641de7..785f0a388b 100644
  PHP_BUILD_PROGRAM
  PHP_SAPI=none
  
-@@ -404,7 +405,9 @@ if test -d /usr/pkg/include -a -d /usr/pkg/lib ; then
+@@ -435,7 +436,9 @@ if test -d /usr/pkg/include -a -d /usr/pkg/lib ; then
     CPPFLAGS="$CPPFLAGS -I/usr/pkg/include"
     LDFLAGS="$LDFLAGS -L/usr/pkg/lib"
  fi
@@ -228,15 +228,6 @@ index 0ff8641de7..785f0a388b 100644
  
  
  dnl First, library checks.
-@@ -762,7 +765,7 @@ if test "$PHP_VALGRIND" != "no"; then
-   AC_MSG_CHECKING([for valgrind header])
- 
-   if test "$PHP_VALGRIND" = "yes"; then
--    SEARCH_PATH="/usr/local /usr"
-+    SEARCH_PATH="/usr/local $SYSTEM_SHLIBDIR_PATHS"
-   else
-     SEARCH_PATH="$PHP_VALGRIND"
-   fi
 diff --git a/ext/bz2/config.m4 b/ext/bz2/config.m4
 index 55917c07f4..8e45b105d2 100644
 --- a/ext/bz2/config.m4
@@ -251,18 +242,18 @@ index 55917c07f4..8e45b105d2 100644
          BZIP_DIR=$i
          AC_MSG_RESULT(found in $i)
 diff --git a/ext/curl/config.m4 b/ext/curl/config.m4
-index 8e688c1a11..1e8155f98d 100644
+index 2f82c34..7081d92 100644
 --- a/ext/curl/config.m4
 +++ b/ext/curl/config.m4
-@@ -49,7 +49,7 @@ if test "$PHP_CURL" != "no"; then
-       CURL_DIR=$PHP_CURL
-     else
-       AC_MSG_CHECKING(for cURL in default path)
--      for i in /usr/local /usr; do
-+      for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
-         if test -r $i/include/curl/easy.h; then
-           CURL_DIR=$i
-           AC_MSG_RESULT(found in $i)
+@@ -10,7 +10,7 @@ if test "$PHP_CURL" != "no"; then
+     CURL_DIR=$PHP_CURL
+   else
+     AC_MSG_CHECKING(for cURL in default path)
+-    for i in /usr/local /usr; do
++    for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -r $i/include/curl/easy.h; then
+         CURL_DIR=$i
+         AC_MSG_RESULT(found in $i)
 diff --git a/ext/dba/config.m4 b/ext/dba/config.m4
 index 2a99c2a100..5c3cde6d0f 100644
 --- a/ext/dba/config.m4
@@ -301,15 +292,6 @@ index 2a99c2a100..5c3cde6d0f 100644
 -  for i in $PHP_TCADB /usr/local /usr; do
 +  for i in $PHP_TCADB /usr/local $SYSTEM_SHLIBDIR_PATHS; do
  	if test -f "$i/include/tcadb.h"; then
- 	  THIS_PREFIX=$i
- 	  PHP_ADD_INCLUDE($THIS_PREFIX/include)
-@@ -234,7 +234,7 @@ PHP_DBA_STD_RESULT(tcadb)
- dnl LMDB
- if test "$PHP_LMDB" != "no"; then
-   PHP_DBA_STD_BEGIN
--  for i in $PHP_LMDB /usr/local /usr; do
-+  for i in $PHP_LMDB /usr/local $SYSTEM_SHLIBDIR_PATHS; do
- 	if test -f "$i/include/lmdb.h"; then
  	  THIS_PREFIX=$i
  	  PHP_ADD_INCLUDE($THIS_PREFIX/include)
 @@ -269,7 +269,8 @@ AC_DEFUN([PHP_DBA_DB_CHECK],[
@@ -391,11 +373,11 @@ index d870cac667..0a56e37316 100755
  	for i in $ENCHANT_SEARCH_DIRS; do
  		if test -f $i/include/enchant/enchant.h; then
 diff --git a/ext/ext_skel b/ext/ext_skel
-index 09a003c92e..2c10acd773 100755
+index d1b8a2874c..b5623671c6 100755
 --- a/ext/ext_skel
 +++ b/ext/ext_skel
-@@ -146,7 +146,7 @@ if test "\$PHP_$EXTNAME" != "no"; then
-   dnl PHP_EVAL_INCLINE(\$LIBFOO_CFLAGS)
+@@ -128,7 +128,7 @@ if test "\$PHP_$EXTNAME" != "no"; then
+   dnl Write more examples of tests here...
  
    dnl # --with-$extname -> check with-path
 -  dnl SEARCH_PATH="/usr/local /usr"     # you might want to change this
@@ -528,7 +510,7 @@ index 6a056979e7..68a0367f6e 100644
      AC_MSG_CHECKING([if iconv is glibc's])
      AC_TRY_LINK([#include <gnu/libc-version.h>],[gnu_get_libc_version();],
 diff --git a/ext/imap/config.m4 b/ext/imap/config.m4
-index badb6e26b2..f48d2c25f4 100644
+index d0b86cba1c..c504724b49 100644
 --- a/ext/imap/config.m4
 +++ b/ext/imap/config.m4
 @@ -109,7 +109,7 @@ if test "$PHP_IMAP" != "no"; then
@@ -541,7 +523,7 @@ index badb6e26b2..f48d2c25f4 100644
        el[]IMAP_INC_CHK(/include/c-client)
        el[]IMAP_INC_CHK(/include/imap)
 diff --git a/ext/ldap/config.m4 b/ext/ldap/config.m4
-index 1a35c94eb1..471850f03f 100644
+index 7ea238f5a5..d6bb53f664 100644
 --- a/ext/ldap/config.m4
 +++ b/ext/ldap/config.m4
 @@ -42,7 +42,7 @@ AC_DEFUN([PHP_LDAP_CHECKS], [
@@ -562,22 +544,15 @@ index 1a35c94eb1..471850f03f 100644
        PHP_LDAP_CHECKS($i)
      done
    else
-@@ -119,70 +119,152 @@ if test "$PHP_LDAP" != "no"; then
+@@ -117,70 +117,120 @@ if test "$PHP_LDAP" != "no"; then
+     LDAP_PTHREAD=
+   fi
  
-   MACHINE_INCLUDES=$($CC -dumpmachine)
- 
--  if test -f $LDAP_LIBDIR/liblber.a || test -f $LDAP_LIBDIR/liblber.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/liblber.a || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/liblber.$SHLIB_SUFFIX_NAME; then
+-  if test -f $LDAP_LIBDIR/liblber.a || test -f $LDAP_LIBDIR/liblber.$SHLIB_SUFFIX_NAME; then
 -    PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
-+  FOUND_LIB="no"
- 
--  elif test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME.3 || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libldap.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libldap.$SHLIB_SUFFIX_NAME.3 || test -f $LDAP_LIBDIR/libldap.3.dylib; then
 -    PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/liblber, lib_exists)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/liblber, lib_exists)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
@@ -585,43 +560,21 @@ index 1a35c94eb1..471850f03f 100644
 +    fi
 +  fi
  
--  elif test -f $LDAP_LIBDIR/libssldap50.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libssldap50.$SHLIB_SUFFIX_NAME; then
--    if test -n "$LDAP_PTHREAD"; then
--      PHP_ADD_LIBRARY($LDAP_PTHREAD)
--    fi
--    PHP_ADD_LIBRARY_WITH_PATH(nspr4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(plc4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(plds4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(ssldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(ldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(prldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(ssl3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    AC_DEFINE(HAVE_NSLDAP,1,[ ])
+-  elif test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME.3 || test -f $LDAP_LIBDIR/libldap.3.dylib; then
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libldap, lib_exists, 3)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libldap, lib_exists, 3)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +    fi
 +  fi
  
--  elif test -f $LDAP_LIBDIR/libldapssl41.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libldapssl41.$SHLIB_SUFFIX_NAME; then
+-  elif test -f $LDAP_LIBDIR/libssldap50.$SHLIB_SUFFIX_NAME; then
 -    if test -n "$LDAP_PTHREAD"; then
 -      PHP_ADD_LIBRARY($LDAP_PTHREAD)
--    fi
--    PHP_ADD_LIBRARY_WITH_PATH(nspr3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(plc3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(plds3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(ldapssl41, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    AC_DEFINE(HAVE_NSLDAP,1,[ ])
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libssldap50, lib_exists)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libssldap50, lib_exists)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      if test -n "$LDAP_PTHREAD"; then
@@ -635,17 +588,22 @@ index 1a35c94eb1..471850f03f 100644
 +      PHP_ADD_LIBRARY_WITH_PATH(prldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +      PHP_ADD_LIBRARY_WITH_PATH(ssl3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +      AC_DEFINE(HAVE_NSLDAP,1,[ ])
-+    fi
+     fi
+-    PHP_ADD_LIBRARY_WITH_PATH(nspr4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(plc4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(plds4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ssldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(prldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ssl3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_NSLDAP,1,[ ])
 +  fi
  
--  elif test -f $LDAP_LIBDIR/libldapssl30.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libldapssl30.$SHLIB_SUFFIX_NAME; then
+-  elif test -f $LDAP_LIBDIR/libldapssl41.$SHLIB_SUFFIX_NAME; then
 -    if test -n "$LDAP_PTHREAD"; then
 -      PHP_ADD_LIBRARY($LDAP_PTHREAD)
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libldapssl41, lib_exists)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libssldap41, lib_exists)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      if test -n "$LDAP_PTHREAD"; then
@@ -657,18 +615,18 @@ index 1a35c94eb1..471850f03f 100644
 +      PHP_ADD_LIBRARY_WITH_PATH(ldapssl41, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +      AC_DEFINE(HAVE_NSLDAP,1,[ ])
      fi
--    PHP_ADD_LIBRARY_WITH_PATH(ldapssl30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(nspr3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(plc3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(plds3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ldapssl41, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 -    AC_DEFINE(HAVE_NSLDAP,1,[ ])
 +  fi
  
--  elif test -f $LDAP_LIBDIR/libldap30.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libldap30.$SHLIB_SUFFIX_NAME; then
+-  elif test -f $LDAP_LIBDIR/libldapssl30.$SHLIB_SUFFIX_NAME; then
 -    if test -n "$LDAP_PTHREAD"; then
 -      PHP_ADD_LIBRARY($LDAP_PTHREAD)
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libldapssl30, lib_exists)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libssldap30, lib_exists)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      if test -n "$LDAP_PTHREAD"; then
@@ -677,18 +635,15 @@ index 1a35c94eb1..471850f03f 100644
 +      PHP_ADD_LIBRARY_WITH_PATH(ldapssl30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +      AC_DEFINE(HAVE_NSLDAP,1,[ ])
      fi
--    PHP_ADD_LIBRARY_WITH_PATH(ldap30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ldapssl30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 -    AC_DEFINE(HAVE_NSLDAP,1,[ ])
 +  fi
  
--  elif test -f $LDAP_LIBDIR/libumich_ldap.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libumich_ldap.$SHLIB_SUFFIX_NAME; then
--    PHP_ADD_LIBRARY_WITH_PATH(umich_lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    PHP_ADD_LIBRARY_WITH_PATH(umich_ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-  elif test -f $LDAP_LIBDIR/libldap30.$SHLIB_SUFFIX_NAME; then
+-    if test -n "$LDAP_PTHREAD"; then
+-      PHP_ADD_LIBRARY($LDAP_PTHREAD)
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libldap30, lib_exists)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libdap30, lib_exists)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      if test -n "$LDAP_PTHREAD"; then
@@ -696,18 +651,16 @@ index 1a35c94eb1..471850f03f 100644
 +      fi
 +      PHP_ADD_LIBRARY_WITH_PATH(ldap30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +      AC_DEFINE(HAVE_NSLDAP,1,[ ])
-+    fi
+     fi
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_NSLDAP,1,[ ])
 +  fi
  
--  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME.12.1 || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libclntsh.$SHLIB_SUFFIX_NAME.12.1; then
--    PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--    AC_DEFINE(HAVE_ORALDAP,1,[ ])
--    AC_DEFINE(HAVE_ORALDAP_12,1,[ ])
+-  elif test -f $LDAP_LIBDIR/libumich_ldap.$SHLIB_SUFFIX_NAME; then
+-    PHP_ADD_LIBRARY_WITH_PATH(umich_lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(umich_ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libumich_ldap, lib_exists)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libumich_ldap, lib_exists)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      PHP_ADD_LIBRARY_WITH_PATH(umich_lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
@@ -715,15 +668,12 @@ index 1a35c94eb1..471850f03f 100644
 +    fi
 +  fi
  
--  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME.11.1 || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libclntsh.$SHLIB_SUFFIX_NAME.11.1; then
+-  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME.12.1; then
 -    PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
 -    AC_DEFINE(HAVE_ORALDAP,1,[ ])
--    AC_DEFINE(HAVE_ORALDAP_11,1,[ ])
+-    AC_DEFINE(HAVE_ORALDAP_12,1,[ ])
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libclntsh, lib_exists, 12.1)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libclntsh, lib_exists, 12.1)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
@@ -732,15 +682,12 @@ index 1a35c94eb1..471850f03f 100644
 +    fi
 +  fi
  
--  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/$MACHINE_INCLUDES/libclntsh.$SHLIB_SUFFIX_NAME; then
--     PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
--     AC_DEFINE(HAVE_ORALDAP,1,[ ])
--     AC_DEFINE(HAVE_ORALDAP_10,1,[ ])
+-  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME.11.1; then
+-    PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_ORALDAP,1,[ ])
+-    AC_DEFINE(HAVE_ORALDAP_11,1,[ ])
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libclntsh, lib_exists, 11.1)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libclntsh, lib_exists, 11.1)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
@@ -748,12 +695,13 @@ index 1a35c94eb1..471850f03f 100644
 +      AC_DEFINE(HAVE_ORALDAP_11,1,[ ])
 +    fi
 +  fi
-+
+ 
+-  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME; then
+-     PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-     AC_DEFINE(HAVE_ORALDAP,1,[ ])
+-     AC_DEFINE(HAVE_ORALDAP_10,1,[ ])
 +  if test $FOUND_LIB = "no"; then
 +    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libclntsh, lib_exists, 10.1)
-+    if test $lib_exists = "no"; then
-+      PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/$MACHINE_INCLUDES/libclntsh, lib_exists, 10.1)
-+    fi
 +    if test $lib_exists = "yes"; then
 +      FOUND_LIB="yes"
 +      PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
@@ -885,7 +833,7 @@ index 7f394d0465..85bcea168e 100644
    for i in $RECODE_LIST; do
      if test -f $i/include/recode.h; then
 diff --git a/ext/session/config.m4 b/ext/session/config.m4
-index b33855a676..befaed8d69 100644
+index 949306c026..fd8358bd45 100644
 --- a/ext/session/config.m4
 +++ b/ext/session/config.m4
 @@ -20,7 +20,7 @@ if test "$PHP_SESSION" != "no"; then
@@ -897,19 +845,6 @@ index b33855a676..befaed8d69 100644
      test -f "$i/include/mm.h" && MM_DIR=$i && break
    done
  
-diff --git a/ext/sodium/config.m4 b/ext/sodium/config.m4
-index 9388fc21a4..e215f0eeb1 100644
---- a/ext/sodium/config.m4
-+++ b/ext/sodium/config.m4
-@@ -5,7 +5,7 @@ PHP_ARG_WITH(sodium, for sodium support,
- [  --with-sodium[=DIR]     Include sodium support])
- 
- if test "$PHP_SODIUM" != "no"; then
--  SEARCH_PATH="/usr/local /usr"     # you might want to change this
-+  SEARCH_PATH="/usr/local $SYSTEM_SHLIBDIR_PATHS"     # you might want to change this
-   SEARCH_FOR="/include/sodium.h"  # you most likely want to change this
- 
-   AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 diff --git a/ext/sqlite3/config0.m4 b/ext/sqlite3/config0.m4
 index 78fd6224dc..e04a640d39 100644
 --- a/ext/sqlite3/config0.m4
@@ -923,19 +858,6 @@ index 78fd6224dc..e04a640d39 100644
        if test -r $i/include/sqlite3.h; then
          SQLITE3_DIR=$i
          AC_MSG_RESULT(found in $i)
-diff --git a/ext/standard/config.m4 b/ext/standard/config.m4
-index 87ee059bd3..6767923a33 100644
---- a/ext/standard/config.m4
-+++ b/ext/standard/config.m4
-@@ -417,7 +417,7 @@ PHP_ARG_WITH(password-argon2, for Argon2 support,
- 
- if test "$PHP_PASSWORD_ARGON2" != "no"; then
-   AC_MSG_CHECKING([for Argon2 library])
--  for i in $PHP_PASSWORD_ARGON2 /usr /usr/local ; do
-+  for i in $PHP_PASSWORD_ARGON2 /usr/local $SYSTEM_SHLIBDIR_PATHS; do
-     if test -r $i/include/argon2.h; then
-       ARGON2_DIR=$i;
-       AC_MSG_RESULT(found in $i)
 diff --git a/ext/tidy/config.m4 b/ext/tidy/config.m4
 index 88463fa8d4..78fa1e7e9b 100644
 --- a/ext/tidy/config.m4
@@ -950,7 +872,7 @@ index 88463fa8d4..78fa1e7e9b 100644
  
    for i in $TIDY_SEARCH_DIRS; do
 diff --git a/ext/wddx/config.m4 b/ext/wddx/config.m4
-index 96b566e2e3..40a044bea0 100644
+index 8f933d490a..68e2b9627c 100644
 --- a/ext/wddx/config.m4
 +++ b/ext/wddx/config.m4
 @@ -37,8 +37,9 @@ if test "$PHP_WDDX" != "no"; then
@@ -966,7 +888,7 @@ index 96b566e2e3..40a044bea0 100644
          break
        fi
 diff --git a/ext/xml/config.m4 b/ext/xml/config.m4
-index 715f65a915..19a2b8c125 100644
+index 812032bc6a..b0956c4624 100644
 --- a/ext/xml/config.m4
 +++ b/ext/xml/config.m4
 @@ -36,8 +36,9 @@ if test "$PHP_XML" != "no"; then
@@ -982,7 +904,7 @@ index 715f65a915..19a2b8c125 100644
          break
        fi
 diff --git a/ext/xmlrpc/config.m4 b/ext/xmlrpc/config.m4
-index 6ed7a6312a..f0672fc969 100644
+index f82016edcb..1f185366c6 100644
 --- a/ext/xmlrpc/config.m4
 +++ b/ext/xmlrpc/config.m4
 @@ -46,8 +46,9 @@ if test "$PHP_XMLRPC" != "no"; then
@@ -1029,7 +951,7 @@ index 9b6f8aaa49..8e70ff0f87 100644
            PHP_XSL_EXSL_DIR=$i
            break
 diff --git a/ext/zip/config.m4 b/ext/zip/config.m4
-index dc34cbf694..cc1cc0b1e6 100644
+index 7ae43250c0..5fed6e950e 100644
 --- a/ext/zip/config.m4
 +++ b/ext/zip/config.m4
 @@ -30,7 +30,7 @@ if test "$PHP_ZIP" != "no"; then

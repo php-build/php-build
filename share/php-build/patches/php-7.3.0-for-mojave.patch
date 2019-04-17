@@ -1,5 +1,5 @@
 diff --git a/acinclude.m4 b/acinclude.m4
-index 1a692b72f4..cf7f78a2a0 100644
+index e2cee40..fa4ded6 100644
 --- a/acinclude.m4
 +++ b/acinclude.m4
 @@ -444,7 +444,18 @@ dnl
@@ -22,14 +22,13 @@ index 1a692b72f4..cf7f78a2a0 100644
      PHP_EXPAND_PATH($1, ai_p)
      ifelse([$2],,[
        _PHP_ADD_LIBPATH_GLOBAL([$ai_p])
-@@ -489,8 +500,17 @@ dnl
- dnl add an include path. 
+@@ -487,7 +498,16 @@ dnl add an include path.
  dnl if before is 1, add in the beginning of INCLUDES.
  dnl
  AC_DEFUN([PHP_ADD_INCLUDE],[
 -  if test "$1" != "/usr/include"; then
 +  is_system_incpath='no'
-+  if test "$is_system_incpath" = 'no'; then
++  if test $is_system_incpath = 'no'; then
 +    for i in $SYSTEM_SHLIBDIR_PATHS; do
 +      if test "$1" = "$i/include"; then
 +        is_system_incpath='yes'
@@ -157,7 +156,7 @@ index 1a692b72f4..cf7f78a2a0 100644
        fi
 @@ -2350,14 +2430,15 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
    if test "$found_openssl" = "no"; then
-   
+ 
      if test "$PHP_OPENSSL_DIR" = "yes"; then
 -      PHP_OPENSSL_DIR="/usr/local/ssl /usr/local /usr /usr/local/openssl"
 +      PHP_OPENSSL_DIR="/usr/local/ssl /usr/local/openssl /usr/local $SYSTEM_SHLIBDIR_PATHS"
@@ -182,21 +181,18 @@ index 1a692b72f4..cf7f78a2a0 100644
        if test -r $i/include/giconv.h; then
          AC_DEFINE(HAVE_GICONV_H, 1, [ ])
          ICONV_DIR=$i
-@@ -2486,10 +2567,9 @@ AC_DEFUN([PHP_SETUP_ICONV], [
-     if test -z "$ICONV_DIR"; then
+@@ -2487,8 +2568,8 @@ AC_DEFUN([PHP_SETUP_ICONV], [
        AC_MSG_ERROR([Please specify the install prefix of iconv with --with-iconv=<DIR>])
      fi
--  
+ 
 -    if test -f $ICONV_DIR/$PHP_LIBDIR/lib$iconv_lib_name.a ||
 -       test -f $ICONV_DIR/$PHP_LIBDIR/lib$iconv_lib_name.$SHLIB_SUFFIX_NAME
--    then
-+
 +    PHP_CHECK_SHLIB_EXISTS($ICONV_DIR/$PHP_LIBDIR/lib$iconv_lib_name, iconv_lib_exists)
-+    if test $iconv_lib_exists = "yes"; then
++    if test $iconv_lib_exists = "yes"
+     then
        PHP_CHECK_LIBRARY($iconv_lib_name, libiconv, [
          found_iconv=yes
-         PHP_DEFINE(HAVE_LIBICONV,1,[ext/iconv])
-@@ -2531,7 +2611,7 @@ AC_DEFUN([PHP_SETUP_LIBXML], [
+@@ -2531,7 +2612,7 @@ AC_DEFUN([PHP_SETUP_LIBXML], [
    dnl First try to find xml2-config
    AC_CACHE_CHECK([for xml2-config path], ac_cv_php_xml2_config_path,
    [
@@ -767,23 +763,6 @@ index 1a35c94eb1..471850f03f 100644
      AC_MSG_ERROR(Cannot find ldap libraries in $LDAP_LIBDIR.)
    fi
  
-diff --git a/ext/pcre/config0.m4 b/ext/pcre/config0.m4
-index 80c8a58721..2db8ad732e 100644
---- a/ext/pcre/config0.m4
-+++ b/ext/pcre/config0.m4
-@@ -24,7 +24,11 @@ PHP_ARG_WITH(pcre-jit,,[  --with-pcre-jit         Enable PCRE JIT functionality
- 
-     AC_MSG_CHECKING([for PCRE library location])
-     for j in $PHP_PCRE_REGEX $PHP_PCRE_REGEX/$PHP_LIBDIR; do
--      test -f $j/libpcre.a || test -f $j/libpcre.$SHLIB_SUFFIX_NAME && PCRE_LIBDIR=$j
-+      PHP_CHECK_SHLIB_EXISTS($j/libpcre, lib_exists)
-+      if test $lib_exists = "yes"; then
-+        PCRE_LIBDIR=$j
-+        break
-+      fi
-     done
-     
-     if test -z "$PCRE_LIBDIR" ; then
 diff --git a/ext/pdo_dblib/config.m4 b/ext/pdo_dblib/config.m4
 index 407c3fe4de..9f8b253cc9 100644
 --- a/ext/pdo_dblib/config.m4
@@ -1051,16 +1030,14 @@ index dc34cbf694..cc1cc0b1e6 100644
            LIBZIP_CFLAGS="-I$i/include"
            LIBZIP_LIBDIR="$i/$PHP_LIBDIR"
 diff --git a/ext/zlib/config0.m4 b/ext/zlib/config0.m4
-index ab94c15fe0..5d05d396ca 100644
+index 4139ac2..76078de 100644
 --- a/ext/zlib/config0.m4
 +++ b/ext/zlib/config0.m4
-@@ -20,8 +20,8 @@ if test "$PHP_ZLIB" != "no" || test "$PHP_ZLIB_DIR" != "no"; then
-       ZLIB_DIR=$PHP_ZLIB
+@@ -21,7 +21,7 @@ if test "$PHP_ZLIB" != "no" || test "$PHP_ZLIB_DIR" != "no"; then
        ZLIB_INCDIR=$ZLIB_DIR/include
      fi
--  else 
+   else
 -    for i in /usr/local /usr $PHP_ZLIB_DIR; do
-+  else
 +    for i in $PHP_ZLIB_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
        if test -f $i/include/zlib/zlib.h; then
          ZLIB_DIR=$i
