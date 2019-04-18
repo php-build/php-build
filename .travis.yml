@@ -1,5 +1,5 @@
 sudo: false
-osx_image: xcode8
+osx_image: xcode8.3
 language: c
 
 os:
