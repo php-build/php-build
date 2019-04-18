@@ -1,4 +1,5 @@
 sudo: false
+dist: xenial
 osx_image: xcode8
 language: c
 
