@@ -23,6 +23,7 @@ addons:
       - libzip-dev
       - php7.0-cli
       - re2c
+      - zlib1g-dev
     update: true
   homebrew:
     packages:
