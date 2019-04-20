@@ -1,10 +1,5 @@
 sudo: false
-osx_image: xcode8
 language: c
-
-os:
-  - linux
-  - osx
 
 cache:
   apt: true
@@ -33,19 +28,89 @@ addons:
       - libzip
     update: true
 
-env:
-  global:
-    - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-  matrix:
-    - DEFINITION=5.2.17
-    - DEFINITION=5.3.29
-    - DEFINITION=5.4.45
-    - DEFINITION=5.5.38
-    - DEFINITION=5.6.40
-    - DEFINITION=7.0.33
-    - DEFINITION=7.1.28
-    - DEFINITION=7.2.17
-    - DEFINITION=7.3.4
+matrix:
+  include:
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.2.17
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.3.29
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.4.45
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.5.38
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.6.40
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.0.33
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.1.28
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.2.17
+    - os: linux
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.3.4
+    - os: osx
+      osx_image: xcode8
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.2.17
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.3.29
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.4.45
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.5.38
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=5.6.40
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.0.33
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.1.28
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.2.17
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.3.4
 
 before_install:
   - |
