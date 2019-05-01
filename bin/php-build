@@ -233,7 +233,7 @@ function download() {
         rm -rf "$PHP_BUILD_TMPDIR/source/$DEFINITION"
     fi
 
-    if [ -d "$PHP_BUILD_TMPDIR/source/$DEFINITION" ]; then
+    if [[ -d "$PHP_BUILD_TMPDIR/source/$DEFINITION" && -n "$(ls -A $PHP_BUILD_TMPDIR/source/$DEFINITION)" ]]; then
         log "Skipping" "Already downloaded and extracted $url"
         return
     fi
@@ -252,7 +252,7 @@ function download() {
         rm "$temp_package"
     fi
 
-    mkdir "$PHP_BUILD_TMPDIR/source/$DEFINITION"
+    mkdir -p "$PHP_BUILD_TMPDIR/source/$DEFINITION"
 
     "extract_$archive_type" "$package_file" "$PHP_BUILD_TMPDIR/source/$DEFINITION"
 }
