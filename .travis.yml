@@ -92,22 +92,22 @@ matrix:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.6.40
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.2
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.0.33
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.2
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.1.29
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.2
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.2.18
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.2
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.3.5
