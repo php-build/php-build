@@ -1,5 +1,6 @@
 sudo: false
 language: c
+dist: xenial
 
 cache:
   apt: true
@@ -15,7 +16,7 @@ addons:
       - libtidy-dev
       - libicu-dev
       - libzip-dev
-      - php5-cli
+      - php7.0-cli
       - re2c
     update: true
   homebrew:
@@ -63,7 +64,6 @@ matrix:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.2.19
     - os: linux
-      dist: xenial
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.3.6
