@@ -135,6 +135,9 @@ before_install:
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
         fi
+        if [[ "$DEFINITION" =~ ^("7.3.".*)$ ]]; then
+            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --without-libzip"
+        fi
     fi
 
 install:
