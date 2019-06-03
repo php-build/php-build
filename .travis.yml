@@ -122,6 +122,9 @@ before_install:
             sudo apt-get install -y autoconf2.13
             export PHP_AUTOCONF=/usr/bin/autoconf2.13
         fi
+        if [[ "$DEFINITION" =~ ^("7.3.".*)$ ]]; then
+            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --without-libzip"
+        fi
     fi
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -134,9 +137,6 @@ before_install:
         if [[ "$DEFINITION" =~ ^("5.2.".*|"5.3.".*)$ ]]; then
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
-        fi
-        if [[ "$DEFINITION" =~ ^("7.3.".*)$ ]]; then
-            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --without-libzip"
         fi
     fi
 
