@@ -15,7 +15,7 @@ addons:
       - libtidy-dev
       - libicu-dev
       - libzip-dev
-      - php5-cli
+      - php-cli
       - re2c
     update: true
   homebrew:
