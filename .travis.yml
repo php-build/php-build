@@ -31,38 +31,47 @@ addons:
 matrix:
   include:
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.2.17
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.3.29
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.4.45
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.5.38
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.6.40
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.0.33
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.1.32
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.2.22
     - os: linux
+      dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.3.9
