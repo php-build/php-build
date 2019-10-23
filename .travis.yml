@@ -160,7 +160,7 @@ before_install:
         fi
     fi
   - |
-    if [[ "$DEFINITION" =~ ^(""7.4.".*)$ ]]; then
+    if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
       set -xe \
         && mkdir -p /tmp/oniguruma \
         && cd /tmp/oniguruma \
