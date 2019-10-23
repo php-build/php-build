@@ -1,5 +1,10 @@
 configure_option "--with-mysql" "mysqlnd"
 configure_option "--with-mcrypt" "/usr"
+configure_option "--without-pear"
+configure_option "--with-gd"
+configure_option "--with-png-dir" "/usr"
+configure_option "--with-jpeg-dir" "/usr"
+configure_option "--enable-zip"
 
 install_package "https://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.4.20.tar.bz2;h=df5951b5a74997cacae7bdc205cc7f9f69c9c7ce;hb=0d30c35745d0f3ad7a4bc26f84bbcc2d1782f678"
 install_xdebug "2.4.1"

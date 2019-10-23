@@ -11,21 +11,23 @@ addons:
     sources:
       - sourceline: 'ppa:ondrej/php'
     packages:
-      - libmcrypt-dev
-      - libtidy-dev
       - libicu-dev
+      - libmcrypt-dev
+      - libonig-dev
+      - libtidy-dev
       - libzip-dev
       - php5-cli
       - re2c
     update: true
   homebrew:
     packages:
-      - re2c
-      - libmcrypt
-      - openssl
-      - libxml2
       - icu4c
+      - libmcrypt
+      - libxml2
       - libzip
+      - oniguruma
+      - openssl
+      - re2c
     update: true
 
 matrix:
@@ -75,6 +77,11 @@ matrix:
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.3.11
+    - os: linux
+      dist: trusty
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.4.0RC4
     - os: osx
       osx_image: xcode8
       env:
@@ -121,6 +128,12 @@ matrix:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.3.11
 
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
+        - DEFINITION=7.4.0RC4
+
 before_install:
   - |
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
@@ -131,7 +144,7 @@ before_install:
             sudo apt-get install -y autoconf2.13
             export PHP_AUTOCONF=/usr/bin/autoconf2.13
         fi
-        if [[ "$DEFINITION" =~ ^("7.3.".*)$ ]]; then
+        if [[ "$DEFINITION" =~ ^("7.3.".*|"7.4.".*)$ ]]; then
             export PHP_BUILD_CONFIGURE_OPTS="--without-libzip"
         fi
     fi
@@ -145,6 +158,17 @@ before_install:
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
             export LIBS="-lssl -lcrypto"
         fi
+    fi
+  - |
+    if [[ "$DEFINITION" =~ ^(""7.4.".*)$ ]]; then
+      set -xe \
+        && mkdir -p /tmp/oniguruma \
+        && cd /tmp/oniguruma \
+        && curl -Ls https://github.com/kkos/oniguruma/releases/download/v6.9.3/onig-6.9.3.tar.gz \
+          | tar xzC /tmp/oniguruma --strip-components=1 \
+        && ./configure --prefix=/usr/local \
+        && make -j $(nproc) \
+        && make install
     fi
 
 install:
