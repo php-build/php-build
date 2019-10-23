@@ -76,11 +76,6 @@ matrix:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.3.11
     - os: osx
-      osx_image: xcode8
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.2.17
-    - os: osx
       osx_image: xcode9.4
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
