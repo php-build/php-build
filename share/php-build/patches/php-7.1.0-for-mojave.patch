@@ -1,0 +1,1001 @@
+diff --git a/acinclude.m4 b/acinclude.m4
+index ff814fb059..61f644f43b 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -444,7 +444,18 @@ dnl
+ dnl Adds a path to linkpath/runpath (LDFLAGS)
+ dnl
+ AC_DEFUN([PHP_ADD_LIBPATH],[
+-  if test "$1" != "/usr/$PHP_LIBDIR" && test "$1" != "/usr/lib"; then
++  is_system_libpath='no'
++  if test "$1" = "/usr/$PHP_LIBDIR"; then
++    is_system_libpath='yes'
++  else
++    for i in $SYSTEM_SHLIBDIR_PATHS; do
++      if test "$1" = "$i/lib"; then
++        is_system_libpath='yes'
++        break
++      fi
++    done
++  fi
++  if test "$is_system_libpath" = 'no'; then
+     PHP_EXPAND_PATH($1, ai_p)
+     ifelse([$2],,[
+       _PHP_ADD_LIBPATH_GLOBAL([$ai_p])
+@@ -489,8 +500,17 @@ dnl
+ dnl add an include path. 
+ dnl if before is 1, add in the beginning of INCLUDES.
+ dnl
+ AC_DEFUN([PHP_ADD_INCLUDE],[
+-  if test "$1" != "/usr/include"; then
++  is_system_incpath='no'
++  if test $is_system_incpath = 'no'; then
++    for i in $SYSTEM_SHLIBDIR_PATHS; do
++      if test "$1" = "$i/include"; then
++        is_system_incpath='yes'
++        break
++      fi
++    done
++  fi
++  if test "$is_system_incpath" = 'no'; then
+     PHP_EXPAND_PATH($1, ai_p)
+     PHP_RUN_ONCE(INCLUDEPATH, $ai_p, [
+       if test "$2"; then
+@@ -1974,7 +1985,7 @@ dnl
+ dnl PHP_SHLIB_SUFFIX_NAMES
+ dnl
+ dnl Determines link library suffix SHLIB_SUFFIX_NAME
+-dnl which can be: .so, .sl or .dylib
++dnl which can be: .so, .sl .tbd or .dylib
+ dnl
+ dnl Determines shared library suffix SHLIB_DL_SUFFIX_NAME
+ dnl suffix can be: .so or .sl
+@@ -1982,21 +1993,89 @@ dnl
+ AC_DEFUN([PHP_SHLIB_SUFFIX_NAMES],[
+  AC_REQUIRE([PHP_CANONICAL_HOST_TARGET])dnl
+  PHP_SUBST_OLD(SHLIB_SUFFIX_NAME)
++ PHP_SUBST_OLD(SHLIB_SUFFIX_NAMES)
+  PHP_SUBST_OLD(SHLIB_DL_SUFFIX_NAME)
+  SHLIB_SUFFIX_NAME=so
++ SHLIB_SUFFIX_NAMES="so"
+  SHLIB_DL_SUFFIX_NAME=$SHLIB_SUFFIX_NAME
+  case $host_alias in
+  *hpux*[)]
+    SHLIB_SUFFIX_NAME=sl
++   SHLIB_SUFFIX_NAMES="sl"
+    SHLIB_DL_SUFFIX_NAME=sl
+    ;;
+  *darwin*[)]
+    SHLIB_SUFFIX_NAME=dylib
++   SHLIB_SUFFIX_NAMES="dylib tbd"
+    SHLIB_DL_SUFFIX_NAME=so
+    ;;
+  esac
+ ])
+ 
++AC_DEFUN([PHP_CHECK_SHLIB_EXISTS],[
++  $2=no
++  if test -n "$3"; then
++    for ext in $SHLIB_SUFFIX_NAMES; do
++      for ver in $3; do
++        if test $ext = "dylib" || test $ext = "tbd"; then
++          if test -f $1.$ver.$ext; then
++            $2=yes
++            break
++          fi
++        elif test -f $1.$ext.$ver; then
++          $2=yes
++          break
++        fi
++      done
++      if test $2 = "yes"; then
++        break
++      fi
++    done
++  else
++    for ext in a $SHLIB_SUFFIX_NAMES; do
++      if test -f $1.$ext; then
++        $2=yes
++        break
++      fi
++    done
++  fi
++])
++
++AC_DEFUN([PHP_SYSTEM_SHLIBDIR_PATHS],[
++  AC_REQUIRE([PHP_CANONICAL_HOST_TARGET])dnl
++  PHP_SUBST_OLD(SYSTEM_SHLIBDIR_PATHS)
++  SYSTEM_SHLIBDIR_PATHS="/usr"
++  case $host_alias in
++  *darwin*[)]
++    shopt -s nullglob
++
++    CLT_SDK_PATH=""
++    for sdk_path in /Library/Developer/CommandLineTools/SDKs/*.sdk; do
++      CLT_SDK_PATH="$CLT_SDK_PATH $sdk_path/usr"
++    done
++    if test -z "$CLT_SDK_PATH" && xcrun --show-sdk-path >/dev/null 2>&1; then
++      CLT_SDK_PATH="$(xcrun --show-sdk-path)/usr"
++    fi
++    if test -n "$CLT_SDK_PATH"; then
++      SYSTEM_SHLIBDIR_PATHS="$SYSTEM_SHLIBDIR_PATHS $CLT_SDK_PATH"
++    fi
++
++    XCODE_SDK_PATH=""
++    for sdk_path in /Applications/Xcode*.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/*.sdk; do
++      XCODE_SDK_PATH="$XCODE_SDK_PATH $sdk_path/usr"
++    done
++    if test -z "$XCODE_SDK_PATH" && xcrun --show-sdk-platform-path >/dev/null 2>&1; then
++      XCODE_SDK_PATH="$(xcrun --show-sdk-platform-path)/usr"
++    fi
++    if test -n "$XCODE_SDK_PATH"; then
++      SYSTEM_SHLIBDIR_PATHS="$SYSTEM_SHLIBDIR_PATHS $XCODE_SDK_PATH"
++    fi
++
++    shopt -u nullglob
++    ;;
++  esac
++])
++
+ dnl
+ dnl PHP_CHECK_64BIT([do if 32], [do if 64])
+ dnl
+@@ -2271,11 +2350,12 @@ AC_DEFUN([PHP_SETUP_KERBEROS],[
+   if test "$found_kerberos" = "no"; then
+ 
+     if test "$PHP_KERBEROS" = "yes"; then
+-      PHP_KERBEROS="/usr/kerberos /usr/local /usr"
++      PHP_KERBEROS="/usr/kerberos /usr/local $SYSTEM_SHLIBDIR_PATHS"
+     fi
+ 
+     for i in $PHP_KERBEROS; do
+-      if test -f $i/$PHP_LIBDIR/libkrb5.a || test -f $i/$PHP_LIBDIR/libkrb5.$SHLIB_SUFFIX_NAME; then
++      PHP_CHECK_SHLIB_EXISTS($i/$PHP_LIBDIR/libkrb5, krb_lib_exists)
++      if test $krb_lib_exists = "yes"; then
+         PHP_KERBEROS_DIR=$i
+         break
+       fi
+@@ -2347,14 +2427,15 @@ AC_DEFUN([PHP_SETUP_OPENSSL],[
+   if test "$found_openssl" = "no"; then
+   
+     if test "$PHP_OPENSSL_DIR" = "yes"; then
+-      PHP_OPENSSL_DIR="/usr/local/ssl /usr/local /usr /usr/local/openssl"
++      PHP_OPENSSL_DIR="/usr/local/ssl /usr/local/openssl /usr/local $SYSTEM_SHLIBDIR_PATHS"
+     fi
+ 
+     for i in $PHP_OPENSSL_DIR; do
+       if test -r $i/include/openssl/evp.h; then
+         OPENSSL_INCDIR=$i/include
+       fi
+-      if test -r $i/$PHP_LIBDIR/libssl.a -o -r $i/$PHP_LIBDIR/libssl.$SHLIB_SUFFIX_NAME; then
++      PHP_CHECK_SHLIB_EXISTS($i/$PHP_LIBDIR/libssl, openssl_lib_exists)
++      if test $openssl_lib_exists = "yes"; then
+         OPENSSL_LIBDIR=$i/$PHP_LIBDIR
+       fi
+       test -n "$OPENSSL_INCDIR" && test -n "$OPENSSL_LIBDIR" && break
+@@ -2467,7 +2548,7 @@ AC_DEFUN([PHP_SETUP_ICONV], [
+   dnl
+   if test "$found_iconv" = "no"; then
+ 
+-    for i in $PHP_ICONV /usr/local /usr; do
++    for i in $PHP_ICONV /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -r $i/include/giconv.h; then
+         AC_DEFINE(HAVE_GICONV_H, 1, [ ])
+         ICONV_DIR=$i
+@@ -2483,10 +2564,9 @@ AC_DEFUN([PHP_SETUP_ICONV], [
+     if test -z "$ICONV_DIR"; then
+       AC_MSG_ERROR([Please specify the install prefix of iconv with --with-iconv=<DIR>])
+     fi
+-  
+-    if test -f $ICONV_DIR/$PHP_LIBDIR/lib$iconv_lib_name.a ||
+-       test -f $ICONV_DIR/$PHP_LIBDIR/lib$iconv_lib_name.$SHLIB_SUFFIX_NAME
+-    then
++
++    PHP_CHECK_SHLIB_EXISTS($ICONV_DIR/$PHP_LIBDIR/lib$iconv_lib_name, iconv_lib_exists)
++    if test $iconv_lib_exists = "yes"; then
+       PHP_CHECK_LIBRARY($iconv_lib_name, libiconv, [
+         found_iconv=yes
+         PHP_DEFINE(HAVE_LIBICONV,1,[ext/iconv])
+@@ -2525,7 +2605,7 @@ dnl
+ AC_DEFUN([PHP_SETUP_LIBXML], [
+ AC_CACHE_CHECK([for xml2-config path], ac_cv_php_xml2_config_path,
+ [
+-  for i in $PHP_LIBXML_DIR /usr/local /usr; do
++  for i in $PHP_LIBXML_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -x "$i/bin/xml2-config"; then
+       ac_cv_php_xml2_config_path="$i/bin/xml2-config"
+       break
+diff --git a/configure.in b/configure.in
+index 7d65b63..9e957f3 100644
+--- a/configure.in
++++ b/configure.in
+@@ -373,6 +373,7 @@ dnl -------------------------------------------------------------------------
+ PTHREADS_CHECK
+ PHP_HELP_SEPARATOR([SAPI modules:])
+ PHP_SHLIB_SUFFIX_NAMES
++PHP_SYSTEM_SHLIBDIR_PATHS
+ PHP_BUILD_PROGRAM
+ PHP_SAPI=none
+ 
+@@ -435,7 +436,9 @@ if test -d /usr/pkg/include -a -d /usr/pkg/lib ; then
+    CPPFLAGS="$CPPFLAGS -I/usr/pkg/include"
+    LDFLAGS="$LDFLAGS -L/usr/pkg/lib"
+ fi
+-test -d /usr/ucblib && PHP_ADD_LIBPATH(/usr/ucblib)
++if test -d /usr/ucblib; then
++  PHP_ADD_LIBPATH(/usr/ucblib)
++fi
+ 
+ 
+ dnl First, library checks.
+diff --git a/ext/bz2/config.m4 b/ext/bz2/config.m4
+index 55917c07f4..8e45b105d2 100644
+--- a/ext/bz2/config.m4
++++ b/ext/bz2/config.m4
+@@ -10,7 +10,7 @@ if test "$PHP_BZ2" != "no"; then
+     BZIP_DIR=$PHP_BZ2
+   else
+     AC_MSG_CHECKING(for BZip2 in default path)
+-    for i in /usr/local /usr; do
++    for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -r $i/include/bzlib.h; then
+         BZIP_DIR=$i
+         AC_MSG_RESULT(found in $i)
+diff --git a/ext/curl/config.m4 b/ext/curl/config.m4
+index 2f82c34..7081d92 100644
+--- a/ext/curl/config.m4
++++ b/ext/curl/config.m4
+@@ -10,7 +10,7 @@ if test "$PHP_CURL" != "no"; then
+     CURL_DIR=$PHP_CURL
+   else
+     AC_MSG_CHECKING(for cURL in default path)
+-    for i in /usr/local /usr; do
++    for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -r $i/include/curl/easy.h; then
+         CURL_DIR=$i
+         AC_MSG_RESULT(found in $i)
+diff --git a/ext/dba/config.m4 b/ext/dba/config.m4
+index 2a99c2a100..5c3cde6d0f 100644
+--- a/ext/dba/config.m4
++++ b/ext/dba/config.m4
+@@ -111,7 +111,7 @@ dnl
+ # QDBM
+ if test "$PHP_QDBM" != "no"; then
+   PHP_DBA_STD_BEGIN
+-  for i in $PHP_QDBM /usr/local /usr; do
++  for i in $PHP_QDBM /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -f "$i/include/depot.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/include/depot.h
+@@ -144,7 +144,7 @@ if test "$PHP_GDBM" != "no"; then
+   if test "$HAVE_QDBM" = "1"; then
+     PHP_DBA_STD_RESULT(gdbm, gdbm, [You cannot combine --with-gdbm with --with-qdbm])
+   fi
+-  for i in $PHP_GDBM /usr/local /usr; do
++  for i in $PHP_GDBM /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -f "$i/include/gdbm.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/include/gdbm.h
+@@ -169,7 +169,7 @@ PHP_DBA_STD_RESULT(gdbm)
+ # NDBM
+ if test "$PHP_NDBM" != "no"; then
+   PHP_DBA_STD_BEGIN
+-  for i in $PHP_NDBM /usr/local /usr; do
++  for i in $PHP_NDBM /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -f "$i/include/ndbm.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/include/ndbm.h
+@@ -203,7 +203,7 @@ PHP_DBA_STD_RESULT(ndbm)
+ dnl TCADB
+ if test "$PHP_TCADB" != "no"; then
+   PHP_DBA_STD_BEGIN
+-  for i in $PHP_TCADB /usr/local /usr; do
++  for i in $PHP_TCADB /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+ 	if test -f "$i/include/tcadb.h"; then
+ 	  THIS_PREFIX=$i
+ 	  PHP_ADD_INCLUDE($THIS_PREFIX/include)
+@@ -269,7 +269,8 @@ AC_DEFUN([PHP_DBA_DB_CHECK],[
+     AC_MSG_ERROR([DBA: Could not find necessary header file(s).])
+   fi
+   for LIB in $2; do
+-    if test -f $THIS_PREFIX/$PHP_LIBDIR/lib$LIB.a || test -f $THIS_PREFIX/$PHP_LIBDIR/lib$LIB.$SHLIB_SUFFIX_NAME; then
++    PHP_CHECK_SHLIB_EXISTS($THIS_PREFIX/$PHP_LIBDIR/lib$LIB, dba_lib_exists)
++    if test $dba_lib_exists = "yes"; then
+       lib_found="";
+       PHP_TEMP_LDFLAGS(-L$THIS_PREFIX/$PHP_LIBDIR, -l$LIB,[
+         AC_TRY_LINK([
+@@ -345,7 +346,7 @@ if test "$PHP_DB4" != "no"; then
+   PHP_DBA_STD_BEGIN
+   dbdp4="/usr/local/BerkeleyDB.4."
+   dbdp5="/usr/local/BerkeleyDB.5."
+-  for i in $PHP_DB4 ${dbdp5}1 ${dbdp5}0 ${dbdp4}8 ${dbdp4}7 ${dbdp4}6 ${dbdp4}5 ${dbdp4}4 ${dbdp4}3 ${dbdp4}2 ${dbdp4}1 ${dbdp}0 /usr/local /usr; do
++  for i in $PHP_DB4 ${dbdp5}1 ${dbdp5}0 ${dbdp4}8 ${dbdp4}7 ${dbdp4}6 ${dbdp4}5 ${dbdp4}4 ${dbdp4}3 ${dbdp4}2 ${dbdp4}1 ${dbdp}0 /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -f "$i/db5/db.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/db5/db.h
+@@ -410,7 +411,8 @@ if test "$PHP_DB3" != "no"; then
+   if test "$HAVE_DB4" = "1"; then
+     PHP_DBA_STD_RESULT(db3, Berkeley DB3, [You cannot combine --with-db3 with --with-db4])
+   fi
+-  for i in $PHP_DB3 /usr/local/BerkeleyDB.3.3 /usr/local/BerkeleyDB.3.2 /usr/local/BerkeleyDB.3.1 /usr/local/BerkeleyDB.3.0 /usr/local /usr; do
++  dbdp3="/usr/local/BerkeleyDB.3."
++  for i in $PHP_DB3 ${dbdp3}.3 ${dbdp3}.2 ${dbdp3}.1 ${dbdp3}.0 /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -f "$i/db3/db.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/include/db3/db.h
+@@ -443,7 +445,7 @@ if test "$PHP_DB2" != "no"; then
+   if test "$HAVE_DB3" = "1" || test "$HAVE_DB4" = "1"; then
+     PHP_DBA_STD_RESULT(db2, Berkeley DB2, [You cannot combine --with-db2 with --with-db3 or --with-db4])
+   fi
+-  for i in $PHP_DB2 $PHP_DB2/BerkeleyDB /usr/BerkeleyDB /usr/local /usr; do
++  for i in $PHP_DB2 $PHP_DB2/BerkeleyDB /usr/BerkeleyDB /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -f "$i/db2/db.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/db2/db.h
+@@ -496,7 +498,7 @@ if test "$PHP_DB1" != "no"; then
+     done
+   else
+     AC_DEFINE_UNQUOTED(DB1_VERSION, "Unknown DB1", [ ])
+-    for i in $PHP_DB1 /usr/local /usr; do
++    for i in $PHP_DB1 /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -f "$i/db1/db.h"; then
+         THIS_PREFIX=$i
+         THIS_INCLUDE=$i/db1/db.h
+@@ -543,7 +545,7 @@ if test "$PHP_DBM" != "no"; then
+   if test "$HAVE_QDBM" = "1"; then
+     PHP_DBA_STD_RESULT(dbm, dbm, [You cannot combine --with-dbm with --with-qdbm])
+   fi
+-  for i in $PHP_DBM /usr/local /usr; do
++  for i in $PHP_DBM /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -f "$i/include/dbm.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/include/dbm.h
+@@ -609,7 +611,7 @@ if test "$PHP_CDB" = "yes"; then
+   THIS_RESULT="builtin"
+ elif test "$PHP_CDB" != "no"; then
+   PHP_DBA_STD_BEGIN
+-  for i in $PHP_CDB /usr/local /usr; do
++  for i in $PHP_CDB /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -f "$i/include/cdb.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/include/cdb.h
+diff --git a/ext/enchant/config.m4 b/ext/enchant/config.m4
+index d870cac667..0a56e37316 100755
+--- a/ext/enchant/config.m4
++++ b/ext/enchant/config.m4
+@@ -11,7 +11,7 @@ if test "$PHP_ENCHANT" != "no"; then
+ 	if test "$PHP_ENCHANT" != "yes"; then
+ 	    ENCHANT_SEARCH_DIRS=$PHP_ENCHANT
+ 	else
+-	    ENCHANT_SEARCH_DIRS="/usr/local /usr"
++	    ENCHANT_SEARCH_DIRS="/usr/local $SYSTEM_SHLIBDIR_PATHS"
+ 	fi
+ 	for i in $ENCHANT_SEARCH_DIRS; do
+ 		if test -f $i/include/enchant/enchant.h; then
+diff --git a/ext/ext_skel b/ext/ext_skel
+index d1b8a2874c..b5623671c6 100755
+--- a/ext/ext_skel
++++ b/ext/ext_skel
+@@ -128,7 +128,7 @@ if test "\$PHP_$EXTNAME" != "no"; then
+   dnl Write more examples of tests here...
+ 
+   dnl # --with-$extname -> check with-path
+-  dnl SEARCH_PATH="/usr/local /usr"     # you might want to change this
++  dnl SEARCH_PATH="/usr/local $SYSTEM_SHLIBDIR_PATHS"     # you might want to change this
+   dnl SEARCH_FOR="/include/$extname.h"  # you most likely want to change this
+   dnl if test -r \$PHP_$EXTNAME/\$SEARCH_FOR; then # path given as parameter
+   dnl   ${EXTNAME}_DIR=\$PHP_$EXTNAME
+diff --git a/ext/gd/config.m4 b/ext/gd/config.m4
+index 1edd91f4ad..4d8fd335c2 100644
+--- a/ext/gd/config.m4
++++ b/ext/gd/config.m4
+@@ -54,7 +54,7 @@ AC_DEFUN([PHP_GD_ZLIB],[
+ 			AC_MSG_ERROR([Can't find zlib headers under "$PHP_ZLIB_DIR"])
+ 		fi
+ 	else
+-		for i in /usr/local /usr; do
++		for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+ 			if test -f "$i/include/zlib/zlib.h"; then
+ 				PHP_ZLIB_DIR="$i"
+ 				PHP_ZLIB_INCDIR="$i/include/zlib"
+@@ -69,7 +69,7 @@ AC_DEFUN([PHP_GD_ZLIB],[
+ AC_DEFUN([PHP_GD_WEBP],[
+   if test "$PHP_WEBP_DIR" != "no"; then
+ 
+-    for i in $PHP_WEBP_DIR /usr/local /usr; do
++    for i in $PHP_WEBP_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       test -f $i/include/webp/decode.h && GD_WEBP_DIR=$i && break
+     done
+ 
+@@ -77,7 +77,7 @@ AC_DEFUN([PHP_GD_WEBP],[
+       AC_MSG_ERROR([webp/decode.h not found.])
+     fi
+ 
+-    for i in $PHP_WEBP_DIR /usr/local /usr; do
++    for i in $PHP_WEBP_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       test -f $i/include/webp/encode.h && GD_WEBP_DIR=$i && break
+     done
+ 
+@@ -103,7 +103,7 @@ AC_DEFUN([PHP_GD_WEBP],[
+ AC_DEFUN([PHP_GD_JPEG],[
+   if test "$PHP_JPEG_DIR" != "no"; then
+ 
+-    for i in $PHP_JPEG_DIR /usr/local /usr; do
++    for i in $PHP_JPEG_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       test -f $i/include/jpeglib.h && GD_JPEG_DIR=$i && break
+     done
+ 
+@@ -128,7 +128,7 @@ AC_DEFUN([PHP_GD_JPEG],[
+ AC_DEFUN([PHP_GD_PNG],[
+   if test "$PHP_PNG_DIR" != "no"; then
+ 
+-    for i in $PHP_PNG_DIR /usr/local /usr; do
++    for i in $PHP_PNG_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       test -f $i/include/png.h && GD_PNG_DIR=$i && break
+     done
+ 
+@@ -159,9 +159,14 @@ AC_DEFUN([PHP_GD_PNG],[
+ AC_DEFUN([PHP_GD_XPM],[
+   if test "$PHP_XPM_DIR" != "no"; then
+ 
+-    for i in $PHP_XPM_DIR /usr/local /usr/X11R6 /usr; do
+-      test -f $i/include/xpm.h && GD_XPM_DIR=$i && GD_XPM_INC=$i && break
+-      test -f $i/include/X11/xpm.h && GD_XPM_DIR=$i && GD_XPM_INC=$i/X11 && break
++    for i in $PHP_XPM_DIR /usr/X11 /usr/X11R6 /usr/local $SYSTEM_SHLIBDIR_PATHS; do
++      for incdir in $i/include $i/include/X11; do
++        if test -f $incdir/xpm.h; then
++          GD_XPM_DIR=$i
++          GD_XPM_INC=$incdir
++          break
++        fi
++      done
+     done
+ 
+     if test -z "$GD_XPM_DIR"; then
+@@ -186,7 +191,7 @@ AC_DEFUN([PHP_GD_XPM],[
+ AC_DEFUN([PHP_GD_FREETYPE2],[
+   if test "$PHP_FREETYPE_DIR" != "no"; then
+ 
+-    for i in $PHP_FREETYPE_DIR /usr/local /usr; do
++    for i in $PHP_FREETYPE_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -f "$i/bin/freetype-config"; then
+         FREETYPE2_DIR=$i
+         FREETYPE2_CONFIG="$i/bin/freetype-config"
+diff --git a/ext/gettext/config.m4 b/ext/gettext/config.m4
+index c82be9cc05..47d4a3b48e 100644
+--- a/ext/gettext/config.m4
++++ b/ext/gettext/config.m4
+@@ -6,7 +6,7 @@ PHP_ARG_WITH(gettext,for GNU gettext support,
+ [  --with-gettext[=DIR]      Include GNU gettext support])
+ 
+ if test "$PHP_GETTEXT" != "no"; then
+-  for i in $PHP_GETTEXT /usr/local /usr; do
++  for i in $PHP_GETTEXT /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     test -r $i/include/libintl.h && GETTEXT_DIR=$i && break
+   done
+ 
+diff --git a/ext/gmp/config.m4 b/ext/gmp/config.m4
+index 22cca7eaf2..89a65d3751 100644
+--- a/ext/gmp/config.m4
++++ b/ext/gmp/config.m4
+@@ -5,7 +5,7 @@ if test "$PHP_GMP" != "no"; then
+ 
+   MACHINE_INCLUDES=$($CC -dumpmachine)
+ 
+-  for i in $PHP_GMP /usr/local /usr; do
++  for i in $PHP_GMP /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     test -f $i/include/gmp.h && GMP_DIR=$i && break
+     test -f $i/include/$MACHINE_INCLUDES/gmp.h && GMP_DIR=$i && break
+   done
+diff --git a/ext/iconv/config.m4 b/ext/iconv/config.m4
+index 6a056979e7..68a0367f6e 100644
+--- a/ext/iconv/config.m4
++++ b/ext/iconv/config.m4
+@@ -15,7 +15,7 @@ if test "$PHP_ICONV" != "no"; then
+ 
+   if test "$iconv_avail" != "no"; then
+     if test -z "$ICONV_DIR"; then
+-      for i in /usr/local /usr; do
++      for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+         if test -f "$i/include/iconv.h" || test -f "$i/include/giconv.h"; then
+           PHP_ICONV_PREFIX="$i"
+           break
+@@ -35,7 +35,7 @@ if test "$PHP_ICONV" != "no"; then
+       PHP_ICONV_H_PATH="$PHP_ICONV_PREFIX/include/giconv.h"
+     else
+       PHP_ICONV_H_PATH="$PHP_ICONV_PREFIX/include/iconv.h"
+-	fi
++    fi
+ 
+     AC_MSG_CHECKING([if iconv is glibc's])
+     AC_TRY_LINK([#include <gnu/libc-version.h>],[gnu_get_libc_version();],
+diff --git a/ext/imap/config.m4 b/ext/imap/config.m4
+index d0b86cba1c..c504724b49 100644
+--- a/ext/imap/config.m4
++++ b/ext/imap/config.m4
+@@ -109,7 +109,7 @@ if test "$PHP_IMAP" != "no"; then
+     PHP_NEW_EXTENSION(imap, php_imap.c, $ext_shared)
+     AC_DEFINE(HAVE_IMAP,1,[ ])
+ 
+-    for i in $PHP_IMAP /usr/local /usr; do
++    for i in $PHP_IMAP /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       IMAP_INC_CHK()
+       el[]IMAP_INC_CHK(/include/c-client)
+       el[]IMAP_INC_CHK(/include/imap)
+diff --git a/ext/ldap/config.m4 b/ext/ldap/config.m4
+index 7ea238f5a5..d6bb53f664 100644
+--- a/ext/ldap/config.m4
++++ b/ext/ldap/config.m4
+@@ -42,7 +42,7 @@ AC_DEFUN([PHP_LDAP_CHECKS], [
+ 
+ AC_DEFUN([PHP_LDAP_SASL_CHECKS], [
+   if test "$1" = "yes"; then
+-    SEARCH_DIRS="/usr/local /usr"
++    SEARCH_DIRS="/usr/local $SYSTEM_SHLIBDIR_PATHS"
+   else
+     SEARCH_DIRS=$1
+   fi
+@@ -95,7 +95,7 @@ if test "$PHP_LDAP" != "no"; then
+   PHP_NEW_EXTENSION(ldap, ldap.c, $ext_shared,,-DLDAP_DEPRECATED=1)
+ 
+   if test "$PHP_LDAP" = "yes"; then
+-    for i in /usr/local /usr; do
++    for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       PHP_LDAP_CHECKS($i)
+     done
+   else
+@@ -117,70 +117,120 @@ if test "$PHP_LDAP" != "no"; then
+     LDAP_PTHREAD=
+   fi
+ 
+-  if test -f $LDAP_LIBDIR/liblber.a || test -f $LDAP_LIBDIR/liblber.$SHLIB_SUFFIX_NAME; then
+-    PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/liblber, lib_exists)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      PHP_ADD_LIBRARY_WITH_PATH(lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++    fi
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME || test -f $LDAP_LIBDIR/libldap.$SHLIB_SUFFIX_NAME.3 || test -f $LDAP_LIBDIR/libldap.3.dylib; then
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libldap, lib_exists, 3)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      PHP_ADD_LIBRARY_WITH_PATH(ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++    fi
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libssldap50.$SHLIB_SUFFIX_NAME; then
+-    if test -n "$LDAP_PTHREAD"; then
+-      PHP_ADD_LIBRARY($LDAP_PTHREAD)
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libssldap50, lib_exists)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      if test -n "$LDAP_PTHREAD"; then
++        PHP_ADD_LIBRARY($LDAP_PTHREAD)
++      fi
++      PHP_ADD_LIBRARY_WITH_PATH(nspr4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(plc4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(plds4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(ssldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(ldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(prldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(ssl3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      AC_DEFINE(HAVE_NSLDAP,1,[ ])
+     fi
+-    PHP_ADD_LIBRARY_WITH_PATH(nspr4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(plc4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(plds4, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ssldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(prldap50, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ssl3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_NSLDAP,1,[ ])
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libldapssl41.$SHLIB_SUFFIX_NAME; then
+-    if test -n "$LDAP_PTHREAD"; then
+-      PHP_ADD_LIBRARY($LDAP_PTHREAD)
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libldapssl41, lib_exists)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      if test -n "$LDAP_PTHREAD"; then
++        PHP_ADD_LIBRARY($LDAP_PTHREAD)
++      fi
++      PHP_ADD_LIBRARY_WITH_PATH(nspr3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(plc3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(plds3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(ldapssl41, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      AC_DEFINE(HAVE_NSLDAP,1,[ ])
+     fi
+-    PHP_ADD_LIBRARY_WITH_PATH(nspr3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(plc3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(plds3, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(ldapssl41, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_NSLDAP,1,[ ])
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libldapssl30.$SHLIB_SUFFIX_NAME; then
+-    if test -n "$LDAP_PTHREAD"; then
+-      PHP_ADD_LIBRARY($LDAP_PTHREAD)
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libldapssl30, lib_exists)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      if test -n "$LDAP_PTHREAD"; then
++        PHP_ADD_LIBRARY($LDAP_PTHREAD)
++      fi
++      PHP_ADD_LIBRARY_WITH_PATH(ldapssl30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      AC_DEFINE(HAVE_NSLDAP,1,[ ])
+     fi
+-    PHP_ADD_LIBRARY_WITH_PATH(ldapssl30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_NSLDAP,1,[ ])
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libldap30.$SHLIB_SUFFIX_NAME; then
+-    if test -n "$LDAP_PTHREAD"; then
+-      PHP_ADD_LIBRARY($LDAP_PTHREAD)
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libldap30, lib_exists)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      if test -n "$LDAP_PTHREAD"; then
++        PHP_ADD_LIBRARY($LDAP_PTHREAD)
++      fi
++      PHP_ADD_LIBRARY_WITH_PATH(ldap30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      AC_DEFINE(HAVE_NSLDAP,1,[ ])
+     fi
+-    PHP_ADD_LIBRARY_WITH_PATH(ldap30, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_NSLDAP,1,[ ])
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libumich_ldap.$SHLIB_SUFFIX_NAME; then
+-    PHP_ADD_LIBRARY_WITH_PATH(umich_lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    PHP_ADD_LIBRARY_WITH_PATH(umich_ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libumich_ldap, lib_exists)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      PHP_ADD_LIBRARY_WITH_PATH(umich_lber, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      PHP_ADD_LIBRARY_WITH_PATH(umich_ldap, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++    fi
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME.12.1; then
+-    PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_ORALDAP,1,[ ])
+-    AC_DEFINE(HAVE_ORALDAP_12,1,[ ])
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libclntsh, lib_exists, 12.1)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      AC_DEFINE(HAVE_ORALDAP,1,[ ])
++      AC_DEFINE(HAVE_ORALDAP_12,1,[ ])
++    fi
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME.11.1; then
+-    PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_ORALDAP,1,[ ])
+-    AC_DEFINE(HAVE_ORALDAP_11,1,[ ])
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libclntsh, lib_exists, 11.1)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      AC_DEFINE(HAVE_ORALDAP,1,[ ])
++      AC_DEFINE(HAVE_ORALDAP_11,1,[ ])
++    fi
++  fi
+ 
+-  elif test -f $LDAP_LIBDIR/libclntsh.$SHLIB_SUFFIX_NAME; then
+-     PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
+-     AC_DEFINE(HAVE_ORALDAP,1,[ ])
+-     AC_DEFINE(HAVE_ORALDAP_10,1,[ ])
++  if test $FOUND_LIB = "no"; then
++    PHP_CHECK_SHLIB_EXISTS($LDAP_LIBDIR/libclntsh, lib_exists, 10.1)
++    if test $lib_exists = "yes"; then
++      FOUND_LIB="yes"
++      PHP_ADD_LIBRARY_WITH_PATH(clntsh, $LDAP_LIBDIR, LDAP_SHARED_LIBADD)
++      AC_DEFINE(HAVE_ORALDAP,1,[ ])
++      AC_DEFINE(HAVE_ORALDAP_10,1,[ ])
++    fi
++  fi
+ 
+-  else
++  if test $FOUND_LIB = "no"; then
+     AC_MSG_ERROR(Cannot find ldap libraries in $LDAP_LIBDIR.)
+   fi
+ 
+diff --git a/ext/pcre/config0.m4 b/ext/pcre/config0.m4
+index 80c8a58721..2db8ad732e 100644
+--- a/ext/pcre/config0.m4
++++ b/ext/pcre/config0.m4
+@@ -24,7 +24,11 @@ PHP_ARG_WITH(pcre-jit,,[  --with-pcre-jit         Enable PCRE JIT functionality
+ 
+     AC_MSG_CHECKING([for PCRE library location])
+     for j in $PHP_PCRE_REGEX $PHP_PCRE_REGEX/$PHP_LIBDIR; do
+-      test -f $j/libpcre.a || test -f $j/libpcre.$SHLIB_SUFFIX_NAME && PCRE_LIBDIR=$j
++      PHP_CHECK_SHLIB_EXISTS($j/libpcre, lib_exists)
++      if test $lib_exists = "yes"; then
++        PCRE_LIBDIR=$j
++        break
++      fi
+     done
+     
+     if test -z "$PCRE_LIBDIR" ; then
+diff --git a/ext/pdo_dblib/config.m4 b/ext/pdo_dblib/config.m4
+index 407c3fe4de..9f8b253cc9 100644
+--- a/ext/pdo_dblib/config.m4
++++ b/ext/pdo_dblib/config.m4
+@@ -13,7 +13,7 @@ if test "$PHP_PDO_DBLIB" != "no"; then
+ 
+   if test "$PHP_PDO_DBLIB" = "yes"; then
+ 
+-    for i in /usr/local /usr; do
++    for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -f $i/include/sybdb.h; then
+         PDO_FREETDS_INSTALLATION_DIR=$i
+         PDO_FREETDS_INCLUDE_DIR=$i/include
+diff --git a/ext/pdo_pgsql/config.m4 b/ext/pdo_pgsql/config.m4
+index 1b6dd0e118..e9d21fe849 100644
+--- a/ext/pdo_pgsql/config.m4
++++ b/ext/pdo_pgsql/config.m4
+@@ -30,7 +30,7 @@ if test "$PHP_PDO_PGSQL" != "no"; then
+   else
+     AC_MSG_RESULT(not found)
+     if test "$PHP_PDO_PGSQL" = "yes"; then
+-      PGSQL_SEARCH_PATHS="/usr /usr/local /usr/local/pgsql"
++      PGSQL_SEARCH_PATHS="/usr/local $SYSTEM_SHLIBDIR_PATHS /usr/local/pgsql"
+     else
+       PGSQL_SEARCH_PATHS=$PHP_PDO_PGSQL
+     fi
+diff --git a/ext/pdo_sqlite/config.m4 b/ext/pdo_sqlite/config.m4
+index b050eea4f1..6d88a4d0ed 100644
+--- a/ext/pdo_sqlite/config.m4
++++ b/ext/pdo_sqlite/config.m4
+@@ -33,7 +33,7 @@ if test "$PHP_PDO_SQLITE" != "no"; then
+   php_pdo_sqlite_sources_core="pdo_sqlite.c sqlite_driver.c sqlite_statement.c"
+ 
+   if test "$PHP_PDO_SQLITE" != "yes"; then
+-    SEARCH_PATH="$PHP_PDO_SQLITE /usr/local /usr"     # you might want to change this
++    SEARCH_PATH="$PHP_PDO_SQLITE /usr/local $SYSTEM_SHLIBDIR_PATHS"     # you might want to change this
+     SEARCH_FOR="/include/sqlite3.h"  # you most likely want to change this
+     if test -r $PHP_PDO_SQLITE/$SEARCH_FOR; then # path given as parameter
+       PDO_SQLITE_DIR=$PHP_PDO_SQLITE
+diff --git a/ext/pgsql/config.m4 b/ext/pgsql/config.m4
+index 0ec34c4c25..a377fcbdca 100644
+--- a/ext/pgsql/config.m4
++++ b/ext/pgsql/config.m4
+@@ -27,7 +27,7 @@ if test "$PHP_PGSQL" != "no"; then
+   else
+     AC_MSG_RESULT(not found)
+     if test "$PHP_PGSQL" = "yes"; then
+-      PGSQL_SEARCH_PATHS="/usr /usr/local /usr/local/pgsql"
++      PGSQL_SEARCH_PATHS="/usr/local $SYSTEM_SHLIBDIR_PATHS /usr/local/pgsql"
+     else
+       PGSQL_SEARCH_PATHS=$PHP_PGSQL
+     fi
+diff --git a/ext/pspell/config.m4 b/ext/pspell/config.m4
+index 481a9ae891..4f450c8a5c 100644
+--- a/ext/pspell/config.m4
++++ b/ext/pspell/config.m4
+@@ -11,7 +11,7 @@ if test "$PHP_PSPELL" != "no"; then
+ 	if test "$PHP_PSPELL" != "yes"; then
+ 	    PSPELL_SEARCH_DIRS=$PHP_PSPELL
+ 	else
+-	    PSPELL_SEARCH_DIRS="/usr/local /usr"
++	    PSPELL_SEARCH_DIRS="/usr/local $SYSTEM_SHLIBDIR_PATHS"
+ 	fi
+ 	for i in $PSPELL_SEARCH_DIRS; do
+ 		if test -f $i/include/pspell/pspell.h; then
+diff --git a/ext/readline/config.m4 b/ext/readline/config.m4
+index 0a00370fce..d664798430 100644
+--- a/ext/readline/config.m4
++++ b/ext/readline/config.m4
+@@ -14,7 +14,7 @@ else
+ fi
+ 
+ if test "$PHP_READLINE" && test "$PHP_READLINE" != "no"; then
+-  for i in $PHP_READLINE /usr/local /usr; do
++  for i in $PHP_READLINE /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     test -f $i/include/readline/readline.h && READLINE_DIR=$i && break
+   done
+ 
+@@ -71,7 +71,7 @@ if test "$PHP_READLINE" && test "$PHP_READLINE" != "no"; then
+ 
+ elif test "$PHP_LIBEDIT" != "no"; then
+ 
+-  for i in $PHP_LIBEDIT /usr/local /usr; do
++  for i in $PHP_LIBEDIT /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     test -f $i/include/editline/readline.h && LIBEDIT_DIR=$i && break
+   done
+ 
+diff --git a/ext/recode/config.m4 b/ext/recode/config.m4
+index 7f394d0465..85bcea168e 100644
+--- a/ext/recode/config.m4
++++ b/ext/recode/config.m4
+@@ -6,7 +6,7 @@ PHP_ARG_WITH(recode,for recode support,
+ [  --with-recode[=DIR]       Include recode support])
+ 
+ if test "$PHP_RECODE" != "no"; then
+-  RECODE_LIST="$PHP_RECODE /usr/local /usr /opt"
++  RECODE_LIST="$PHP_RECODE /usr/local $SYSTEM_SHLIBDIR_PATHS /opt"
+ 
+   for i in $RECODE_LIST; do
+     if test -f $i/include/recode.h; then
+diff --git a/ext/session/config.m4 b/ext/session/config.m4
+index 949306c026..fd8358bd45 100644
+--- a/ext/session/config.m4
++++ b/ext/session/config.m4
+@@ -20,7 +20,7 @@ if test "$PHP_SESSION" != "no"; then
+ fi
+ 
+ if test "$PHP_MM" != "no"; then
+-  for i in $PHP_MM /usr/local /usr; do
++  for i in $PHP_MM /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     test -f "$i/include/mm.h" && MM_DIR=$i && break
+   done
+ 
+diff --git a/ext/sqlite3/config0.m4 b/ext/sqlite3/config0.m4
+index 78fd6224dc..e04a640d39 100644
+--- a/ext/sqlite3/config0.m4
++++ b/ext/sqlite3/config0.m4
+@@ -22,7 +22,7 @@ if test $PHP_SQLITE3 != "no"; then
+ 
+   if test $PHP_SQLITE3 != "yes"; then
+     AC_MSG_CHECKING([for sqlite3 files in default path])
+-    for i in $PHP_SQLITE3 /usr/local /usr; do
++    for i in $PHP_SQLITE3 /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -r $i/include/sqlite3.h; then
+         SQLITE3_DIR=$i
+         AC_MSG_RESULT(found in $i)
+diff --git a/ext/tidy/config.m4 b/ext/tidy/config.m4
+index 88463fa8d4..78fa1e7e9b 100644
+--- a/ext/tidy/config.m4
++++ b/ext/tidy/config.m4
+@@ -10,7 +10,7 @@ if test "$PHP_TIDY" != "no"; then
+   if test "$PHP_TIDY" != "yes"; then
+     TIDY_SEARCH_DIRS=$PHP_TIDY
+   else
+-    TIDY_SEARCH_DIRS="/usr/local /usr"
++    TIDY_SEARCH_DIRS="/usr/local $SYSTEM_SHLIBDIR_PATHS"
+   fi
+ 
+   for i in $TIDY_SEARCH_DIRS; do
+diff --git a/ext/wddx/config.m4 b/ext/wddx/config.m4
+index 8f933d490a..68e2b9627c 100644
+--- a/ext/wddx/config.m4
++++ b/ext/wddx/config.m4
+@@ -37,8 +37,9 @@ if test "$PHP_WDDX" != "no"; then
+   dnl Check for expat only if --with-libexpat-dir is used.
+   dnl
+   if test "$PHP_LIBEXPAT_DIR" != "no"; then
+-    for i in $PHP_XML $PHP_LIBEXPAT_DIR /usr /usr/local; do
+-      if test -f "$i/$PHP_LIBDIR/libexpat.a" || test -f "$i/$PHP_LIBDIR/libexpat.$SHLIB_SUFFIX_NAME"; then
++    for i in $PHP_XML $PHP_LIBEXPAT_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
++      PHP_CHECK_SHLIB_EXISTS($i/$PHP_LIBDIR/libexpat, expat_lib_exists)
++      if test $expat_lib_exists = "yes"; then
+         EXPAT_DIR=$i
+         break
+       fi
+diff --git a/ext/xml/config.m4 b/ext/xml/config.m4
+index 812032bc6a..b0956c4624 100644
+--- a/ext/xml/config.m4
++++ b/ext/xml/config.m4
+@@ -36,8 +36,9 @@ if test "$PHP_XML" != "no"; then
+   dnl Check for expat only if --with-libexpat-dir is used.
+   dnl
+   if test "$PHP_LIBEXPAT_DIR" != "no"; then
+-    for i in $PHP_XML $PHP_LIBEXPAT_DIR /usr /usr/local; do
+-      if test -f "$i/$PHP_LIBDIR/libexpat.a" || test -f "$i/$PHP_LIBDIR/libexpat.$SHLIB_SUFFIX_NAME"; then
++    for i in $PHP_XML $PHP_LIBEXPAT_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
++      PHP_CHECK_SHLIB_EXISTS($i/$PHP_LIBDIR/libexpat, expat_lib_exists)
++      if test $expat_lib_exists = "yes"; then
+         EXPAT_DIR=$i
+         break
+       fi
+diff --git a/ext/xmlrpc/config.m4 b/ext/xmlrpc/config.m4
+index f82016edcb..1f185366c6 100644
+--- a/ext/xmlrpc/config.m4
++++ b/ext/xmlrpc/config.m4
+@@ -46,8 +46,9 @@ if test "$PHP_XMLRPC" != "no"; then
+     ])
+   else
+     testval=no
+-    for i in $PHP_LIBEXPAT_DIR $XMLRPC_DIR /usr/local /usr; do
+-      if test -f $i/$PHP_LIBDIR/libexpat.a || test -f $i/$PHP_LIBDIR/libexpat.$SHLIB_SUFFIX_NAME; then
++    for i in $PHP_LIBEXPAT_DIR $XMLRPC_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
++      PHP_CHECK_SHLIB_EXISTS($i/$PHP_LIBDIR/libexpat, expat_lib_exists)
++      if test $expat_lib_exists = "yes"; then
+         AC_DEFINE(HAVE_LIBEXPAT,1,[ ])
+         PHP_ADD_LIBRARY_WITH_PATH(expat, $i/$PHP_LIBDIR, XMLRPC_SHARED_LIBADD)
+         PHP_ADD_INCLUDE($i/include)
+@@ -101,7 +102,7 @@ dnl for xmlrpc-epi because of this.
+     XMLRPC_DIR=$PHP_XMLRPC/include/xmlrpc-epi
+   else
+     AC_MSG_CHECKING(for XMLRPC-EPI in default path)
+-    for i in /usr/local /usr; do
++    for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -r $i/include/xmlrpc.h; then
+         XMLRPC_DIR=$i/include
+         AC_MSG_RESULT(found in $i)
+diff --git a/ext/xsl/config.m4 b/ext/xsl/config.m4
+index 9b6f8aaa49..8e70ff0f87 100644
+--- a/ext/xsl/config.m4
++++ b/ext/xsl/config.m4
+@@ -16,7 +16,7 @@ if test "$PHP_XSL" != "no"; then
+     AC_MSG_ERROR([XSL extension requires DOM extension, add --enable-dom])
+   fi
+ 
+-  for i in $PHP_XSL /usr/local /usr; do
++  for i in $PHP_XSL /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+     if test -x "$i/bin/xslt-config"; then
+       XSLT_CONFIG=$i/bin/xslt-config
+       break
+@@ -39,7 +39,7 @@ if test "$PHP_XSL" != "no"; then
+       PHP_EVAL_INCLINE($XSL_INCS)
+       
+       AC_MSG_CHECKING([for EXSLT support])
+-      for i in $PHP_XSL /usr/local /usr; do
++      for i in $PHP_XSL /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+         if test -r "$i/include/libexslt/exslt.h"; then
+           PHP_XSL_EXSL_DIR=$i
+           break
+diff --git a/ext/zip/config.m4 b/ext/zip/config.m4
+index 7ae43250c0..5fed6e950e 100644
+--- a/ext/zip/config.m4
++++ b/ext/zip/config.m4
+@@ -30,7 +30,7 @@ if test "$PHP_ZIP" != "no"; then
+       AC_MSG_ERROR([Can not find zlib headers under "$PHP_ZLIB_DIR"])
+     fi
+   else
+-    for i in /usr/local /usr; do
++    for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -f "$i/include/zlib/zlib.h"; then
+         PHP_ZLIB_DIR="$i"
+         PHP_ZLIB_INCDIR="$i/include/zlib"
+@@ -73,7 +73,7 @@ if test "$PHP_ZIP" != "no"; then
+       fi
+ 
+     else
+-      for i in /usr/local /usr; do
++      for i in /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+         if test -r $i/include/zip.h; then
+           LIBZIP_CFLAGS="-I$i/include"
+           LIBZIP_LIBDIR="$i/$PHP_LIBDIR"
+diff --git a/ext/zlib/config0.m4 b/ext/zlib/config0.m4
+index ab94c15fe0..5d05d396ca 100644
+--- a/ext/zlib/config0.m4
++++ b/ext/zlib/config0.m4
+@@ -20,8 +20,8 @@ if test "$PHP_ZLIB" != "no" || test "$PHP_ZLIB_DIR" != "no"; then
+       ZLIB_DIR=$PHP_ZLIB
+       ZLIB_INCDIR=$ZLIB_DIR/include
+     fi
+-  else 
+-    for i in /usr/local /usr $PHP_ZLIB_DIR; do
++  else
++    for i in $PHP_ZLIB_DIR /usr/local $SYSTEM_SHLIBDIR_PATHS; do
+       if test -f $i/include/zlib/zlib.h; then
+         ZLIB_DIR=$i
+         ZLIB_INCDIR=$i/include/zlib
+diff --git a/scripts/phpize.m4 b/scripts/phpize.m4
+index 1094e2812c..e61744748c 100644
+--- a/scripts/phpize.m4
++++ b/scripts/phpize.m4
+@@ -33,6 +33,7 @@ PHP_ARG_WITH(libdir, for system library directory,
+ 
+ PHP_RUNPATH_SWITCH
+ PHP_SHLIB_SUFFIX_NAMES
++PHP_SYSTEM_SHLIBDIR_PATHS
+ 
+ dnl Find php-config script
+ PHP_ARG_WITH(php-config,,
