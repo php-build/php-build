@@ -136,7 +136,7 @@ before_install:
             sudo apt-get install -y autoconf2.13
             export PHP_AUTOCONF=/usr/bin/autoconf2.13
         fi
-        if [[ "$DEFINITION" =~ ^("7.3.".*)$ ]]; then
+        if [[ "$DEFINITION" =~ ^("7.3.".*|"7.4.".*)$ ]]; then
             export PHP_BUILD_CONFIGURE_OPTS="--without-libzip"
         fi
     fi
