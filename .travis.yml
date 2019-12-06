@@ -81,7 +81,7 @@ matrix:
       dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.4.0RC4
+        - DEFINITION=7.4.0
     - os: osx
       osx_image: xcode8
       env:
