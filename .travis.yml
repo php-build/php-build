@@ -16,7 +16,7 @@ addons:
       - libonig-dev
       - libtidy-dev
       - libzip-dev
-      - libjpeg62-turbo-dev
+      - libjpeg62
       - php5-cli
       - re2c
     update: true
