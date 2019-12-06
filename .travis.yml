@@ -170,7 +170,8 @@ before_install:
           | tar xzC /tmp/oniguruma --strip-components=1 \
         && ./configure --prefix=/usr/local \
         && make -j $(nproc) \
-        && sudo make install
+        && sudo make install \
+        && cd /home/travis/php-build/php-build
     fi
 install:
   - git clone https://github.com/sstephenson/bats
@@ -179,7 +180,7 @@ install:
   - bats --version
 
 script:
-  - /home/travis/run-tests.sh $DEFINITION
+  - ./run-tests.sh $DEFINITION
 
 after_failure:
   - head -1000 $(ls -r /tmp/php-build*.log | head -n 1)
