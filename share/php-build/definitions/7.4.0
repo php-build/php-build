@@ -1,5 +1,5 @@
 configure_option "--enable-gd"
-configure_option "--with-jpeg" "/usr"
+configure_option "--with-jpeg"
 configure_option "--with-zip"
 
 install_package "https://secure.php.net/distributions/php-7.4.0.tar.bz2"
