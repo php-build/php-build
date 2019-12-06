@@ -170,7 +170,8 @@ before_install:
           | tar xzC /tmp/oniguruma --strip-components=1 \
         && ./configure --prefix=/usr/local \
         && make -j $(nproc) \
-        && sudo make install
+        && sudo make install \
+        && cd /home/travis
     fi
 install:
   - git clone https://github.com/sstephenson/bats
