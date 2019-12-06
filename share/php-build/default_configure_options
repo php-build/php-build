@@ -1,5 +1,4 @@
 --enable-sockets
---with-jpeg-dir=/usr
 --enable-exif
 --with-zlib
 --with-zlib-dir=/usr
