@@ -18,7 +18,6 @@ addons:
       - libzip-dev
       - libjpeg-dev
       - libjpeg62
-      - php5-cli
       - re2c
     update: true
   homebrew:
@@ -40,6 +39,10 @@ matrix:
 #      env:
 #        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
 #        - DEFINITION=5.2.17
+#      addons:
+#        apt:
+#          packges:
+#            - php5-cli
 #    - os: linux
 #      dist: trusty
 #      env:
