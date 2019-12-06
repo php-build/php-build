@@ -165,14 +165,12 @@ before_install:
     if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
       set -xe \
         && mkdir -p /tmp/oniguruma \
-        && #cwd=$(pwd)
         && cd /tmp/oniguruma \
         && curl -Ls https://github.com/kkos/oniguruma/releases/download/v6.9.4/onig-6.9.4.tar.gz \
           | tar xzC /tmp/oniguruma --strip-components=1 \
         && ./configure --prefix=/usr/local \
         && make -j $(nproc) \
-        && sudo make install \
-        && cd /home/travis
+        && sudo make install
     fi
 install:
   - git clone https://github.com/sstephenson/bats
