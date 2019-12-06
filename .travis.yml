@@ -16,6 +16,7 @@ addons:
       - libonig-dev
       - libtidy-dev
       - libzip-dev
+      - libjpeg62-turbo-dev
       - php5-cli
       - re2c
     update: true
@@ -157,12 +158,6 @@ before_install:
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
             export LIBS="-lssl -lcrypto"
-        fi
-    fi
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
-            sudo apt-get -y libjpeg-dev --enable-shared
         fi
     fi
 install:
