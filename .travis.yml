@@ -170,7 +170,7 @@ before_install:
           | tar xzC /tmp/oniguruma --strip-components=1 \
         && ./configure --prefix=/usr/local \
         && make -j $(nproc) \
-        && make install
+        && sudo make install
     fi
 install:
   - git clone https://github.com/sstephenson/bats
