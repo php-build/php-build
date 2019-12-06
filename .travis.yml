@@ -17,7 +17,6 @@ addons:
       - libtidy-dev
       - libzip-dev
       - libjpeg-dev
-      - libjpeg62
       - re2c
     update: true
   homebrew:
