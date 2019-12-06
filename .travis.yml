@@ -16,7 +16,6 @@ addons:
       - libonig-dev
       - libtidy-dev
       - libzip-dev
-      - libjpeg-dev
       - php5-cli
       - re2c
     update: true
@@ -160,7 +159,12 @@ before_install:
             export LIBS="-lssl -lcrypto"
         fi
     fi
-
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
+            sudo apt-get -y libjpeg-dev --enable-shared
+        fi
+    fi
 install:
   - git clone https://github.com/sstephenson/bats
   - bats/install.sh $HOME
