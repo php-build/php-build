@@ -171,7 +171,7 @@ before_install:
         && ./configure --prefix=/usr/local \
         && make -j $(nproc) \
         && sudo make install \
-        && cd /home/travis/php-build/php-build
+        && cd ~
     fi
 install:
   - git clone https://github.com/sstephenson/bats
