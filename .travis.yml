@@ -28,6 +28,7 @@ addons:
       - libjpeg
       - oniguruma
       - openssl
+      - python
       - re2c
     update: true
 
