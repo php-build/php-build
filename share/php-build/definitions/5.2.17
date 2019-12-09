@@ -1,6 +1,10 @@
-
 configure_option "--enable-fastcgi"
 configure_option "--with-mcrypt" "/usr"
+configure_option "--without-pear"
+configure_option "--with-gd"
+configure_option "--with-png-dir" "/usr"
+configure_option "--with-jpeg-dir" "/usr"
+configure_option "--enable-zip"
 
 configure_option -R "--with-mysql"
 configure_option -R "--with-mysqli"
