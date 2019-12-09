@@ -1,4 +1,3 @@
-sudo: false
 language: c
 
 cache:
@@ -11,21 +10,25 @@ addons:
     sources:
       - sourceline: 'ppa:ondrej/php'
     packages:
-      - libmcrypt-dev
-      - libtidy-dev
       - libicu-dev
+      - libmcrypt-dev
+      - libonig-dev
+      - libtidy-dev
       - libzip-dev
-      - php5-cli
+      - libjpeg-dev
       - re2c
     update: true
   homebrew:
     packages:
-      - re2c
-      - libmcrypt
-      - openssl
-      - libxml2
       - icu4c
+      - libmcrypt
+      - libxml2
       - libzip
+      - libjpeg
+      - oniguruma
+      - openssl
+      - python
+      - re2c
     update: true
 
 matrix:
@@ -35,26 +38,46 @@ matrix:
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.2.17
+      addons:
+        apt:
+          packges:
+            - php5-cli
     - os: linux
       dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.3.29
+      addons:
+        apt:
+          packges:
+            - php5-cli
     - os: linux
       dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.4.45
+      addons:
+        apt:
+          packges:
+            - php5-cli
     - os: linux
       dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.5.38
+      addons:
+        apt:
+          packges:
+            - php5-cli
     - os: linux
       dist: trusty
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=5.6.40
+      addons:
+        apt:
+          packges:
+            - php5-cli
     - os: linux
       dist: trusty
       env:
