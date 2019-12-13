@@ -29,6 +29,8 @@ addons:
       - openssl
       - python
       - re2c
+      - krb5
+      - libedit
     update: true
 
 matrix:
@@ -173,15 +175,20 @@ before_install:
     fi
   - |
     if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
-      set -xe \
-        && mkdir -p /tmp/oniguruma \
-        && cd /tmp/oniguruma \
-        && curl -Ls https://github.com/kkos/oniguruma/releases/download/v6.9.4/onig-6.9.4.tar.gz \
-          | tar xzC /tmp/oniguruma --strip-components=1 \
-        && ./configure --prefix=/usr/local \
-        && make -j $(nproc) \
-        && sudo make install \
-        && cd $TRAVIS_BUILD_DIR
+        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+            set -xe \
+              && mkdir -p /tmp/oniguruma \
+              && cd /tmp/oniguruma \
+              && curl -Ls https://github.com/kkos/oniguruma/releases/download/v6.9.4/onig-6.9.4.tar.gz \
+                | tar xzC /tmp/oniguruma --strip-components=1 \
+              && ./configure --prefix=/usr/local \
+              && make -j $(nproc) \
+              && sudo make install \
+              && cd $TRAVIS_BUILD_DIR
+        fi
+        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+            export PKG_CONFIG_PATH="$(brew --prefix krb5)/lib/pkgconfig:$(brew --prefix openssl)/lib/pkgconfig:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix libedit)/lib/pkgconfig"
+        fi
     fi
 install:
   - git clone https://github.com/sstephenson/bats
