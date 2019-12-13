@@ -29,6 +29,8 @@ addons:
       - openssl
       - python
       - re2c
+      - krb5
+      - libedit
     update: true
 
 matrix:
@@ -172,8 +174,8 @@ before_install:
         fi
     fi
   - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
+    if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
+        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
             set -xe \
               && mkdir -p /tmp/oniguruma \
               && cd /tmp/oniguruma \
@@ -183,6 +185,9 @@ before_install:
               && make -j $(nproc) \
               && sudo make install \
               && cd $TRAVIS_BUILD_DIR
+        fi
+        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+            export PKG_CONFIG_PATH="$(brew --prefix krb5)/lib/pkgconfig:$(brew --prefix openssl)/lib/pkgconfig:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix libedit)/lib/pkgconfig"
         fi
     fi
 install:
