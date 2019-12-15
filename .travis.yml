@@ -91,12 +91,12 @@ matrix:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.1.33
     - os: linux
-      dist: trusty
+      dist: xenial
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.2.25
     - os: linux
-      dist: trusty
+      dist: xenial
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.3.12
