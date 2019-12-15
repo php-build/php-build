@@ -177,11 +177,10 @@ before_install:
     if [[ "$DEFINITION" =~ ^("5.".*)$ ]]; then
         if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
             set -xe \
-              && mkdir -p /tmp/openssl1.0 \
-              && cd /tmp/openssl1.0 \
-              && curl -Ls https://github.com/openssl/openssl/archive/OpenSSL_1_0_2t.tar.gz \
-                | tar xzC /tmp/openssl1.0 --strip-components=1 \
-              && ./configure --prefix=/usr/local/opt/openssl@1.0 no-ssl2 no-ssl3 no-zlib shared enable-cms darwin64-x86_64-cc enable-ec_nistp_64_gcc_128 \
+              && curl -LOs https://github.com/openssl/openssl/archive/OpenSSL_1_0_2t.tar.gz \
+              && tar xzf OpenSSL_1_0_2t.tar.gz \
+              && cd openssl-OpenSSL_1_0_2t \
+              && ./Configure --prefix=/usr/local/opt/openssl@1.0 no-ssl2 no-ssl3 no-zlib shared enable-cms darwin64-x86_64-cc enable-ec_nistp_64_gcc_128 \
               && make depend \
               && make \
               && make install_sw \
