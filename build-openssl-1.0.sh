@@ -8,4 +8,4 @@ curl -Ls https://github.com/openssl/openssl/archive/OpenSSL_1_0_2t.tar.gz | tar 
 ./Configure --prefix=/usr/local/opt/openssl@1.0 no-ssl2 no-ssl3 no-zlib shared enable-cms darwin64-x86_64-cc enable-ec_nistp_64_gcc_128
 make depend
 make
-make install_sw
+sudo make install_sw
