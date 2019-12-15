@@ -1,6 +1,4 @@
-#!/bin/sh
-
-set -xe
+#!/bin/sh -xe
 
 mkdir -p /tmp/openssl-1.0
 cd /tmp/openssl-1.0
