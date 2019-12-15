@@ -21,16 +21,15 @@ addons:
   homebrew:
     packages:
       - icu4c
+      - krb5
+      - libedit
       - libmcrypt
       - libxml2
       - libzip
       - libjpeg
       - oniguruma
-      - openssl
       - python
       - re2c
-      - krb5
-      - libedit
     update: true
 
 matrix:
@@ -130,26 +129,46 @@ matrix:
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.0.33
+      addons:
+        homebrew:
+          packges:
+            - openssl
     - os: osx
       osx_image: xcode9.4
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.1.33
+      addons:
+        homebrew:
+          packges:
+            - openssl
     - os: osx
       osx_image: xcode9.4
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.2.25
+      addons:
+        homebrew:
+          packges:
+            - openssl
     - os: osx
       osx_image: xcode9.4
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.3.12
+      addons:
+        homebrew:
+          packges:
+            - openssl
     - os: osx
       osx_image: xcode9.4
       env:
         - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
         - DEFINITION=7.4.0
+      addons:
+        homebrew:
+          packges:
+            - openssl
 
 before_install:
   - |
@@ -164,32 +183,7 @@ before_install:
         if [[ "$DEFINITION" =~ ^("7.3.".*)$ ]]; then
             export PHP_BUILD_CONFIGURE_OPTS="--without-libzip"
         fi
-    fi
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-        if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
-            brew install autoconf@2.13
-            export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
-            export LIBS="-lssl -lcrypto"
-        fi
-    fi
-  - |
-    if [[ "$DEFINITION" =~ ^("5.".*)$ ]]; then
-        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-            set -xe \
-              && curl -LOs https://github.com/openssl/openssl/archive/OpenSSL_1_0_2t.tar.gz \
-              && tar xzf OpenSSL_1_0_2t.tar.gz \
-              && cd openssl-OpenSSL_1_0_2t \
-              && ./Configure --prefix=/usr/local/opt/openssl@1.0 no-ssl2 no-ssl3 no-zlib shared enable-cms darwin64-x86_64-cc enable-ec_nistp_64_gcc_128 \
-              && make depend \
-              && make \
-              && make install_sw \
-              && cd $TRAVIS_BUILD_DIR
-            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-openssl=/usr/local/opt/openssl@1.0"
-        fi
-    fi
-    if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
             set -xe \
               && mkdir -p /tmp/oniguruma \
               && cd /tmp/oniguruma \
@@ -200,7 +194,19 @@ before_install:
               && sudo make install \
               && cd $TRAVIS_BUILD_DIR
         fi
-        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+    fi
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
+            brew install autoconf@2.13
+            export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
+            export LIBS="-lssl -lcrypto"
+        fi
+        if [[ "$DEFINITION" =~ ^("5.".*)$ ]]; then
+            ./build-openssl-1.0.sh
+            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-openssl=/usr/local/opt/openssl@1.0"
+        fi
+        if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
             export PKG_CONFIG_PATH="$(brew --prefix krb5)/lib/pkgconfig:$(brew --prefix openssl)/lib/pkgconfig:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix libedit)/lib/pkgconfig"
         fi
     fi
