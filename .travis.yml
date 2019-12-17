@@ -37,121 +37,84 @@ matrix:
   include:
     - os: linux
       dist: trusty
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.2.17
+      env: DEFINITION=5.2.17
       addons:
         apt:
           packges:
             - php5-cli
     - os: linux
       dist: trusty
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.3.29
+      env: DEFINITION=5.3.29
       addons:
         apt:
           packges:
             - php5-cli
     - os: linux
       dist: trusty
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.4.45
+      env: DEFINITION=5.4.45
       addons:
         apt:
           packges:
             - php5-cli
     - os: linux
       dist: trusty
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.5.38
+      env: DEFINITION=5.5.38
       addons:
         apt:
           packges:
             - php5-cli
     - os: linux
       dist: trusty
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.6.40
+      env: DEFINITION=5.6.40
       addons:
         apt:
           packges:
             - php5-cli
     - os: linux
       dist: trusty
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.0.33
+      env: DEFINITION=7.0.33
     - os: linux
       dist: trusty
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.1.33
+      env: DEFINITION=7.1.33
     - os: linux
       dist: xenial
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.2.26
+      env: DEFINITION=7.2.26
     - os: linux
       dist: xenial
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.3.13
+      env: DEFINITION=7.3.13
     - os: linux
       dist: xenial
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.4.0
+      env: DEFINITION=7.4.0
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.3.29
+      env: DEFINITION=5.3.29
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.4.45
+      env: DEFINITION=5.4.45
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.5.38
+      env: DEFINITION=5.5.38
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=5.6.40
+      env: DEFINITION=5.6.40
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.0.33
+      env: DEFINITION=7.0.33
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.1.33
+      env: DEFINITION=7.1.33
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.2.26
+      env: DEFINITION=7.2.26
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.3.13
+      env: DEFINITION=7.3.13
     - os: osx
       osx_image: xcode9.4
-      env:
-        - PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
-        - DEFINITION=7.4.0
+      env: DEFINITION=7.4.0
 
 before_install:
+  - export PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
   - |
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         if [[ "$DEFINITION" =~ ^("5.2.".*)$ ]]; then
