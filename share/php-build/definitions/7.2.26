@@ -1,0 +1,9 @@
+configure_option "--without-pear"
+configure_option "--with-gd"
+configure_option "--with-png-dir" "/usr"
+configure_option "--with-jpeg-dir" "/usr"
+configure_option "--enable-zip"
+
+install_package "https://secure.php.net/distributions/php-7.2.26.tar.bz2"
+install_xdebug "2.9.0"
+enable_builtin_opcache
