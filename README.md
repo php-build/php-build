@@ -2,8 +2,6 @@
 
 php-build is a utility for building versions of PHP to use them side by side with each other. The overall structure is loosly borrowed from Sam Stephenson's [ruby-build].
 
-*Do you like php-build? You can buy me a beer by [Gittipp-ing]. Consider also Gittipp-ing one of the awesome [contributors].*
-
 ## Overview
 
 * [Installation](#installation)
@@ -89,8 +87,6 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 php-build is released under the [MIT License][license].
 
-[contributors]: https://github.com/php-build/php-build/graphs/contributors
-[Gittipp-ing]: https://gratipay.com/~CHH/
 [license]: LICENSE
 [phpenv]: https://github.com/phpenv/phpenv
 [ruby-build]: https://github.com/rbenv/ruby-build
