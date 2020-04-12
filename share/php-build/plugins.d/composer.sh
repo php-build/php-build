@@ -17,12 +17,12 @@ download_composer() {
     local composer_url="$1"
 
     if [ -z "$composer_url" ]; then
-        composer_url="https://getcomposer.org/composer.phar"
+        composer_url="https://getcomposer.org/composer-stable.phar"
     fi
 
     if [ ! -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
         log Composer "Downloading from $composer_url"
-        wget -P "$PHP_BUILD_TMPDIR/packages" $composer_url
+        wget -P "$PHP_BUILD_TMPDIR/packages" -O composer.phar $composer_url
     else
         log Composer "self updating in $PHP_BUILD_TMPDIR/packages/composer.phar"
         $PHP $PHP_BUILD_TMPDIR/packages/composer.phar self-update
