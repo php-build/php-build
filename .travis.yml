@@ -151,6 +151,7 @@ before_install:
     fi
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        export PHP_BUILD_DEBUG=1
         # prefix all brew packages before native ones
         export PATH="$(brew --prefix):$PATH"
 
