@@ -643,7 +643,7 @@ function configure_package() {
     fi;
 
     if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix bzip2)" ]; then
-      configure_option -R "--with-bz" "$(brew --prefix bzip2)"
+      configure_option -R "--with-bz2" "$(brew --prefix bzip2)"
     fi;
 
     if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libiconv)" ]; then
