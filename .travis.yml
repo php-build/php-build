@@ -24,7 +24,7 @@ addons:
       - libedit
       - libmcrypt
       - libxml2
-#      - libzip
+      - libzip
       - libjpeg
       - oniguruma
       - openssl
@@ -34,7 +34,7 @@ addons:
       - zlib
       - bzip2
       - libiconv
-      - tidy-html5
+#      - tidy-html5
     update: true
 
 matrix:
@@ -162,7 +162,7 @@ before_install:
             # forcing new bison location
             export PATH="/usr/local/opt/bison@2.7/bin:$PATH"
             # debug
-            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --without-libzip"
+            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --without-tidy"
             # debug
         fi
 
