@@ -1,5 +1,9 @@
 language: c
 
+cache:
+  directories:
+    - /home/travis/.rvm/
+    -
 addons:
   apt:
     sources:
@@ -147,9 +151,8 @@ before_install:
     fi
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-        which bison;
-        bison --version;
-        brew --prefix bison;
+        # prefix all brew packages before native ones
+        export PATH="$(brew --prefix):$PATH"
         if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
