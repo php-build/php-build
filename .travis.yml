@@ -107,6 +107,15 @@ matrix:
     - os: osx
       osx_image: xcode9.4
       env: DEFINITION=7.4.5
+    - os: osx
+      osx_image: xcode11.3
+      env: DEFINITION=7.2.30
+    - os: osx
+      osx_image: xcode11.3
+      env: DEFINITION=7.3.17
+    - os: osx
+      osx_image: xcode11.3
+      env: DEFINITION=7.4.5
 
 before_install:
   - export PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
