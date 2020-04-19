@@ -154,6 +154,7 @@ before_install:
         # prefix all brew packages before native ones
         export PATH="$(brew --prefix):$PATH"
         export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-bz2=$(brew --prefix bzip2)"
+        export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-zlib-dir=$(brew --prefix zlib)"
 
         brew search bison
 
