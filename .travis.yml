@@ -162,6 +162,10 @@ before_install:
         # prefix all brew packages before native ones
         export PATH="$(brew --prefix):$PATH"
 
+        # debug
+        ls -la "$(brew --prefix bzip2)/include/bzlib.h"
+        # debug
+
         export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-bz2=$(brew --prefix bzip2)"
         export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-zlib-dir=$(brew --prefix zlib)"
 
