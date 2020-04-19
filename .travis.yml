@@ -32,6 +32,7 @@ addons:
       - re2c
       - bison
       - zlib
+      - bzip
     update: true
 
 matrix:
