@@ -658,6 +658,10 @@ function configure_package() {
       configure_option -R "--with-libedit" "$(brew --prefix libedit)"
     fi;
 
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libzip)" ]; then
+      configure_option -R "--with-libzip" "$(brew --prefix libzip)"
+    fi;
+
     if is_osx && [ -n "$brewLocation" ] && [ -e "$(brew --prefix icu4c)" ]; then
         configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
         # icu4c 59+ requires C++11
