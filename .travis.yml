@@ -153,6 +153,8 @@ before_install:
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
         # prefix all brew packages before native ones
         export PATH="$(brew --prefix):$PATH"
+        export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-bz $(brew --prefix bzip2)"
+
         if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
