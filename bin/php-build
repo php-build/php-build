@@ -597,6 +597,7 @@ function configure_package() {
     local source_path=$1
     local backup_pwd=$(pwd)
     local package_name="$(definition_package_name)"
+    local brewLocation=$(which brew)
 
     CONFIGURE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
@@ -622,7 +623,6 @@ function configure_package() {
         configure_option -D "--with-gettext"
         configure_option -D "--with-readline"
         configure_option "--with-libedit"
-
         configure_option -R "--with-png-dir" "/usr/X11"
     fi
 
@@ -633,12 +633,28 @@ function configure_package() {
 
     # Override `--with-openssl` and `--with-libxml-dir`
     # if Homebrew's openssl and libxml2 exist on Mac OS X 10.11+.
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 11 ] && [ -n "$(which brew)" ] && [ -e "$(brew --prefix openssl)" ] && [ -e "$(brew --prefix libxml2)" ]; then
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 11 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix openssl)" ] && [ -e "$(brew --prefix libxml2)" ]; then
         configure_option -R "--with-openssl" "$(brew --prefix openssl)"
         configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
     fi
 
-    if is_osx && [ -n "$(which brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 15 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix zlib)" ]; then
+      configure_option -R "--with-zlib-dir" "$(brew --prefix zlib)"
+    fi;
+
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 15 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix bzip2)" ]; then
+      configure_option -R "--with-bz" "$(brew --prefix bzip2)"
+    fi;
+
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 15 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libiconv)" ]; then
+      configure_option -R "--with-iconv" "$(brew --prefix libiconv)"
+    fi;
+
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 15 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libedit)" ]; then
+      configure_option -R "--with-libedit" "$(brew --prefix libedit)"
+    fi;
+
+    if is_osx && [ -n "$brewLocation" ] && [ -e "$(brew --prefix icu4c)" ]; then
         configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
         # icu4c 59+ requires C++11
         if [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "61" ]]; then
