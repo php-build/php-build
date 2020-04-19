@@ -155,6 +155,7 @@ before_install:
 
         if [[ "$DEFINITION" =~ ^("7.".*)$ ]]; then
             brew install bison@2.7
+            brew link bison@2.7 --force
             # forcing new bison location
             export PATH="/usr/local/opt/bison@2.7/bin:$PATH"
         fi
