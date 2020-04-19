@@ -155,6 +155,8 @@ before_install:
         # prefix all brew packages before native ones
         export PATH="$(brew --prefix):$PATH"
 
+        export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-zlib-dir=$(brew --prefix zlib)"
+
         if [[ "$DEFINITION" =~ ^("7.".*)$ ]]; then
             brew install bison@2.7
             # forcing new bison location
