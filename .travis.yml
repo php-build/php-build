@@ -155,6 +155,8 @@ before_install:
         export PATH="$(brew --prefix):$PATH"
         export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-bz2=$(brew --prefix bzip2)"
 
+        brew search bison
+
         if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
