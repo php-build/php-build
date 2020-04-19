@@ -33,6 +33,7 @@ addons:
       - bison
       - zlib
       - bzip2
+      - libiconv
     update: true
 
 matrix:
