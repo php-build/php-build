@@ -161,25 +161,23 @@ before_install:
             brew link bison@2.7 --force
             # forcing new bison location
             export PATH="/usr/local/opt/bison@2.7/bin:$PATH"
+            export LD_LIBRARY_PATH="$(brew --prefix libzip)/lib:$LD_LIBRARY_PATH"
         fi
 
         # prefix all brew packages before native ones
         export PATH="$(brew --prefix):$PATH"
-
-        # debug
-        ls -la "$(brew --prefix bzip2)"
-        ls -la "$(brew --prefix bzip2)/include"
-        # debug
 
         if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
             export LIBS="-lssl -lcrypto"
         fi
+
         if [[ "$DEFINITION" =~ ^("5.".*)$ ]]; then
             ./build-openssl-1.0.sh
             export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-openssl=/usr/local/opt/openssl@1.0"
         fi
+
         if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
             export PKG_CONFIG_PATH="$(brew --prefix krb5)/lib/pkgconfig:$(brew --prefix openssl)/lib/pkgconfig:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix libedit)/lib/pkgconfig"
         fi
