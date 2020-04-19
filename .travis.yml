@@ -32,83 +32,83 @@ addons:
 
 matrix:
   include:
-    - os: linux
-      dist: trusty
-      env: DEFINITION=5.2.17
-      addons:
-        apt:
-          packges:
-            - php5-cli
-    - os: linux
-      dist: trusty
-      env: DEFINITION=5.3.29
-      addons:
-        apt:
-          packges:
-            - php5-cli
-    - os: linux
-      dist: trusty
-      env: DEFINITION=5.4.45
-      addons:
-        apt:
-          packges:
-            - php5-cli
-    - os: linux
-      dist: trusty
-      env: DEFINITION=5.5.38
-      addons:
-        apt:
-          packges:
-            - php5-cli
-    - os: linux
-      dist: trusty
-      env: DEFINITION=5.6.40
-      addons:
-        apt:
-          packges:
-            - php5-cli
-    - os: linux
-      dist: trusty
-      env: DEFINITION=7.0.33
-    - os: linux
-      dist: trusty
-      env: DEFINITION=7.1.33
-    - os: linux
-      dist: xenial
-      env: DEFINITION=7.2.30
-    - os: linux
-      dist: xenial
-      env: DEFINITION=7.3.17
-    - os: linux
-      dist: xenial
-      env: DEFINITION=7.4.5
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=5.3.29
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=5.4.45
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=5.5.38
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=5.6.40
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=7.0.33
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=7.1.33
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=7.2.30
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=7.3.17
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=7.4.5
+#    - os: linux
+#      dist: trusty
+#      env: DEFINITION=5.2.17
+#      addons:
+#        apt:
+#          packges:
+#            - php5-cli
+#    - os: linux
+#      dist: trusty
+#      env: DEFINITION=5.3.29
+#      addons:
+#        apt:
+#          packges:
+#            - php5-cli
+#    - os: linux
+#      dist: trusty
+#      env: DEFINITION=5.4.45
+#      addons:
+#        apt:
+#          packges:
+#            - php5-cli
+#    - os: linux
+#      dist: trusty
+#      env: DEFINITION=5.5.38
+#      addons:
+#        apt:
+#          packges:
+#            - php5-cli
+#    - os: linux
+#      dist: trusty
+#      env: DEFINITION=5.6.40
+#      addons:
+#        apt:
+#          packges:
+#            - php5-cli
+#    - os: linux
+#      dist: trusty
+#      env: DEFINITION=7.0.33
+#    - os: linux
+#      dist: trusty
+#      env: DEFINITION=7.1.33
+#    - os: linux
+#      dist: xenial
+#      env: DEFINITION=7.2.30
+#    - os: linux
+#      dist: xenial
+#      env: DEFINITION=7.3.17
+#    - os: linux
+#      dist: xenial
+#      env: DEFINITION=7.4.5
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=5.3.29
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=5.4.45
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=5.5.38
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=5.6.40
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=7.0.33
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=7.1.33
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=7.2.30
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=7.3.17
+#    - os: osx
+#      osx_image: xcode9.4
+#      env: DEFINITION=7.4.5
     - os: osx
       osx_image: xcode11.3
       env: DEFINITION=7.2.30
@@ -147,6 +147,9 @@ before_install:
     fi
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        which bison;
+        bison --version;
+        brew --prefix bison;
         if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
             brew install autoconf@2.13
             export PHP_AUTOCONF=$(brew --prefix autoconf@2.13)/bin/autoconf213
