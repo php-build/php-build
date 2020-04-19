@@ -2,8 +2,8 @@ language: c
 
 cache:
   directories:
-    - /home/travis/.rvm/
-    -
+    - /usr/local/Cellar
+
 addons:
   apt:
     sources:
