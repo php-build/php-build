@@ -156,7 +156,9 @@ before_install:
         export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-bz2=$(brew --prefix bzip2)"
         export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-zlib-dir=$(brew --prefix zlib)"
 
-        brew search bison
+        if [[ "$DEFINITION" =~ ^("7.".*)$ ]]; then
+            brew install bison@2.7
+        fi
 
         if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
             brew install autoconf@2.13
