@@ -161,7 +161,7 @@ before_install:
             brew link bison@2.7 --force
             # forcing new bison location
             export PATH="/usr/local/opt/bison@2.7/bin:$PATH"
-            export LD_LIBRARY_PATH="$(brew --prefix libzip)/lib:$LD_LIBRARY_PATH"
+            export DYLD_LIBRARY_PATH="$(brew --prefix libzip)/lib:$DYLD_LIBRARY_PATH"
         fi
 
         # prefix all brew packages before native ones
