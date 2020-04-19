@@ -638,19 +638,19 @@ function configure_package() {
         configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
     fi
 
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 15 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix zlib)" ]; then
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix zlib)" ]; then
       configure_option -R "--with-zlib-dir" "$(brew --prefix zlib)"
     fi;
 
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 15 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix bzip2)" ]; then
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix bzip2)" ]; then
       configure_option -R "--with-bz" "$(brew --prefix bzip2)"
     fi;
 
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 15 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libiconv)" ]; then
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libiconv)" ]; then
       configure_option -R "--with-iconv" "$(brew --prefix libiconv)"
     fi;
 
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 15 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libedit)" ]; then
+    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libedit)" ]; then
       configure_option -R "--with-libedit" "$(brew --prefix libedit)"
     fi;
 
