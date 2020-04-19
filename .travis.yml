@@ -26,6 +26,8 @@ addons:
       - openssl
       - python
       - re2c
+      - bison
+      - zlib
     update: true
 
 matrix:
