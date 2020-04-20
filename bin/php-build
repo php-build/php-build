@@ -649,10 +649,10 @@ function configure_package() {
     if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libiconv)" ]; then
       configure_option -R "--with-iconv" "$(brew --prefix libiconv)"
     fi;
-
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libedit)" ]; then
-      configure_option -R "--with-libedit" "$(brew --prefix libedit)"
-    fi;
+#
+#    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libedit)" ]; then
+#      configure_option -R "--with-libedit" "$(brew --prefix libedit)"
+#    fi;
 
     if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 14 ] && [ -n "$brewLocation" ] && [ -e "$(brew --prefix libzip)" ]; then
       configure_option -R "--with-libzip" "$(brew --prefix libzip)"
