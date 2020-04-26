@@ -1,9 +1,5 @@
 language: c
 
-cache:
-  directories:
-    - /usr/local/Cellar
-
 addons:
   apt:
     sources:
@@ -155,6 +151,9 @@ before_install:
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
         export PHP_BUILD_DEBUG=1
+
+        # debug let's try to find readline.h on travis
+        find / -name readline.h -type f
 
         if [[ "$DEFINITION" =~ ^("7.".*)$ ]]; then
             brew install bison@2.7
