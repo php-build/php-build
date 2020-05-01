@@ -22,7 +22,7 @@ download_composer() {
 
     if [ ! -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
         log Composer "Downloading from $composer_url"
-        wget -P "$PHP_BUILD_TMPDIR/packages" -O composer.phar $composer_url
+        wget -O "$PHP_BUILD_TMPDIR/packages/composer.phar" $composer_url
     else
         log Composer "self updating in $PHP_BUILD_TMPDIR/packages/composer.phar"
         $PHP $PHP_BUILD_TMPDIR/packages/composer.phar self-update
