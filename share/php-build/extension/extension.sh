@@ -126,6 +126,7 @@ function _checkout_extension {
     if [ -n "$revision" ]; then
         log "$name" "Checkout specified revision: $revision"
         cd "$source_dir"
+        git checkout $revision
         git reset --hard $revision
         cd "$cwd"
     fi
