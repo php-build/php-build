@@ -82,12 +82,6 @@ matrix:
       env: DEFINITION=7.4.6
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=5.3.29
-    - os: osx
-      osx_image: xcode9.4
-      env: DEFINITION=5.4.45
-    - os: osx
-      osx_image: xcode9.4
       env: DEFINITION=5.5.38
     - os: osx
       osx_image: xcode9.4
