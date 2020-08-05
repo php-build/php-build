@@ -1,6 +1,0 @@
-configure_option "--enable-gd"
-configure_option "--with-jpeg"
-configure_option "--with-zip"
-
-install_package_from_github master
-enable_builtin_opcache
