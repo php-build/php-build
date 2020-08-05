@@ -92,6 +92,24 @@ function osx_minor {
     return 0
 }
 
+num_cpu_cores() {
+    local num
+    case "$(uname -s)" in
+    Darwin | *BSD )
+        num="$(sysctl -n hw.ncpu 2>/dev/null || true)"
+        ;;
+    SunOS )
+        num="$(getconf NPROCESSORS_ONLN 2>/dev/null || true)"
+        ;;
+    * )
+        num="$({ getconf _NPROCESSORS_ONLN ||
+             grep -c ^processor /proc/cpuinfo; } 2>/dev/null)"
+        num="${num#0}"
+        ;;
+    esac
+    echo "${num:-2}"
+}
+
 # Common Variables
 # ----------------
 
@@ -375,7 +393,7 @@ function build_package() {
     fi
     cd "$source_path"
     {
-        make $PHP_BUILD_EXTRA_MAKE_ARGUMENTS
+        make -j $(num_cpu_cores) $PHP_BUILD_EXTRA_MAKE_ARGUMENTS
         make install
         if [ "$PHP_BUILD_KEEP_OBJECT_FILES" == "off" ]; then
             make clean
