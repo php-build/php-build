@@ -73,13 +73,13 @@ matrix:
       env: DEFINITION=7.1.33
     - os: linux
       dist: xenial
-      env: DEFINITION=7.2.32
+      env: DEFINITION=7.2.33
     - os: linux
       dist: xenial
-      env: DEFINITION=7.3.20
+      env: DEFINITION=7.3.21
     - os: linux
       dist: xenial
-      env: DEFINITION=7.4.8
+      env: DEFINITION=7.4.9
     - os: osx
       osx_image: xcode9.4
       env: DEFINITION=5.5.38
@@ -94,13 +94,13 @@ matrix:
       env: DEFINITION=7.1.33
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=7.2.32
+      env: DEFINITION=7.2.33
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=7.3.20
+      env: DEFINITION=7.3.21
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=7.4.8
+      env: DEFINITION=7.4.9
 
 before_install:
   - export PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
