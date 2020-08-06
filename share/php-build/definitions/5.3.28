@@ -8,6 +8,7 @@ configure_option "--with-png-dir" "/usr"
 configure_option "--with-jpeg-dir" "/usr"
 configure_option "--enable-zip"
 
+patch_file "php-5.4-curl-config.patch"
 patch_file "php-5.3.29-64bit-intl.patch"
 patch_file "php-5.4.12-support-c++11.patch"
 

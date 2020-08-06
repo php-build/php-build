@@ -663,6 +663,11 @@ function configure_package() {
 
     {
         if has_patch $package_name; then
+            if [ -f ./configure.in ]; then
+                # Even if a patch touches ext/*/config.m4, ./buildconf may not
+                # re-generate ./configure (e.g. PHP 5.3 + Ubuntu 18.04).
+                touch configure.in
+	    fi
             buildconf_wrapper --force
         elif [ ! -f ./configure ]; then
             buildconf_wrapper

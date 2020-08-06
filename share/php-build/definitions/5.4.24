@@ -8,5 +8,7 @@ configure_option "--with-png-dir" "/usr"
 configure_option "--with-jpeg-dir" "/usr"
 configure_option "--enable-zip"
 
+patch_file "php-5.4-curl-config.patch"
+
 install_package "https://secure.php.net/distributions/php-5.4.24.tar.bz2"
 install_xdebug "2.4.1"
