@@ -456,7 +456,7 @@ function apply_patches() {
     if [ -n "$PATCH_FILES" ]; then
         log "Info" "Applying patches: $PATCH_FILES"
         for patch in $PATCH_FILES; do
-            patch -d "$source_path" -N -p1 -s < $patch || true
+            patch -d "$source_path" -N -p1 -s < $patch
         done
     fi
 }
