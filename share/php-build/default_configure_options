@@ -4,7 +4,6 @@
 --with-zlib-dir=/usr
 --with-bz2
 --enable-intl
---with-kerberos
 --with-openssl
 --enable-soap
 --enable-xmlreader
