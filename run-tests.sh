@@ -15,7 +15,7 @@ usage() {
     echo "Usage: ./run-tests.sh all|stable|<definition>,..."
 }
 
-if ! which "bats" > /dev/null; then
+if ! command -v bats > /dev/null; then
     echo "You need http://github.com/sstephenson/bats installed." >&2
     exit 1
 fi
