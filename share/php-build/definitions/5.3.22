@@ -1,3 +1,4 @@
+autoconf_version 2.13
 configure_option "--with-mysql" "mysqlnd"
 configure_option "--with-mcrypt" "/usr"
 configure_option "--without-pear"

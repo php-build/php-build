@@ -512,6 +512,35 @@ function definition_package_name() {
     echo "php-$DEFINITION"
 }
 
+# ### autoconf_version
+#
+# Requires an old autoconf version. Valid values are 2.13 and 2.64, which are
+# commonly shipped with most Linux distros.
+function autoconf_version() {
+    local ver="$1"
+    # if the user has set PHP_AUTOCONF, honor it and ignore this command.
+    if [[ -n "${PHP_AUTOCONF}" ]]; then
+        return
+    fi
+    # Debian-like pattern
+    if command -v "autoconf$ver" &> /dev/null; then
+        export PHP_AUTOCONF="autoconf$ver"
+        return
+    fi
+    # RHEL-like pattern
+    if command -v "autoconf-$ver" &> /dev/null; then
+        export PHP_AUTOCONF="autoconf-$ver"
+        return
+    fi
+    # macOS+Homebrew
+    if is_osx && brew --prefix "autoconf@$ver" &> /dev/null; then
+        PHP_AUTOCONF="$(brew --prefix "autoconf@$ver")/bin/autoconf${ver//./}"
+        export PHP_AUTOCONF
+        return
+    fi
+    # no luck, let's hope that system's autoconf is compatible
+}
+
 # ### configure_option
 #
 # This function sets and unsets arguments for `configure`. Pass it
