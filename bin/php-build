@@ -689,15 +689,17 @@ $CONFIGURE_OPTIONS"
         mkdir -p "$PREFIX/libexec"
     fi
 
-    # Set the lib dir to `lib64` on **x86_64**
-    # systems.
+    # x86_64 multiarch systems may have lib, lib32 and lib64.
+    # In older distros, lib64 is the default directory for x86_64 libraries
+    # while on modern distros it's just lib. If no --with-libdir is provided
+    # and /usr/lib64 exists, then we set --with-libdir=lib64.
     local append_default_libdir='yes'
     for option in $CONFIGURE_OPTIONS; do
       case "$option" in
         "--with-libdir"*) append_default_libdir='no' ;;
       esac
     done
-    if [ "$(uname -p)" = "x86_64" ] && [ "${append_default_libdir}" = 'yes' ]; then
+    if [ "$(uname -p)" = "x86_64" ] && [ "${append_default_libdir}" = 'yes' ] && [ -d /usr/lib64 ]; then
         argv="$argv --with-libdir=lib64"
     fi
 
