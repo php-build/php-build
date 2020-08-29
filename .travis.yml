@@ -29,7 +29,6 @@ addons:
       - openssl
       - python
       - re2c
-      - bison
     update: true
 
 matrix:
@@ -151,6 +150,11 @@ before_install:
         fi
         if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
             export PKG_CONFIG_PATH="$(brew --prefix krb5)/lib/pkgconfig:$(brew --prefix openssl)/lib/pkgconfig:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix libedit)/lib/pkgconfig"
+        fi
+        if [[ "$DEFINITION" =~ ^("8.0".*)$ ]]; then
+            brew install bison
+            echo 'export PATH="/usr/local/opt/bison/bin:$PATH"' >> /Users/travis/.bash_profile
+            export LDFLAGS="-L/usr/local/opt/bison/lib"
         fi
     fi
 install:
