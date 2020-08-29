@@ -11,7 +11,10 @@ addons:
       - libtidy-dev
       - libzip-dev
       - libjpeg-dev
+      - libxml2-dev
+      - libsqlite3-dev
       - re2c
+      - bison
     update: true
   homebrew:
     packages:
@@ -26,6 +29,7 @@ addons:
       - openssl
       - python
       - re2c
+      - bison
     update: true
 
 matrix:
@@ -80,6 +84,9 @@ matrix:
     - os: linux
       dist: xenial
       env: DEFINITION=7.4.9
+    - os: linux
+      dist: xenial
+      env: DEFINITION=master
     - os: osx
       osx_image: xcode9.4
       env: DEFINITION=5.5.38
@@ -101,6 +108,9 @@ matrix:
     - os: osx
       osx_image: xcode9.4
       env: DEFINITION=7.4.9
+    - os: osx
+      osx_image: xcode9.4
+      env: DEFINITION=master
 
 before_install:
   - export PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
