@@ -46,6 +46,7 @@ for definition in $BUILD_LIST; do
         export TEST_PREFIX="$BUILD_PREFIX/$definition"
         export DEFINITION_CONFIG=$(./bin/php-build --definition "$definition")
         export PHP_MINOR_VERSION=${definition%.*}
+        export PHP_MAJOR_VERSION=${definition:0:1}
 
         echo "Running Tests..."
 
