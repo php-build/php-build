@@ -29,7 +29,8 @@
     echo "$output" | grep -q '^tidy$'
     echo "$output" | grep -q '^xml$'
     echo "$output" | grep -q '^xmlreader$'
-    echo "$output" | grep -q '^xmlrpc$'
+    # xmlrpc has been moved to PECL for version 8
+    [[ $PHP_MAJOR_VERSION < 8 ]] && echo "$output" | grep -q '^xmlrpc$'
     echo "$output" | grep -q '^xsl$'
     echo "$output" | grep -q '^zip$'
     echo "$output" | grep -q '^zlib$'
