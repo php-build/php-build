@@ -615,6 +615,11 @@ function configure_package() {
     local source_path=$1
     local backup_pwd=$(pwd)
     local package_name="$(definition_package_name)"
+    local phpLower74=true
+
+    if [[ $DEFINITION =~ ^("7.4.".*)$ ]] || [[ $DEFINITION =~ ^("8.0".*)$ ]]; then
+        phpLower74=false
+    fi
 
     CONFIGURE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
@@ -641,7 +646,9 @@ function configure_package() {
         configure_option -D "--with-readline"
         configure_option "--with-libedit"
 
-        configure_option -R "--with-png-dir" "/usr/X11"
+        if [[ $phpLower74 ]]; then
+            configure_option -R "--with-png-dir" "/usr/X11"
+        fi
     fi
 
     if [ "$PHP_BUILD_ZTS_ENABLE" == "on" ]; then
@@ -653,11 +660,16 @@ function configure_package() {
     # if Homebrew's openssl and libxml2 exist on Mac OS X 10.11+.
     if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 11 ] && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix openssl)" ] && [ -e "$(brew --prefix libxml2)" ]; then
         configure_option -R "--with-openssl" "$(brew --prefix openssl)"
-        configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
+
+        if [[ $phpLower74 ]]; then
+            configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
+        fi
     fi
 
     if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
-        configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
+        if [[ $phpLower74 ]]; then
+            configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
+        fi
         # icu4c 59+ requires C++11
         if [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "61" ]]; then
             # icu4c 61+ compatability (see #499)
