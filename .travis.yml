@@ -155,6 +155,7 @@ before_install:
             brew install bison
             export PATH="/usr/local/opt/openssl@1.1/bin:/usr/local/opt/bison/bin:$PATH"
             export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib -L/usr/local/opt/bison/lib"
+            export PKG_CONFIG_PATH="$(brew --prefix krb5)/lib/pkgconfig:$(brew --prefix openssl)/lib/pkgconfig:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix libedit)/lib/pkgconfig"
         fi
     fi
 install:
