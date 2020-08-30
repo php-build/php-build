@@ -42,13 +42,13 @@ jobs:
           - { distro: 'ubuntu:20.04', php: '5.6.40'}
           # TODO: icu-config / intl
           - { distro: 'ubuntu:20.04', php: '7.0.33'}
-          # TODO: openssl 1.0.2
-          - { distro: 'centos:8', php: '5.3.29'}
-          - { distro: 'centos:8', php: '5.4.45'}
-          - { distro: 'centos:8', php: '5.5.38'}
           # libzip (0.10.1) on CentOS 7 is too old for PHP 7.3+ (required: >= 0.11)
           - { distro: 'centos:7', php: '7.3.22'}
           - { distro: 'centos:7', php: '7.4.10'}
+        include:
+          - { distro: 'centos:8', php: '5.3.29', openssl102: true}
+          - { distro: 'centos:8', php: '5.4.45', openssl102: true}
+          - { distro: 'centos:8', php: '5.5.38', openssl102: true}
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"
     env:
@@ -62,9 +62,15 @@ jobs:
           ./install-dependencies.sh
           git clone --depth 1 https://github.com/sstephenson/bats.git
           ./bats/install.sh /usr/local
+          if [ "${{ matrix.openssl102 }}" = "true" ]; then
+            ./build-openssl-1.0.sh
+          fi
       - name: run tests
         run: |
           set -ex
+          if [ "${{ matrix.openssl102 }}" = "true" ]; then
+            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-openssl=/usr/local/opt/openssl@1.0"
+          fi
           if ! ./run-tests.sh ${{ matrix.php }}; then
             cat /tmp/php-build.*.log
             exit 1
