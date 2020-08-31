@@ -86,6 +86,9 @@ matrix:
     - os: linux
       dist: xenial
       env: DEFINITION=8.0snapshot
+    - os: linux
+      dist: xenial
+      env: DEFINITION=master
     - os: osx
       osx_image: xcode9.4
       env: DEFINITION=5.5.38
@@ -110,6 +113,9 @@ matrix:
     - os: osx
       osx_image: xcode9.4
       env: DEFINITION=8.0snapshot
+    - os: osx
+      osx_image: xcode9.4
+      env: DEFINITION=master
 
 before_install:
   - export PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"
@@ -149,7 +155,7 @@ before_install:
         if [[ "$DEFINITION" =~ ^("7.4.".*)$ ]]; then
             export PKG_CONFIG_PATH="$(brew --prefix krb5)/lib/pkgconfig:$(brew --prefix openssl)/lib/pkgconfig:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix libedit)/lib/pkgconfig"
         fi
-        if [[ "$DEFINITION" =~ ^("8.0".*)$ ]]; then
+        if [[ "$DEFINITION" =~ ^("8.0".*)$ ]] || [[ "$DEFINITION" == "master" ]]; then
             brew install bison
             export PATH="/usr/local/opt/openssl@1.1/bin:/usr/local/opt/bison/bin:$PATH"
             export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib -L/usr/local/opt/bison/lib"
