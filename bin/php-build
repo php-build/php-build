@@ -154,6 +154,10 @@ PATCH_FILES=""
 
 [ -z "$CONFIGURE_OPTS" ] && CONFIGURE_OPTS=""
 
+[ -z "$PHP_BUILD_CURL_OPTS" ] && PHP_BUILD_CURL_OPTS=""
+
+[ -z "$PHP_BUILD_WGET_OPTS" ] && PHP_BUILD_WGET_OPTS=""
+
 # Enable Zend Thread Safety by setting this value to "yes"
 [ -z "$PHP_BUILD_ZTS_ENABLE" ] && PHP_BUILD_ZTS_ENABLE=off
 
@@ -211,19 +215,19 @@ function http() {
 }
 
 function http_head_curl() {
-    curl -qsILf "$1"
+    curl -qsILf ${PHP_BUILD_CURL_OPTS} "$1"
 }
 
 function http_get_curl() {
-    curl -qsSLf "$1"
+    curl -qsSLf ${PHP_BUILD_CURL_OPTS} "$1"
 }
 
 function http_head_wget() {
-    wget -q --server-response --spider "$1" 2>&1
+    wget -q --server-response --spider ${PHP_BUILD_WGET_OPTS} "$1" 2>&1
 }
 
 function http_get_wget() {
-    wget -nv -O- "$1"
+    wget -nv -O- ${PHP_BUILD_WGET_OPTS} "$1"
 }
 
 # Logs a given log text with a [marker] to STDERR
