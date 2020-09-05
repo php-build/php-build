@@ -2,33 +2,8 @@ language: c
 
 addons:
   apt:
-    sources:
-      - sourceline: 'ppa:ondrej/php'
-    packages:
-      - libicu-dev
-      - libmcrypt-dev
-      - libonig-dev
-      - libtidy-dev
-      - libzip-dev
-      - libjpeg-dev
-      - libxml2-dev
-      - libsqlite3-dev
-      - re2c
-      - bison
     update: true
   homebrew:
-    packages:
-      - icu4c
-      - krb5
-      - libedit
-      - libmcrypt
-      - libxml2
-      - libzip
-      - libjpeg
-      - oniguruma
-      - openssl
-      - python
-      - re2c
     update: true
 
 matrix:
@@ -36,38 +11,18 @@ matrix:
     - os: linux
       dist: trusty
       env: DEFINITION=5.2.17
-      addons:
-        apt:
-          packges:
-            - php5-cli
     - os: linux
       dist: trusty
       env: DEFINITION=5.3.29
-      addons:
-        apt:
-          packges:
-            - php5-cli
     - os: linux
       dist: trusty
       env: DEFINITION=5.4.45
-      addons:
-        apt:
-          packges:
-            - php5-cli
     - os: linux
       dist: trusty
       env: DEFINITION=5.5.38
-      addons:
-        apt:
-          packges:
-            - php5-cli
     - os: linux
       dist: trusty
       env: DEFINITION=5.6.40
-      addons:
-        apt:
-          packges:
-            - php5-cli
     - os: linux
       dist: trusty
       env: DEFINITION=7.0.33
@@ -118,9 +73,6 @@ before_install:
         if [[ "$DEFINITION" =~ ^("5.2.".*)$ ]]; then
             export PHP_BUILD_CONFIGURE_OPTS="--with-libdir=lib/x86_64-linux-gnu"
         fi
-        if [[ "$DEFINITION" =~ ^("5.2.".*|"5.3.".*)$ ]]; then
-            sudo apt-get install -y autoconf2.13
-        fi
         if [[ "$DEFINITION" =~ ^("7.3.".*)$ ]]; then
             export PHP_BUILD_CONFIGURE_OPTS="--without-libzip"
         fi
@@ -138,10 +90,6 @@ before_install:
     fi
   - |
     if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-        if [[ "$DEFINITION" =~ ^("5.3.".*)$ ]]; then
-            brew install autoconf@2.13
-            export LIBS="-lssl -lcrypto"
-        fi
         if [[ "$DEFINITION" =~ ^("5.".*)$ ]]; then
             ./build-openssl-1.0.sh
             export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-openssl=/usr/local/opt/openssl@1.0"
@@ -157,6 +105,7 @@ before_install:
         fi
     fi
 install:
+  - ./install-dependencies.sh
   - git clone https://github.com/sstephenson/bats
   - bats/install.sh $HOME
   - export PATH=$HOME/bin:$HOME/libexec:$PATH
