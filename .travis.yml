@@ -108,6 +108,7 @@ install:
   - bats --version
 
 script:
+  - export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS$PHP_BUILD_CONFIGURE_OPTS --enable-option-checking=fatal"
   - ./run-tests.sh $DEFINITION
 
 after_failure:
