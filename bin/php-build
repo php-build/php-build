@@ -650,7 +650,7 @@ function configure_package() {
     local package_name="$(definition_package_name)"
     local phpLower74=true
 
-    if [[ $DEFINITION =~ ^("7.4.".*)$ ]] || [[ $DEFINITION =~ ^("8.0".*)$ ]]; then
+    if [[ $DEFINITION =~ ^("7.4".*)$ ]] || [[ $DEFINITION =~ ^("8.0".*)$ ]]; then
         phpLower74=false
     fi
 
@@ -678,6 +678,12 @@ function configure_package() {
         configure_option -D "--with-gettext"
         configure_option -D "--with-readline"
         configure_option "--with-libedit"
+        if [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libedit)" ]; then
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix libedit)/lib/pkgconfig"
+            if [[ $phpLower74 ]]; then
+                configure_option -R "--with-libedit" "$(brew --prefix libedit)"
+            fi
+        fi
 
         if [[ $phpLower74 ]]; then
             configure_option -R "--with-png-dir" "/usr/X11"
@@ -689,17 +695,19 @@ function configure_package() {
         log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
     fi
 
-    # Override `--with-openssl` and `--with-libxml-dir`
-    # if Homebrew's openssl and libxml2 exist on Mac OS X 10.11+.
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 11 ] && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix openssl)" ] && [ -e "$(brew --prefix libxml2)" ]; then
-        configure_option -R "--with-openssl" "$(brew --prefix openssl)"
+    if [[ $phpLower74 ]] && is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libxml2)" ]; then
+        configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
+    fi
 
-        if [[ $phpLower74 ]]; then
-            configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
-        fi
+    if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix openssl)" ]; then
+        # openssl 1.1 on macOS requires using pkg-config (or patching)
+        export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix openssl)/lib/pkgconfig"
+        configure_option -R "--with-openssl" "$(brew --prefix openssl)"
     fi
 
     if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
+        # PHP 7.4+ will pick up ICU with pkg-config only, previous versions will use pkg-config or --with-icu-dir.
+        export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix icu4c)/lib/pkgconfig"
         if [[ $phpLower74 ]]; then
             configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
         fi
