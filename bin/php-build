@@ -695,14 +695,14 @@ function configure_package() {
         log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
     fi
 
-    if [[ $phpLower74 ]] && is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libxml2)" ]; then
-        configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
+    if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix bzip2)" ]; then
+        # macOS 10.13 works with stock bzip2, but in later versions ./configure
+        # will not find it. Homebrew version works with 10.13 and higher.
+        configure_option -R "--with-bz2" "$(brew --prefix bzip2)"
     fi
 
-    if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix openssl)" ]; then
-        # openssl 1.1 on macOS requires using pkg-config (or patching)
-        export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix openssl)/lib/pkgconfig"
-        configure_option -R "--with-openssl" "$(brew --prefix openssl)"
+    if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libiconv)" ]; then
+        configure_option -R "--with-iconv" "$(brew --prefix libiconv)"
     fi
 
     if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
@@ -718,6 +718,20 @@ function configure_package() {
         elif [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "59" ]]; then
             export CXXFLAGS="-std=c++11 -stdlib=libc++"
         fi
+    fi
+
+    if [[ $phpLower74 ]] && is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libxml2)" ]; then
+        configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
+    fi
+
+    if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix openssl)" ]; then
+        # openssl 1.1 on macOS requires using pkg-config (or patching)
+        export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix openssl)/lib/pkgconfig"
+        configure_option -R "--with-openssl" "$(brew --prefix openssl)"
+    fi
+
+    if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix zlib)" ]; then
+        configure_option -R "--with-zlib" "$(brew --prefix zlib)"
     fi
 
     CONFIGURE_OPTIONS="$CONFIGURE_OPTIONS $PHP_BUILD_CONFIGURE_OPTS $CONFIGURE_OPTS"
