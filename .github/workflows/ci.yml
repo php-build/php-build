@@ -1,0 +1,77 @@
+name: ci
+on:
+  pull_request:
+  push:
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - 'centos:7'
+          - 'centos:8'
+          - 'ubuntu:18.04'
+          - 'ubuntu:20.04'
+        php:
+          - '5.2.17'
+          - '5.3.29'
+          - '5.4.45'
+          - '5.5.38'
+          - '5.6.40'
+          - '7.0.33'
+          - '7.1.33'
+          - '7.2.33'
+          - '7.3.22'
+          - '7.4.10'
+        exclude:
+          # TODO: libmysqlclient-dev dependency
+          - { distro: 'centos:7', php: '5.2.17'}
+          # TODO: libmysqlclient-dev dependency & curl-config
+          - { distro: 'centos:8', php: '5.2.17'}
+          - { distro: 'ubuntu:18.04', php: '5.2.17'}
+          - { distro: 'ubuntu:20.04', php: '5.2.17'}
+          # TODO: icu-config / intl
+          - { distro: 'ubuntu:20.04', php: '5.3.29'}
+          - { distro: 'ubuntu:20.04', php: '5.4.45'}
+          - { distro: 'ubuntu:20.04', php: '5.5.38'}
+          - { distro: 'ubuntu:20.04', php: '5.6.40'}
+          - { distro: 'ubuntu:20.04', php: '7.0.33'}
+          # libzip (0.10.1) on CentOS 7 is too old for PHP 7.3+ (required: >= 0.11)
+          - { distro: 'centos:7', php: '7.3.22'}
+          - { distro: 'centos:7', php: '7.4.10'}
+        include:
+          - { distro: 'centos:8', php: '5.3.29', openssl102: true}
+          - { distro: 'centos:8', php: '5.4.45', openssl102: true}
+          - { distro: 'centos:8', php: '5.5.38', openssl102: true}
+          - { distro: 'ubuntu:18.04', php: '5.3.29', openssl102: true}
+          - { distro: 'ubuntu:18.04', php: '5.4.45', openssl102: true}
+          - { distro: 'ubuntu:18.04', php: '5.5.38', openssl102: true}
+    name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
+    container: "${{ matrix.distro }}"
+    env:
+      # https://bugs.php.net/bug.php?id=79445
+      PHP_BUILD_CURL_OPTS: '--retry 3 --retry-delay 5 --connect-timeout 10'
+      # Fail if php-build is using unrecognized configure options by default.
+      PHP_BUILD_CONFIGURE_OPTS: '--enable-option-checking=fatal'
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          set -ex
+          ./install-dependencies.sh
+          git clone --depth 1 https://github.com/sstephenson/bats.git
+          ./bats/install.sh /usr/local
+          if [ "${{ matrix.openssl102 }}" = "true" ]; then
+            ./build-openssl-1.0.sh
+          fi
+      - name: run tests
+        run: |
+          set -ex
+          if [ "${{ matrix.openssl102 }}" = "true" ]; then
+            export PHP_BUILD_CONFIGURE_OPTS="$PHP_BUILD_CONFIGURE_OPTS --with-openssl=/usr/local/opt/openssl@1.0"
+          fi
+          if ! ./run-tests.sh ${{ matrix.php }}; then
+            cat /tmp/php-build.*.log
+            exit 1
+          fi

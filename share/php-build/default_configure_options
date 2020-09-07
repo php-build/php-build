@@ -10,7 +10,7 @@
 --with-xsl
 --enable-ftp
 --enable-cgi
---with-curl=/usr
+--with-curl
 --with-tidy
 --with-xmlrpc
 --enable-sysvsem

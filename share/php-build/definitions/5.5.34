@@ -1,3 +1,4 @@
+configure_option -D "--enable-phpdbg"
 configure_option "--with-mysql" "mysqlnd"
 configure_option "--with-mcrypt" "/usr"
 configure_option "--without-pear"
@@ -5,6 +6,8 @@ configure_option "--with-gd"
 configure_option "--with-png-dir" "/usr"
 configure_option "--with-jpeg-dir" "/usr"
 configure_option "--enable-zip"
+
+patch_file "php-5.6-curl-config.patch"
 
 install_package "https://secure.php.net/distributions/php-5.5.34.tar.bz2"
 install_xdebug "2.5.5"

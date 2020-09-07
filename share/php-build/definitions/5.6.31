@@ -6,6 +6,7 @@ configure_option "--with-png-dir" "/usr"
 configure_option "--with-jpeg-dir" "/usr"
 configure_option "--enable-zip"
 
+patch_file "php-5.6-curl-config.patch"
 patch_file "php-5.6-support-openssl-1.1.0.patch"
 
 install_package "https://secure.php.net/distributions/php-5.6.31.tar.bz2"
