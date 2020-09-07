@@ -34,10 +34,10 @@ matrix:
       env: DEFINITION=7.2.33
     - os: linux
       dist: xenial
-      env: DEFINITION=7.3.21
+      env: DEFINITION=7.3.22
     - os: linux
       dist: xenial
-      env: DEFINITION=7.4.9
+      env: DEFINITION=7.4.10
     - os: linux
       dist: xenial
       env: DEFINITION=8.0snapshot
@@ -58,10 +58,10 @@ matrix:
       env: DEFINITION=7.2.33
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=7.3.21
+      env: DEFINITION=7.3.22
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=7.4.9
+      env: DEFINITION=7.4.10
     - os: osx
       osx_image: xcode9.4
       env: DEFINITION=8.0snapshot
