@@ -5,5 +5,5 @@ configure_option "--with-mhash"
 
 configure_option -D "--with-xmlrpc"
 
-install_package_from_github master
+install_package_from_github PHP-8.0
 enable_builtin_opcache
