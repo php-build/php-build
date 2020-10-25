@@ -28,7 +28,7 @@ update_gh_pages() {
 VERSION="$1"
 
 if [ -z "$RONN_PATH" ]; then
-    ronn=$(which ronn)
+    ronn="$(command -v ronn)"
 else
     ronn="$RONN_PATH"
 fi

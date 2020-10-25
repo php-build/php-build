@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Update this when a new stable version comes around
-STABLE_DEFINITIONS="5.3.29 5.4.45 5.5.38 5.6.40 7.0.33 7.1.28 7.2.17 7.3.4"
+STABLE_DEFINITIONS="5.3.29 5.4.45 5.5.38 5.6.40 7.0.33 7.1.33 7.2.34 7.3.23 7.4.11"
 
 TIME="$(date "+%Y%m%d%H%M%S")"
 
@@ -15,7 +15,7 @@ usage() {
     echo "Usage: ./run-tests.sh all|stable|<definition>,..."
 }
 
-if ! which "bats" > /dev/null; then
+if ! command -v bats > /dev/null; then
     echo "You need http://github.com/sstephenson/bats installed." >&2
     exit 1
 fi
@@ -46,6 +46,7 @@ for definition in $BUILD_LIST; do
         export TEST_PREFIX="$BUILD_PREFIX/$definition"
         export DEFINITION_CONFIG=$(./bin/php-build --definition "$definition")
         export PHP_MINOR_VERSION=${definition%.*}
+        export PHP_MAJOR_VERSION=${definition:0:1}
 
         echo "Running Tests..."
 

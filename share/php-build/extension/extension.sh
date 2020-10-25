@@ -39,7 +39,9 @@ function install_extension {
                 "$configure_args" $extension_type "$after_install"
         fi
     else
-        echo "No configuration found for extension \"$extension\", skipping" >&3
+        log "$extension" "No definition found, assuming default PECL installation"
+
+        _download_extension $extension $version "http://pecl.php.net/get/$extension-$version.tgz" "" "extension" ""
     fi
 }
 
@@ -124,6 +126,7 @@ function _checkout_extension {
     if [ -n "$revision" ]; then
         log "$name" "Checkout specified revision: $revision"
         cd "$source_dir"
+        git checkout $revision
         git reset --hard $revision
         cd "$cwd"
     fi

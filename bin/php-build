@@ -92,6 +92,24 @@ function osx_minor {
     return 0
 }
 
+num_cpu_cores() {
+    local num
+    case "$(uname -s)" in
+    Darwin | *BSD )
+        num="$(sysctl -n hw.ncpu 2>/dev/null || true)"
+        ;;
+    SunOS )
+        num="$(getconf NPROCESSORS_ONLN 2>/dev/null || true)"
+        ;;
+    * )
+        num="$({ getconf _NPROCESSORS_ONLN ||
+             grep -c ^processor /proc/cpuinfo; } 2>/dev/null)"
+        num="${num#0}"
+        ;;
+    esac
+    echo "${num:-2}"
+}
+
 # Common Variables
 # ----------------
 
@@ -135,6 +153,10 @@ PATCH_FILES=""
 [ -z "$PHP_BUILD_CONFIGURE_OPTS" ] && PHP_BUILD_CONFIGURE_OPTS=""
 
 [ -z "$CONFIGURE_OPTS" ] && CONFIGURE_OPTS=""
+
+[ -z "$PHP_BUILD_CURL_OPTS" ] && PHP_BUILD_CURL_OPTS=""
+
+[ -z "$PHP_BUILD_WGET_OPTS" ] && PHP_BUILD_WGET_OPTS=""
 
 # Enable Zend Thread Safety by setting this value to "yes"
 [ -z "$PHP_BUILD_ZTS_ENABLE" ] && PHP_BUILD_ZTS_ENABLE=off
@@ -193,19 +215,19 @@ function http() {
 }
 
 function http_head_curl() {
-    curl -qsILf "$1"
+    curl -qsILf ${PHP_BUILD_CURL_OPTS} "$1"
 }
 
 function http_get_curl() {
-    curl -qsSLf "$1"
+    curl -qsSLf ${PHP_BUILD_CURL_OPTS} "$1"
 }
 
 function http_head_wget() {
-    wget -q --server-response --spider "$1" 2>&1
+    wget -q --server-response --spider ${PHP_BUILD_WGET_OPTS} "$1" 2>&1
 }
 
 function http_get_wget() {
-    wget -nv -O- "$1"
+    wget -nv -O- ${PHP_BUILD_WGET_OPTS} "$1"
 }
 
 # Logs a given log text with a [marker] to STDERR
@@ -233,7 +255,7 @@ function download() {
         rm -rf "$PHP_BUILD_TMPDIR/source/$DEFINITION"
     fi
 
-    if [ -d "$PHP_BUILD_TMPDIR/source/$DEFINITION" ]; then
+    if [[ -d "$PHP_BUILD_TMPDIR/source/$DEFINITION" && -n "$(ls -A $PHP_BUILD_TMPDIR/source/$DEFINITION)" ]]; then
         log "Skipping" "Already downloaded and extracted $url"
         return
     fi
@@ -252,7 +274,7 @@ function download() {
         rm "$temp_package"
     fi
 
-    mkdir "$PHP_BUILD_TMPDIR/source/$DEFINITION"
+    mkdir -p "$PHP_BUILD_TMPDIR/source/$DEFINITION"
 
     "extract_$archive_type" "$package_file" "$PHP_BUILD_TMPDIR/source/$DEFINITION"
 }
@@ -375,7 +397,7 @@ function build_package() {
     fi
     cd "$source_path"
     {
-        make $PHP_BUILD_EXTRA_MAKE_ARGUMENTS
+        make -j $(num_cpu_cores) $PHP_BUILD_EXTRA_MAKE_ARGUMENTS
         make install
         if [ "$PHP_BUILD_KEEP_OBJECT_FILES" == "off" ]; then
             make clean
@@ -438,7 +460,7 @@ function apply_patches() {
     if [ -n "$PATCH_FILES" ]; then
         log "Info" "Applying patches: $PATCH_FILES"
         for patch in $PATCH_FILES; do
-            patch -d "$source_path" -N -p1 -s < $patch || true
+            patch -d "$source_path" -N -p1 -s < $patch
         done
     fi
 }
@@ -492,6 +514,35 @@ function is_php_package() {
 
 function definition_package_name() {
     echo "php-$DEFINITION"
+}
+
+# ### autoconf_version
+#
+# Requires an old autoconf version. Valid values are 2.13 and 2.64, which are
+# commonly shipped with most Linux distros.
+function autoconf_version() {
+    local ver="$1"
+    # if the user has set PHP_AUTOCONF, honor it and ignore this command.
+    if [[ -n "${PHP_AUTOCONF}" ]]; then
+        return
+    fi
+    # Debian-like pattern
+    if command -v "autoconf$ver" &> /dev/null; then
+        export PHP_AUTOCONF="autoconf$ver"
+        return
+    fi
+    # RHEL-like pattern
+    if command -v "autoconf-$ver" &> /dev/null; then
+        export PHP_AUTOCONF="autoconf-$ver"
+        return
+    fi
+    # macOS+Homebrew
+    if is_osx && brew --prefix "autoconf@$ver" &> /dev/null; then
+        PHP_AUTOCONF="$(brew --prefix "autoconf@$ver")/bin/autoconf${ver//./}"
+        export PHP_AUTOCONF
+        return
+    fi
+    # no luck, let's hope that system's autoconf is compatible
 }
 
 # ### configure_option
@@ -597,6 +648,11 @@ function configure_package() {
     local source_path=$1
     local backup_pwd=$(pwd)
     local package_name="$(definition_package_name)"
+    local phpLower74=true
+
+    if [[ $DEFINITION =~ ^("7.4".*)$ ]] || [[ $DEFINITION =~ ^("8.0".*)$ ]]; then
+        phpLower74=false
+    fi
 
     CONFIGURE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
@@ -622,8 +678,16 @@ function configure_package() {
         configure_option -D "--with-gettext"
         configure_option -D "--with-readline"
         configure_option "--with-libedit"
+        if [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libedit)" ]; then
+            export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix libedit)/lib/pkgconfig"
+            if [[ $phpLower74 ]]; then
+                configure_option -R "--with-libedit" "$(brew --prefix libedit)"
+            fi
+        fi
 
-        configure_option -R "--with-png-dir" "/usr/X11"
+        if [[ $phpLower74 ]]; then
+            configure_option -R "--with-png-dir" "/usr/X11"
+        fi
     fi
 
     if [ "$PHP_BUILD_ZTS_ENABLE" == "on" ]; then
@@ -631,15 +695,22 @@ function configure_package() {
         log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
     fi
 
-    # Override `--with-openssl` and `--with-libxml-dir`
-    # if Homebrew's openssl and libxml2 exist on Mac OS X 10.11+.
-    if is_osx && [ "$(osx_major)" -eq 10 ] && [ "$(osx_minor)" -ge 11 ] && [ -n "$(which brew)" ] && [ -e "$(brew --prefix openssl)" ] && [ -e "$(brew --prefix libxml2)" ]; then
-        configure_option -R "--with-openssl" "$(brew --prefix openssl)"
+    if [[ $phpLower74 ]] && is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libxml2)" ]; then
         configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
     fi
 
-    if is_osx && [ -n "$(which brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
-        configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
+    if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix openssl)" ]; then
+        # openssl 1.1 on macOS requires using pkg-config (or patching)
+        export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix openssl)/lib/pkgconfig"
+        configure_option -R "--with-openssl" "$(brew --prefix openssl)"
+    fi
+
+    if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
+        # PHP 7.4+ will pick up ICU with pkg-config only, previous versions will use pkg-config or --with-icu-dir.
+        export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix icu4c)/lib/pkgconfig"
+        if [[ $phpLower74 ]]; then
+            configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
+        fi
         # icu4c 59+ requires C++11
         if [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "61" ]]; then
             # icu4c 61+ compatability (see #499)
@@ -671,15 +742,17 @@ $CONFIGURE_OPTIONS"
         mkdir -p "$PREFIX/libexec"
     fi
 
-    # Set the lib dir to `lib64` on **x86_64**
-    # systems.
+    # x86_64 multiarch systems may have lib, lib32 and lib64.
+    # In older distros, lib64 is the default directory for x86_64 libraries
+    # while on modern distros it's just lib. If no --with-libdir is provided
+    # and /usr/lib64 exists, then we set --with-libdir=lib64.
     local append_default_libdir='yes'
     for option in $CONFIGURE_OPTIONS; do
       case "$option" in
         "--with-libdir"*) append_default_libdir='no' ;;
       esac
     done
-    if [ "$(uname -p)" = "x86_64" ] && [ "${append_default_libdir}" = 'yes' ]; then
+    if [ "$(uname -p)" = "x86_64" ] && [ "${append_default_libdir}" = 'yes' ] && [ -d /usr/lib64 ]; then
         argv="$argv --with-libdir=lib64"
     fi
 
