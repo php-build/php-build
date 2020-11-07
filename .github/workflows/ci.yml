@@ -1,0 +1,71 @@
+name: ci
+on:
+  pull_request:
+  push:
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - 'centos:7'
+          - 'centos:8'
+          - 'ubuntu:18.04'
+          - 'ubuntu:20.04'
+        php:
+          - '5.2.17'
+          - '5.3.29'
+          - '5.4.45'
+          - '5.5.38'
+          - '5.6.40'
+          - '7.0.33'
+          - '7.1.33'
+          - '7.2.33'
+          - '7.3.22'
+          - '7.4.10'
+        exclude:
+          # TODO: libmysqlclient-dev dependency
+          - { distro: 'centos:7', php: '5.2.17'}
+          # TODO: libmysqlclient-dev dependency & curl-config
+          - { distro: 'centos:8', php: '5.2.17'}
+          - { distro: 'ubuntu:18.04', php: '5.2.17'}
+          - { distro: 'ubuntu:20.04', php: '5.2.17'}
+          # TODO: curl-config
+          - { distro: 'ubuntu:18.04', php: '5.3.29'}
+          - { distro: 'ubuntu:18.04', php: '5.4.45'}
+          - { distro: 'ubuntu:18.04', php: '5.5.38'}
+          - { distro: 'ubuntu:18.04', php: '5.6.40'}
+          - { distro: 'ubuntu:20.04', php: '5.3.29'}
+          - { distro: 'ubuntu:20.04', php: '5.4.45'}
+          - { distro: 'ubuntu:20.04', php: '5.5.38'}
+          - { distro: 'ubuntu:20.04', php: '5.6.40'}
+          # TODO: icu-config / intl
+          - { distro: 'ubuntu:20.04', php: '7.0.33'}
+          # TODO: openssl 1.0.2
+          - { distro: 'centos:8', php: '5.3.29'}
+          - { distro: 'centos:8', php: '5.4.45'}
+          - { distro: 'centos:8', php: '5.5.38'}
+          # libzip (0.10.1) on CentOS 7 is too old for PHP 7.3+ (required: >= 0.11)
+          - { distro: 'centos:7', php: '7.3.22'}
+          - { distro: 'centos:7', php: '7.4.10'}
+    name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
+    container: "${{ matrix.distro }}"
+    env:
+      # https://bugs.php.net/bug.php?id=79445
+      PHP_BUILD_CURL_OPTS: '--retry 3 --retry-delay 5 --connect-timeout 10'
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: |
+          set -ex
+          ./install-dependencies.sh
+          git clone --depth 1 https://github.com/sstephenson/bats.git
+          ./bats/install.sh /usr/local
+      - name: run tests
+        run: |
+          set -ex
+          if ! ./run-tests.sh ${{ matrix.php }}; then
+            cat /tmp/php-build.*.log
+            exit 1
+          fi
