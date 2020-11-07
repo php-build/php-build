@@ -21,9 +21,9 @@ jobs:
           - '5.6.40'
           - '7.0.33'
           - '7.1.33'
-          - '7.2.33'
-          - '7.3.22'
-          - '7.4.10'
+          - '7.2.34'
+          - '7.3.24'
+          - '7.4.12'
         exclude:
           # TODO: libmysqlclient-dev dependency
           - { distro: 'centos:7', php: '5.2.17'}
@@ -47,8 +47,8 @@ jobs:
           - { distro: 'centos:8', php: '5.4.45'}
           - { distro: 'centos:8', php: '5.5.38'}
           # libzip (0.10.1) on CentOS 7 is too old for PHP 7.3+ (required: >= 0.11)
-          - { distro: 'centos:7', php: '7.3.22'}
-          - { distro: 'centos:7', php: '7.4.10'}
+          - { distro: 'centos:7', php: '7.3.24'}
+          - { distro: 'centos:7', php: '7.4.12'}
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"
     env:
