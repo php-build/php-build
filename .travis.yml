@@ -12,33 +12,6 @@ matrix:
       dist: trusty
       env: DEFINITION=5.2.17
     - os: linux
-      dist: trusty
-      env: DEFINITION=5.3.29
-    - os: linux
-      dist: trusty
-      env: DEFINITION=5.4.45
-    - os: linux
-      dist: trusty
-      env: DEFINITION=5.5.38
-    - os: linux
-      dist: trusty
-      env: DEFINITION=5.6.40
-    - os: linux
-      dist: trusty
-      env: DEFINITION=7.0.33
-    - os: linux
-      dist: trusty
-      env: DEFINITION=7.1.33
-    - os: linux
-      dist: xenial
-      env: DEFINITION=7.2.34
-    - os: linux
-      dist: xenial
-      env: DEFINITION=7.3.24
-    - os: linux
-      dist: xenial
-      env: DEFINITION=7.4.12
-    - os: linux
       dist: xenial
       env: DEFINITION=8.0snapshot
     - os: osx
