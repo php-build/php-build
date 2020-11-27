@@ -5,5 +5,5 @@ configure_option "--with-jpeg-dir" "/usr"
 configure_option "--enable-zip"
 
 install_package_from_github PHP-7.3
-install_xdebug_master "xdebug_2_9"
+install_xdebug_master "xdebug_3_0"
 enable_builtin_opcache
