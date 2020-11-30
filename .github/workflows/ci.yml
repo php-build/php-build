@@ -24,6 +24,7 @@ jobs:
           - '7.2.34'
           - '7.3.24'
           - '7.4.12'
+          - '8.0.0'
         exclude:
           # TODO: libmysqlclient-dev dependency
           - { distro: 'centos:7', php: '5.2.17'}
