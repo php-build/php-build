@@ -47,9 +47,6 @@ jobs:
           - { distro: 'centos:8', php: '5.3.29'}
           - { distro: 'centos:8', php: '5.4.45'}
           - { distro: 'centos:8', php: '5.5.38'}
-          # libzip (0.10.1) on CentOS 7 is too old for PHP 7.3+ (required: >= 0.11)
-          - { distro: 'centos:7', php: '7.3.25'}
-          - { distro: 'centos:7', php: '7.4.13'}
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"
     env:
