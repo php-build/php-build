@@ -680,12 +680,12 @@ function configure_package() {
         configure_option "--with-libedit"
         if [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libedit)" ]; then
             export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix libedit)/lib/pkgconfig"
-            if [[ $phpLower74 ]]; then
+            if [[ "$phpLower74" == "true" ]]; then
                 configure_option -R "--with-libedit" "$(brew --prefix libedit)"
             fi
         fi
 
-        if [[ $phpLower74 ]]; then
+        if [[ "$phpLower74" == "true" ]]; then
             configure_option -R "--with-png-dir" "/usr/X11"
         fi
     fi
@@ -695,7 +695,7 @@ function configure_package() {
         log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
     fi
 
-    if [[ $phpLower74 ]] && is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libxml2)" ]; then
+    if [[ "$phpLower74" == "true" ]] && is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libxml2)" ]; then
         configure_option -R "--with-libxml-dir" "$(brew --prefix libxml2)"
     fi
 
@@ -708,7 +708,7 @@ function configure_package() {
     if is_osx && [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix icu4c)" ]; then
         # PHP 7.4+ will pick up ICU with pkg-config only, previous versions will use pkg-config or --with-icu-dir.
         export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix icu4c)/lib/pkgconfig"
-        if [[ $phpLower74 ]]; then
+        if [[ "$phpLower74" == "true" ]]; then
             configure_option "--with-icu-dir" "$(brew --prefix icu4c)"
         fi
         # icu4c 59+ requires C++11
