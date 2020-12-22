@@ -158,7 +158,7 @@ PATCH_FILES=""
 
 [ -z "$PHP_BUILD_WGET_OPTS" ] && PHP_BUILD_WGET_OPTS=""
 
-# Enable Zend Thread Safety by setting this value to "yes"
+# Enable Zend Thread Safety by setting this value to "on"
 [ -z "$PHP_BUILD_ZTS_ENABLE" ] && PHP_BUILD_ZTS_ENABLE=off
 
 PHP_BUILD_VERSION="0.11.0dev"
