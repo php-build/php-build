@@ -649,9 +649,13 @@ function configure_package() {
     local backup_pwd=$(pwd)
     local package_name="$(definition_package_name)"
     local phpLower74=true
+    local phpLower80=true
 
     if [[ $DEFINITION =~ ^("7.4".*)$ ]] || [[ $DEFINITION =~ ^("8.0".*)$ ]]; then
         phpLower74=false
+    fi
+    if [[ $DEFINITION =~ ^("8.0".*)$ ]]; then
+        phpLower80=false
     fi
 
     CONFIGURE_OUTPUT='5'
@@ -691,7 +695,11 @@ function configure_package() {
     fi
 
     if [ "$PHP_BUILD_ZTS_ENABLE" == "on" ]; then
-        configure_option "--enable-maintainer-zts"
+        if [[ $phpLower80 == "true" ]]; then
+            configure_option "--enable-maintainer-zts"
+        else
+            configure_option "--enable-zts"
+        fi
         log "Warning" "Enabling Zend Thread Safety is meant only for maintainers!"
     fi
 
