@@ -80,7 +80,6 @@ case $DISTRO in
 			libtidy-devel \
 			libxml2-devel \
 			libxslt-devel \
-			libzip-devel \
 			make \
 			oniguruma-devel \
 			openssl-devel \
@@ -88,7 +87,14 @@ case $DISTRO in
 			pkgconf \
 			readline-devel \
 			sqlite-devel \
-			zlib-devel
+			zlib-devel \
+			cmake3
+		$SUDO curl https://github.com/nih-at/libzip/releases/download/v1.7.3/libzip-1.7.3.tar.gz -L -o libzip-1.7.3.tar.gz && \
+			tar -zxvf libzip-1.7.3.tar.gz && \
+			cd libzip-1.7.3 && \
+			cmake3 . -DCMAKE_INSTALL_PREFIX=/usr && \
+			make && \
+			make install
 		;;
 	darwin)
 		# brew install will fail if a package is already installed

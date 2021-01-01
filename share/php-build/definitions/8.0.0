@@ -5,6 +5,6 @@ configure_option "--with-mhash"
 
 configure_option -D "--with-xmlrpc"
 
-install_package_from_github PHP-8.0
-install_xdebug_master "xdebug_3_0"
+install_package "https://secure.php.net/distributions/php-8.0.0.tar.bz2"
+install_xdebug "3.0.1"
 enable_builtin_opcache
