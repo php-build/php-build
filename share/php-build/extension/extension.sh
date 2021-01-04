@@ -115,7 +115,7 @@ function _checkout_extension {
         cd "$source_dir"
         git clean -fdx
         git reset --hard HEAD
-        git pull origin master > /dev/null
+        git pull origin > /dev/null
         cd "$cwd"
     else
         log "$name" "Fetching from $url_source"
