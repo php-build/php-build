@@ -58,7 +58,6 @@ case $DISTRO in
 		;;
 	rhel)
 		$SUDO yum install -y yum-utils epel-release
-		$SUDO yum-config-manager --enable PowerTools
 		$SUDO yum install -y \
 			autoconf \
 			autoconf213 \
