@@ -58,7 +58,7 @@ case $DISTRO in
 		;;
 	rhel)
 		$SUDO yum install -y yum-utils epel-release
-		$SUDO yum-config-manager --enable codeready-builder-for-rhel-8-x86_64-rpms || true
+		$SUDO dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm || true
 		$SUDO yum install -y \
 			autoconf \
 			autoconf213 \
