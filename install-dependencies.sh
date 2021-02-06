@@ -57,8 +57,10 @@ case $DISTRO in
 			zlib1g-dev
 		;;
 	rhel)
-		$SUDO yum install -y yum-utils epel-release
-		$SUDO dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm || true
+		$SUDO dnf -y install dnf-plugins-core || true
+		$SUDO dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm || true
+		$SUDO yum install -y yum-utils epel-release || true
+		$SUDO dnf config-manager --set-enabled PowerTools
 		$SUDO yum install -y \
 			autoconf \
 			autoconf213 \
