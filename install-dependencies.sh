@@ -58,7 +58,7 @@ case $DISTRO in
 		;;
 	rhel)
 		$SUDO yum install -y yum-utils epel-release
-		$SUDO yum-config-manager --enable PowerTools || $SUDO subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+		$SUDO yum-config-manager --enable codeready-builder-for-rhel-8-x86_64-rpms || true
 		$SUDO yum install -y \
 			autoconf \
 			autoconf213 \
