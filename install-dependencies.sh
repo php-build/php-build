@@ -1,5 +1,9 @@
 #!/bin/sh
-set -e
+set -eu
+
+if [ -f /etc/os-release ]; then
+	. /etc/os-release
+fi
 
 if [ -f /etc/debian_version ]; then
 	DISTRO=debian
@@ -58,7 +62,12 @@ case $DISTRO in
 		;;
 	rhel)
 		$SUDO yum install -y yum-utils epel-release
-		$SUDO yum-config-manager --enable PowerTools
+		if [ ${VERSION_ID:-0} -lt 8 ]; then
+			$SUDO yum-config-manager --enable PowerTools
+		else
+			$SUDO yum install -y dnf-plugins-core
+			$SUDO yum config-manager --set-enabled powertools
+		fi
 		$SUDO yum install -y \
 			autoconf \
 			autoconf213 \
