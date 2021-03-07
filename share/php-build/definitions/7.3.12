@@ -5,5 +5,5 @@ configure_option "--with-jpeg-dir" "/usr"
 configure_option "--enable-zip"
 
 install_package "https://secure.php.net/distributions/php-7.3.12.tar.bz2"
-install_xdebug "3.0.2"
+install_xdebug "3.0.3"
 enable_builtin_opcache
