@@ -9,5 +9,5 @@ configure_option "--enable-zip"
 
 patch_file "php-5.4.12-support-c++11.patch"
 
-install_package "http://museum.php.net/php5/php-5.4.12.tar.bz2"
+install_package "https://museum.php.net/php5/php-5.4.12.tar.bz2"
 install_xdebug "2.4.1"
