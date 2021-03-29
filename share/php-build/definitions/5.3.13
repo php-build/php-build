@@ -11,5 +11,5 @@ patch_file "php-5.3.29-64bit-intl.patch"
 patch_file "php-5.4.6-libxml2-2.9.patch"
 patch_file "php-5.4.12-support-c++11.patch"
 
-install_package "https://git.php.net/?p=web/php-distributions.git;a=blob;f=php-5.3.13.tar.bz2;h=3ca3e799c3e24eec433669b956ab21763430bc21;hb=fc98a2ea17a9f6fddcc28207ebee4904619e19a2"
+install_package "http://museum.php.net/php5/php-5.3.13.tar.bz2"
 install_xdebug "2.2.7"
