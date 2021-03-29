@@ -16,5 +16,5 @@ patch_file "xp_ssl.c.patch"
 patch_file "zip_direct.c.patch"
 patch_file "php-5.4.6-libxml2-2.9.patch"
 
-install_package "http://museum.php.net/php5/php-5.2.17.tar.bz2"
+install_package "https://museum.php.net/php5/php-5.2.17.tar.bz2"
 install_xdebug "2.2.7"
