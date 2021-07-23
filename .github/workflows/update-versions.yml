@@ -1,0 +1,21 @@
+name: Update PHP definitions
+
+on:
+  schedule:
+    - cron: 0 0 * * FRI #new patch releases are on Thursday - go with midnight on Friday morning to be sure
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@2.9.0
+      - run: php update-php-versions.php
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update PHP version definitions"
+      - run: git push
