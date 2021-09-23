@@ -81,6 +81,7 @@ case $DISTRO in
 			gcc \
 			gcc-c++ \
 			git \
+			libarchive \
 			libcurl-devel \
 			libicu-devel \
 			libjpeg-turbo-devel \
