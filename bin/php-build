@@ -656,11 +656,9 @@ function configure_package() {
     local minorVersion=$(echo $baseVersion | cut -d '.' -f2)
 
     if [[ $majorVersion -ge 8 ]]; then
-	phpLower74=false
-	phpLower80=false
-	log Debug "PHP version detected as 8 or higher"
+        phpLower74=false
+        phpLower80=false
     elif [[ $majorVersion -eq 7 ]] && [[ $minorVersion -ge 4 ]]; then
-	log Debug "PHP version detected as 7.4 or higher"
         phpLower74=false
     fi
 
