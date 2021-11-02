@@ -35,7 +35,7 @@ function download_from_github() {
 function clone_from_github() {
     local branch=${1}
     local repository_name=${2}
-    local repository_url="git://github.com/${repository_name}.git"
+    local repository_url="https://github.com/${repository_name}.git"
     local directory="${PHP_BUILD_TMPDIR}/source/${DEFINITION}"
 
     if [ -d "${directory}" ]; then
