@@ -35,7 +35,7 @@ Locate your phpenv directory:
 
 Clone the Git repository into phpenv plugins directory:
 
-    % git clone git://github.com/php-build/php-build.git $HOME/.phpenv/plugins/php-build
+    % git clone https://github.com/php-build/php-build.git $HOME/.phpenv/plugins/php-build
 
 Now you can use php-build as phpenv plugin, as follows:
 
@@ -47,7 +47,7 @@ The built version will be installed into `$HOME/.phpenv/versions/<definition>`.
 
 Clone the Git Repository:
 
-    % git clone git://github.com/php-build/php-build.git
+    % git clone https://github.com/php-build/php-build.git
 
 Then go into the extracted/cloned directory and run:
 
