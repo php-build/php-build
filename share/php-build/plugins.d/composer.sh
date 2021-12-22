@@ -17,7 +17,7 @@ download_composer() {
     local composer_url="$1"
 
     if [ -z "$composer_url" ]; then
-        composer_url="https://getcomposer.org/download/2.1.9/composer.phar"
+        composer_url="https://getcomposer.org/download/2.2.0/composer.phar"
     fi
 
     if [ ! -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
