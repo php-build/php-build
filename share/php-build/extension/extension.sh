@@ -115,12 +115,16 @@ function _checkout_extension {
         cd "$source_dir"
         git clean -fdx
         git reset --hard HEAD
-        git pull origin master > /dev/null
+        git fetch origin > /dev/null
         cd "$cwd"
     else
         log "$name" "Fetching from $url_source"
         git clone "$url_source" "$source_dir" 2>&4
         log "$name" "commit $(cd ${source_dir} && git rev-parse HEAD)"
+    fi
+
+    if [ ! -n "$revision" ]; then
+        revision="origin/master"
     fi
 
     if [ -n "$revision" ]; then

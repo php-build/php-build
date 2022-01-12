@@ -651,11 +651,15 @@ function configure_package() {
     local phpLower74=true
     local phpLower80=true
 
-    if [[ $DEFINITION =~ ^("7.4".*)$ ]] || [[ $DEFINITION =~ ^("8.0".*)$ ]]; then
+    local baseVersion=$(echo $DEFINITION | grep -Po '^\d+\.\d+')
+    local majorVersion=$(echo $baseVersion | cut -d '.' -f1)
+    local minorVersion=$(echo $baseVersion | cut -d '.' -f2)
+
+    if [[ $majorVersion -ge 8 ]]; then
         phpLower74=false
-    fi
-    if [[ $DEFINITION =~ ^("8.0".*)$ ]]; then
         phpLower80=false
+    elif [[ $majorVersion -eq 7 ]] && [[ $minorVersion -ge 4 ]]; then
+        phpLower74=false
     fi
 
     CONFIGURE_OUTPUT='5'

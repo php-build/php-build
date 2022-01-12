@@ -1,5 +1,9 @@
 #!/bin/sh
-set -e
+set -eu
+
+if [ -f /etc/os-release ]; then
+	. /etc/os-release
+fi
 
 if [ -f /etc/debian_version ]; then
 	DISTRO=debian
@@ -58,7 +62,19 @@ case $DISTRO in
 		;;
 	rhel)
 		$SUDO yum install -y yum-utils epel-release
-		$SUDO yum-config-manager --enable PowerTools
+		if [ ${VERSION_ID:-0} -lt 8 ]; then
+			$SUDO yum-config-manager --enable PowerTools
+			# Install gcc v10 and enable it
+			$SUDO yum install -y centos-release-scl
+			$SUDO yum install -y devtoolset-10-gcc-c++
+			# Countermeasures for the message on the right: "MANPATH: unbound variable"
+			MANPATH=""
+			# Enable devtoolset-10 for gcc v10
+			source /opt/rh/devtoolset-10/enable
+		else
+			$SUDO yum install -y dnf-plugins-core
+			$SUDO yum config-manager --set-enabled powertools
+		fi
 		$SUDO yum install -y \
 			autoconf \
 			autoconf213 \
@@ -72,6 +88,7 @@ case $DISTRO in
 			gcc \
 			gcc-c++ \
 			git \
+			libarchive \
 			libcurl-devel \
 			libicu-devel \
 			libjpeg-turbo-devel \
