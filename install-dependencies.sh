@@ -61,6 +61,11 @@ case $DISTRO in
 			zlib1g-dev
 		;;
 	rhel)
+		# NOTE: Responding to the following error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
+		if [ ${VERSION_ID:-0} -eq 8 ]; then
+			sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-*
+			sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-Linux-*
+		fi
 		$SUDO yum install -y yum-utils epel-release
 		if [ ${VERSION_ID:-0} -lt 8 ]; then
 			$SUDO yum-config-manager --enable PowerTools
