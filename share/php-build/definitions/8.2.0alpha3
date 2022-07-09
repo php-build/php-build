@@ -1,0 +1,10 @@
+configure_option "--enable-gd"
+configure_option "--with-jpeg"
+configure_option "--with-zip"
+configure_option "--with-mhash"
+
+configure_option -D "--with-xmlrpc"
+
+install_package "https://downloads.php.net/~sergey/php-8.2.0alpha3.tar.bz2"
+install_xdebug "3.1.5"
+enable_builtin_opcache
