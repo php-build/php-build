@@ -28,7 +28,7 @@ matrix:
       env: DEFINITION=7.1.33
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=7.2.4
+      env: DEFINITION=7.2.34
     - os: osx
       osx_image: xcode9.4
       env: DEFINITION=7.3.33
