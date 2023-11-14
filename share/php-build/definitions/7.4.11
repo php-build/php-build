@@ -2,6 +2,8 @@ configure_option "--enable-gd"
 configure_option "--with-jpeg"
 configure_option "--with-zip"
 
+patch_file "php-8.0-support-openssl-3.patch"
+
 install_package "https://secure.php.net/distributions/php-7.4.11.tar.bz2"
 install_xdebug "3.1.6"
 enable_builtin_opcache
