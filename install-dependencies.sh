@@ -76,6 +76,7 @@ case $DISTRO in
 			$SUDO yum config-manager --set-enabled powertools
 		else
 			$SUDO yum install -y dnf-plugins-core
+			$SUDO yum config-manager --set-enabled crb
 		fi
 		$SUDO yum install -y \
 			autoconf \
