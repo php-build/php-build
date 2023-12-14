@@ -71,7 +71,7 @@ case $DISTRO in
 			MANPATH=""
 			# Enable devtoolset-10 for gcc v10
 			source /opt/rh/devtoolset-10/enable
-		else
+		elif [ ${VERSION_ID:-0} -lt 9 ]; then
 			$SUDO yum install -y dnf-plugins-core
 			$SUDO yum config-manager --set-enabled powertools
 		fi
