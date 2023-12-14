@@ -62,6 +62,12 @@ jobs:
           # PHP 7.0
           - { distro: 'ubuntu:20.04', php: '7.0.33'}
           - { distro: 'ubuntu:22.04', php: '7.0.33'}
+          # PHP 7.1
+          - { distro: 'ubuntu:22.04', php: '7.1.33'}
+          # PHP 7.2
+          - { distro: 'ubuntu:22.04', php: '7.2.34'}
+          # PHP 7.3
+          - { distro: 'ubuntu:22.04', php: '7.3.33'}
 
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"
