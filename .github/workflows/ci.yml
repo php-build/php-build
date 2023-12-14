@@ -10,7 +10,7 @@ jobs:
       matrix:
         distro:
           - 'centos:7'
-          - 'centos:8'
+          - 'rockylinux:8'
           - 'ubuntu:18.04'
           - 'ubuntu:20.04'
         php:
@@ -31,7 +31,7 @@ jobs:
           # TODO: libmysqlclient-dev dependency
           - { distro: 'centos:7', php: '5.2.17'}
           # TODO: libmysqlclient-dev dependency & curl-config
-          - { distro: 'centos:8', php: '5.2.17'}
+          - { distro: 'rockylinux:8', php: '5.2.17'}
           - { distro: 'ubuntu:18.04', php: '5.2.17'}
           - { distro: 'ubuntu:20.04', php: '5.2.17'}
           # TODO: curl-config
@@ -46,9 +46,9 @@ jobs:
           # TODO: icu-config / intl
           - { distro: 'ubuntu:20.04', php: '7.0.33'}
           # TODO: openssl 1.0.2
-          - { distro: 'centos:8', php: '5.3.29'}
-          - { distro: 'centos:8', php: '5.4.45'}
-          - { distro: 'centos:8', php: '5.5.38'}
+          - { distro: 'rockylinux:8', php: '5.3.29'}
+          - { distro: 'rockylinux:8', php: '5.4.45'}
+          - { distro: 'rockylinux:8', php: '5.5.38'}
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"
     env:
