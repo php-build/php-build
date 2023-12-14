@@ -79,6 +79,7 @@ case $DISTRO in
 		else
 			$SUDO yum install -y dnf-plugins-core
 			$SUDO yum config-manager --set-enabled crb
+			$SUDO dnf -y swap curl-minimal curl
 			$SUDO yum install -y autoconf
 		fi
 		$SUDO yum install -y \
