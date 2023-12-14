@@ -74,6 +74,8 @@ case $DISTRO in
 		elif [ ${VERSION_ID:-0} -lt 9 ]; then
 			$SUDO yum install -y dnf-plugins-core
 			$SUDO yum config-manager --set-enabled powertools
+		else
+			$SUDO yum install -y dnf-plugins-core
 		fi
 		$SUDO yum install -y \
 			autoconf \
