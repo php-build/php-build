@@ -71,16 +71,17 @@ case $DISTRO in
 			MANPATH=""
 			# Enable devtoolset-10 for gcc v10
 			source /opt/rh/devtoolset-10/enable
+			$SUDO yum install -y autoconf autoconf213
 		elif [[ "$VERSION_ID" =~ ^8 ]]; then
 			$SUDO yum install -y dnf-plugins-core
 			$SUDO yum config-manager --set-enabled powertools
+			$SUDO yum install -y autoconf autoconf213
 		else
 			$SUDO yum install -y dnf-plugins-core
 			$SUDO yum config-manager --set-enabled crb
+			$SUDO yum install -y autoconf
 		fi
 		$SUDO yum install -y \
-			autoconf \
-			autoconf213 \
 			bash \
 			bison \
 			bzip2 \
