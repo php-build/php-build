@@ -62,7 +62,7 @@ case $DISTRO in
 		;;
 	rhel)
 		$SUDO yum install -y yum-utils epel-release
-		if [ ${VERSION_ID:-0} -lt 8 ]; then
+		if [[ "$VERSION_ID" =~ ^7 ]]; then
 			$SUDO yum-config-manager --enable PowerTools
 			# Install gcc v10 and enable it
 			$SUDO yum install -y centos-release-scl
@@ -71,7 +71,7 @@ case $DISTRO in
 			MANPATH=""
 			# Enable devtoolset-10 for gcc v10
 			source /opt/rh/devtoolset-10/enable
-		elif [ ${VERSION_ID:-0} -lt 9 ]; then
+		elif [[ "$VERSION_ID" =~ ^8 ]]
 			$SUDO yum install -y dnf-plugins-core
 			$SUDO yum config-manager --set-enabled powertools
 		else
