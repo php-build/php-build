@@ -33,6 +33,29 @@ if [ -n "$PHP_BUILD_DEBUG" ]; then
     set -x
 fi
 
+# This script serves as a polyfill for macOS's version of grep, which does not support the -P option.
+# It modifies the grep arguments by replacing -P with -E to ensure compatibility with macOS.
+grep() {
+    local args=()
+    echo "Original arguments: $@" >&2  # Display initial input to the function, redirected to stderr
+    local arg
+    for arg in "$@"; do
+        # Check if argument contains '-P', need to split combined options like '-Pr'
+        if [[ "$arg" == *"-P"* ]]; then
+            echo "Found -P in $arg, replacing with -E for macOS compatibility" >&2  # Redirected to stderr
+            # Replace 'P' with 'E' only if directly followed by other characters
+            local modified="${arg//-P/-E}"
+            args+=("$modified")
+        else
+            args+=("$arg")
+        fi
+    done
+    echo "Modified arguments for macOS compatibility: ${args[@]}" >&2  # Show modified arguments, redirected to stderr
+    # Use 'command' to bypass the shell function and call the system's grep directly
+    command grep "${args[@]}"
+}
+
+
 # Preserve STDERR on FD3, so we can easily log build errors on FD2 to a file and
 # use FD3 for php-build's visible error messages.
 exec 3<&2
@@ -130,6 +153,7 @@ if [ ! -d "$PHP_BUILD_TMPDIR" ]; then
 fi
 
 # set ${TMP} for backward compatibility
+# shellcheck disable=SC2034
 TMP=$PHP_BUILD_TMPDIR
 
 # This file gets copied to `$PREFIX/etc/php.ini` once the build is complete.
@@ -304,7 +328,7 @@ function extract_bz2() {
 # List all defintions found in $PHP_BUILD_DEFINITION_PATH
 function list_definitions() {
     local sed_regex_switch='E'
-   
+
     # sed switch -E is BSD specific and only added to UNIX sed after v4.2
     # fallback to -r if -E does not work
     if ! sed -${sed_regex_switch} '' /dev/null > /dev/null 2>&1; then
@@ -321,6 +345,7 @@ function list_definitions() {
 function trigger_before_install() {
     export PHP_BUILD_ROOT
     export PREFIX
+    # bashsupport disable=BP2001
     export SOURCE_PATH="$1"
 
     local triggers_dir="$PHP_BUILD_ROOT/share/php-build/before-install.d/"
@@ -338,6 +363,7 @@ function trigger_after_install() {
     export PHP_BUILD_ROOT
     export PREFIX
 
+    # bashsupport disable=BP2002
     after_install "$PREFIX" 2>&4
 
     local triggers_dir="$PHP_BUILD_ROOT/share/php-build/after-install.d/"
@@ -356,6 +382,7 @@ function trigger_after_install() {
 # Gets called after install has finished.
 # Implement this function in your definitions.
 function after_install() {
+    # bashsupport disable=BP3001
     local stub=1
 }
 
@@ -364,6 +391,7 @@ function load_plugins() {
         return 1
     fi
 
+    local plugin
     for plugin in "$1/"*.sh
     do
         source $plugin
@@ -391,6 +419,7 @@ function build_package() {
 
     log "Compiling" "$source_path"
 
+    # bashsupport disable=BP2001
     MAKE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
         MAKE_OUTPUT='4'
@@ -408,6 +437,7 @@ function build_package() {
     # Remove .dSYM extension from executables (OSX issue).
     if test -n "$(find $PREFIX/bin -maxdepth 1 -name '*.dSYM' -print -quit)"
     then
+        local bin;
         for bin in "$PREFIX/bin/"*.dSYM; do
             mv "$bin" "${bin%*.dSYM}"
         done
@@ -459,6 +489,7 @@ function apply_patches() {
 
     if [ -n "$PATCH_FILES" ]; then
         log "Info" "Applying patches: $PATCH_FILES"
+        local patch
         for patch in $PATCH_FILES; do
             patch -d "$source_path" -N -p1 -s < $patch
         done
@@ -469,6 +500,7 @@ function apply_patches() {
 function install_extensions() {
     # handle extensions that should be installed by defined environment variable
     # variable must be in the format: extension_name=version extension_name=version
+    # bashsupport disable=BP2001
     for extension_def in $PHP_BUILD_INSTALL_EXTENSION; do
         local extension=$(echo $extension_def | cut -d"=" -f1)
         local version=$(echo $extension_def | cut -d"=" -f2)
@@ -528,6 +560,7 @@ function autoconf_version() {
     fi
     # Debian-like pattern
     if command -v "autoconf$ver" &> /dev/null; then
+        # bashsupport disable=BP2001
         export PHP_AUTOCONF="autoconf$ver"
         return
     fi
@@ -623,6 +656,7 @@ function has_patch() {
 # definitions which were written before `--with-openssl`
 # was in the list of default configure arguments.
 function with_openssl() {
+    # bashsupport disable=BP2001,SC2034
     stub=1
 }
 
@@ -662,6 +696,17 @@ function configure_package() {
         phpLower74=false
     fi
 
+    # Debug output of variables
+    echo "source_path: $source_path"
+    echo "backup_pwd: $backup_pwd"
+    echo "package_name: $package_name"
+    echo "phpLower74: $phpLower74"
+    echo "phpLower80: $phpLower80"
+    echo "baseVersion: $baseVersion"
+    echo "majorVersion: $majorVersion"
+    echo "minorVersion: $minorVersion"
+
+    # bashsupport disable=BP2001
     CONFIGURE_OUTPUT='5'
     if [ "$VERBOSE" ]; then
         CONFIGURE_OUTPUT='4'
@@ -683,10 +728,12 @@ function configure_package() {
     # This currently builds PHP without the `gettext` and `readline`
     # extensions, as I've currently not got them to work on my machine.
     if is_osx; then
+        echo 'Working on OSX'
         configure_option -D "--with-gettext"
         configure_option -D "--with-readline"
         configure_option "--with-libedit"
         if [ -n "$(command -v brew)" ] && [ -e "$(brew --prefix libedit)" ]; then
+            # bashsupport disable=BP2001
             export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+${PKG_CONFIG_PATH}:}$(brew --prefix libedit)/lib/pkgconfig"
             if [[ "$phpLower74" == "true" ]]; then
                 configure_option -R "--with-libedit" "$(brew --prefix libedit)"
@@ -726,6 +773,7 @@ function configure_package() {
         # icu4c 59+ requires C++11
         if [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "61" ]]; then
             # icu4c 61+ compatability (see #499)
+            # bashsupport disable=BP2001
             export CXXFLAGS="-std=c++11 -stdlib=libc++ -DU_USING_ICU_NAMESPACE=1"
         elif [[ -z "$CXXFLAGS" && $($(brew --prefix icu4c)/bin/icu-config --version) > "59" ]]; then
             export CXXFLAGS="-std=c++11 -stdlib=libc++"
@@ -772,6 +820,7 @@ $CONFIGURE_OPTIONS"
     # PHP 5.2 and 5.3 has the problem.
     # See https://github.com/php/php-src/pull/135
     if is_osx; then
+        # bashsupport disable=BP2001
         export ac_cv_exeext=''
     fi
 
@@ -779,6 +828,7 @@ $CONFIGURE_OPTIONS"
 
     # Use php-build prefix for the Apache libexec folder
     if [ -n "$PHP_BUILD_APXS" ]; then
+        # bashsupport disable=BP2001
         apxs_libexecdir=$($PHP_BUILD_APXS -q LIBEXECDIR)
         sed -i"" -e "s|'\$(INSTALL_ROOT)${apxs_libexecdir}'|${PREFIX}${apxs_libexecdir}|g" ${source_path}/Makefile
     fi
