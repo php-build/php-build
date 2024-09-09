@@ -61,18 +61,18 @@ case $DISTRO in
 			zlib1g-dev
 		;;
 	rhel)
-		$SUDO yum install -y yum-utils epel-release
+		$SUDO dnf install -y yum-utils epel-release
 		if [[ "$VERSION_ID" =~ ^8 ]]; then
-			$SUDO yum install -y dnf-plugins-core
-			$SUDO yum config-manager --set-enabled powertools
-			$SUDO yum install -y autoconf autoconf213
+			$SUDO dnf install -y dnf-plugins-core
+			$SUDO dnf config-manager --set-enabled powertools
+			$SUDO dnf install -y autoconf autoconf213
 		else
-			$SUDO yum install -y dnf-plugins-core
-			$SUDO yum config-manager --set-enabled crb
+			$SUDO dnf install -y dnf-plugins-core
+			$SUDO dnf config-manager --set-enabled crb
 			$SUDO dnf -y swap curl-minimal curl
-			$SUDO yum install -y autoconf
+			$SUDO dnf install -y autoconf
 		fi
-		$SUDO yum install -y \
+		$SUDO dnf install -y \
 			bash \
 			bison \
 			bzip2 \
