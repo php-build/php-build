@@ -84,7 +84,7 @@ jobs:
       # https://bugs.php.net/bug.php?id=79445
       PHP_BUILD_CURL_OPTS: '--retry 3 --retry-delay 5 --connect-timeout 10'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: install dependencies
         run: |
           set -ex
