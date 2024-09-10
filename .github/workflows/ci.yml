@@ -76,7 +76,7 @@ jobs:
           - { distro: 'ubuntu:22.04', php: '7.3.33'}
           - { distro: 'ubuntu:24.04', php: '7.3.33'}
           # PHP 8.3
-          - { distro: 'rockylinux:8', php: '8.3.8'}
+          - { distro: 'rockylinux:8', php: '8.3.11'}
 
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"
