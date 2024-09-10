@@ -61,28 +61,18 @@ case $DISTRO in
 			zlib1g-dev
 		;;
 	rhel)
-		$SUDO yum install -y yum-utils epel-release
-		if [[ "$VERSION_ID" =~ ^7 ]]; then
-			$SUDO yum-config-manager --enable PowerTools
-			# Install gcc v10 and enable it
-			$SUDO yum install -y centos-release-scl
-			$SUDO yum install -y devtoolset-10-gcc-c++
-			# Countermeasures for the message on the right: "MANPATH: unbound variable"
-			MANPATH=""
-			# Enable devtoolset-10 for gcc v10
-			source /opt/rh/devtoolset-10/enable
-			$SUDO yum install -y autoconf autoconf213
-		elif [[ "$VERSION_ID" =~ ^8 ]]; then
-			$SUDO yum install -y dnf-plugins-core
-			$SUDO yum config-manager --set-enabled powertools
-			$SUDO yum install -y autoconf autoconf213
+		$SUDO dnf install -y yum-utils epel-release
+		if [[ "$VERSION_ID" =~ ^8 ]]; then
+			$SUDO dnf install -y dnf-plugins-core
+			$SUDO dnf config-manager --set-enabled powertools
+			$SUDO dnf install -y autoconf autoconf213
 		else
-			$SUDO yum install -y dnf-plugins-core
-			$SUDO yum config-manager --set-enabled crb
+			$SUDO dnf install -y dnf-plugins-core
+			$SUDO dnf config-manager --set-enabled crb
 			$SUDO dnf -y swap curl-minimal curl
-			$SUDO yum install -y autoconf
+			$SUDO dnf install -y autoconf
 		fi
-		$SUDO yum install -y \
+		$SUDO dnf install -y \
 			bash \
 			bison \
 			bzip2 \
