@@ -9,12 +9,11 @@ jobs:
       fail-fast: false
       matrix:
         distro:
-          - 'centos:7'
           - 'rockylinux:8'
           - 'rockylinux:9'
-          - 'ubuntu:18.04'
           - 'ubuntu:20.04'
           - 'ubuntu:22.04'
+          - 'ubuntu:24.04'
         php:
           - '5.2.17'
           - '5.3.29'
@@ -32,51 +31,51 @@ jobs:
           - '8.3.8'
         exclude:
           # PHP 5.2
-          - { distro: 'centos:7', php: '5.2.17'}
           - { distro: 'rockylinux:8', php: '5.2.17'}
           - { distro: 'rockylinux:9', php: '5.2.17'}
-          - { distro: 'ubuntu:18.04', php: '5.2.17'}
           - { distro: 'ubuntu:20.04', php: '5.2.17'}
           - { distro: 'ubuntu:22.04', php: '5.2.17'}
+          - { distro: 'ubuntu:24.04', php: '5.2.17'}
           # PHP 5.3
           - { distro: 'rockylinux:8', php: '5.3.29'}
           - { distro: 'rockylinux:9', php: '5.3.29'}
-          - { distro: 'ubuntu:18.04', php: '5.3.29'}
           - { distro: 'ubuntu:20.04', php: '5.3.29'}
           - { distro: 'ubuntu:22.04', php: '5.3.29'}
+          - { distro: 'ubuntu:24.04', php: '5.3.29'}
           # PHP 5.4
           - { distro: 'rockylinux:8', php: '5.4.45'}
           - { distro: 'rockylinux:9', php: '5.4.45'}
-          - { distro: 'ubuntu:18.04', php: '5.4.45'}
           - { distro: 'ubuntu:20.04', php: '5.4.45'}
           - { distro: 'ubuntu:22.04', php: '5.4.45'}
+          - { distro: 'ubuntu:24.04', php: '5.4.45'}
           # PHP 5.5
           - { distro: 'rockylinux:8', php: '5.5.38'}
           - { distro: 'rockylinux:9', php: '5.5.38'}
-          - { distro: 'ubuntu:18.04', php: '5.5.38'}
           - { distro: 'ubuntu:20.04', php: '5.5.38'}
           - { distro: 'ubuntu:22.04', php: '5.5.38'}
+          - { distro: 'ubuntu:24.04', php: '5.5.38'}
           # PHP 5.6
           - { distro: 'rockylinux:9', php: '5.6.40'}
-          - { distro: 'ubuntu:18.04', php: '5.6.40'}
           - { distro: 'ubuntu:20.04', php: '5.6.40'}
           - { distro: 'ubuntu:22.04', php: '5.6.40'}
+          - { distro: 'ubuntu:24.04', php: '5.6.40'}
           # PHP 7.0
           - { distro: 'rockylinux:9', php: '7.0.33'}
           - { distro: 'ubuntu:20.04', php: '7.0.33'}
           - { distro: 'ubuntu:22.04', php: '7.0.33'}
+          - { distro: 'ubuntu:24.04', php: '7.0.33'}
           # PHP 7.1
           - { distro: 'rockylinux:9', php: '7.1.33'}
           - { distro: 'ubuntu:22.04', php: '7.1.33'}
+          - { distro: 'ubuntu:24.04', php: '7.1.33'}
           # PHP 7.2
           - { distro: 'rockylinux:9', php: '7.2.34'}
           - { distro: 'ubuntu:22.04', php: '7.2.34'}
+          - { distro: 'ubuntu:24.04', php: '7.2.34'}
           # PHP 7.3
           - { distro: 'ubuntu:22.04', php: '7.3.33'}
-          # PHP 8.2
-          - { distro: 'centos:7', php: '8.2.20'}
+          - { distro: 'ubuntu:24.04', php: '7.3.33'}
           # PHP 8.3
-          - { distro: 'centos:7', php: '8.3.8'}
           - { distro: 'rockylinux:8', php: '8.3.8'}
 
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
@@ -85,7 +84,7 @@ jobs:
       # https://bugs.php.net/bug.php?id=79445
       PHP_BUILD_CURL_OPTS: '--retry 3 --retry-delay 5 --connect-timeout 10'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: install dependencies
         run: |
           set -ex
