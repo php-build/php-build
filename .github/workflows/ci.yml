@@ -29,6 +29,7 @@ jobs:
           - '8.1.31'
           - '8.2.26'
           - '8.3.14'
+          - '8.4.1'
         exclude:
           # PHP 5.2
           - { distro: 'rockylinux:8', php: '5.2.17'}
