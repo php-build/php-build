@@ -6,5 +6,5 @@ configure_option "--with-mhash"
 configure_option -D "--with-xmlrpc"
 
 install_package_from_github PHP-8.1
-install_xdebug_master "xdebug_3_2"
+install_xdebug_master "xdebug_3_4"
 enable_builtin_opcache
