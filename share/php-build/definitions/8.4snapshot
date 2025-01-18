@@ -1,0 +1,10 @@
+configure_option "--enable-gd"
+configure_option "--with-jpeg"
+configure_option "--with-zip"
+configure_option "--with-mhash"
+
+configure_option -D "--with-xmlrpc"
+
+install_package_from_github PHP-8.4
+install_xdebug_master
+enable_builtin_opcache
