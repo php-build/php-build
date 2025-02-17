@@ -77,8 +77,28 @@ jobs:
           - { distro: 'ubuntu:22.04', php: '7.3.33'}
           - { distro: 'ubuntu:24.04', php: '7.3.33'}
           # PHP 8.3
+          - { distro: 'rockylinux:8', php: '8.3.0'}
+          - { distro: 'rockylinux:8', php: '8.3.1'}
+          - { distro: 'rockylinux:8', php: '8.3.2'}
+          - { distro: 'rockylinux:8', php: '8.3.3'}
+          - { distro: 'rockylinux:8', php: '8.3.4'}
+          - { distro: 'rockylinux:8', php: '8.3.5'}
+          - { distro: 'rockylinux:8', php: '8.3.6'}
+          - { distro: 'rockylinux:8', php: '8.3.7'}
+          - { distro: 'rockylinux:8', php: '8.3.8'}
+          - { distro: 'rockylinux:8', php: '8.3.9'}
+          - { distro: 'rockylinux:8', php: '8.3.10'}
+          - { distro: 'rockylinux:8', php: '8.3.11'}
+          - { distro: 'rockylinux:8', php: '8.3.12'}
+          - { distro: 'rockylinux:8', php: '8.3.13'}
+          - { distro: 'rockylinux:8', php: '8.3.14'}
+          - { distro: 'rockylinux:8', php: '8.3.15'}
+          - { distro: 'rockylinux:8', php: '8.3.16'}
           - { distro: 'rockylinux:8', php: '8.3.17'}
           # PHP 8.4
+          - { distro: 'rockylinux:8', php: '8.4.1'}
+          - { distro: 'rockylinux:8', php: '8.4.2'}
+          - { distro: 'rockylinux:8', php: '8.4.3'}
           - { distro: 'rockylinux:8', php: '8.4.4'}
 
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
