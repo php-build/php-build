@@ -5,6 +5,7 @@ configure_option "--with-jpeg-dir" "/usr"
 configure_option "--enable-zip"
 
 patch_file "php-8.0-support-openssl-3.patch"
+patch_file "php-7.3-openssl.patch"
 
 install_package "https://secure.php.net/distributions/php-7.3.33.tar.bz2"
 install_xdebug "3.1.6"
