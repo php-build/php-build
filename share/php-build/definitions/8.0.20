@@ -8,5 +8,5 @@ configure_option -D "--with-xmlrpc"
 patch_file "php-8.0-support-openssl-3.patch"
 
 install_package "https://www.php.net/distributions/php-8.0.20.tar.bz2"
-install_xdebug "3.3.1"
+install_xdebug "3.4.2"
 enable_builtin_opcache

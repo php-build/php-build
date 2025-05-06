@@ -8,5 +8,5 @@ configure_option -D "--with-xmlrpc"
 patch_file "php-8.0-support-openssl-3.patch"
 
 install_package_from_github PHP-8.0
-install_xdebug_master "xdebug_3_2"
+install_xdebug_master "xdebug_3_4"
 enable_builtin_opcache

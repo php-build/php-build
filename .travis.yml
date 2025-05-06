@@ -40,13 +40,16 @@ matrix:
       env: DEFINITION=8.0.30
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=8.1.30
+      env: DEFINITION=8.1.32
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=8.2.25
+      env: DEFINITION=8.2.28
     - os: osx
       osx_image: xcode9.4
-      env: DEFINITION=8.3.13
+      env: DEFINITION=8.3.20
+    - os: osx
+      osx_image: xcode9.4
+      env: DEFINITION=8.4.6
 
 before_install:
   - export PHP_BUILD_EXTRA_MAKE_ARGUMENTS="-j2"

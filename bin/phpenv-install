@@ -42,7 +42,7 @@ usage() {
 
 definitions() {
   local query="$1"
-  php-build --definitions | $(type -p ggrep grep | head -1) -F "$query" || true
+  php-build --definitions | $(type -p ggrep grep | head -1) -F "$query" | sort -V || true
 }
 
 indent() {
