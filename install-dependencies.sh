@@ -3,6 +3,9 @@ set -eu
 
 if [ -f /etc/os-release ]; then
 	. /etc/os-release
+    if [ "$NAME" == "Arch Linux" ]; then
+        DISTRO=arch
+    fi
 fi
 
 if [ -f /etc/debian_version ]; then
@@ -108,6 +111,33 @@ case $DISTRO in
 			make && \
 			make install
 		;;
+    arch)
+        $SUDO pacman -Syu
+        arch_dependencies=(
+            "autoconf"
+            "bison"
+            "ca-certificates"
+            "findutils"
+            "bzip2"
+            "libcurl-gnutls"
+            "icu"
+            "libmcrypt"
+            "oniguruma"
+            "libpng"
+            "readline"
+            "sqlite"
+            "openssl"
+            "tidy"
+            "libxml2"
+            "libxslt"
+            "libzip"
+            "re2c"
+            "zlib"
+        )
+        for d in "${arch_dependencies[@]}"; do
+            sudo pacman -S --needed "$d" --noconfirm
+        done
+        ;;
 	darwin)
 		# brew install will fail if a package is already installed
 		# using brew bundle seems to be the recommended alternative
