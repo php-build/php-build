@@ -110,7 +110,8 @@ rhel)
         make install
     ;;
 arch)
-    $SUDO pacman -Syu --needed --noconfirm \
+    $SUDO pacman -Syu
+    $SUDO pacman -S --needed --noconfirm \
         autoconf \
         bison \
         ca-certificates \
