@@ -3,7 +3,7 @@ set -eu
 
 if [ -f /etc/os-release ]; then
 	. /etc/os-release
-    if [ "$NAME" == "Arch Linux" ]; then
+    if [ "$NAME" = "Arch Linux" ]; then
         DISTRO=arch
     fi
 fi
