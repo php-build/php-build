@@ -28,8 +28,8 @@ jobs:
           - '8.0.30'
           - '8.1.33'
           - '8.2.29'
-          - '8.3.23'
-          - '8.4.10'
+          - '8.3.24'
+          - '8.4.11'
         exclude:
           # PHP 5.2
           - { distro: 'rockylinux:8', php: '5.2.17'}
@@ -101,6 +101,7 @@ jobs:
           - { distro: 'rockylinux:8', php: '8.3.21'}
           - { distro: 'rockylinux:8', php: '8.3.22'}
           - { distro: 'rockylinux:8', php: '8.3.23'}
+          - { distro: 'rockylinux:8', php: '8.3.24'}
           # PHP 8.4
           - { distro: 'rockylinux:8', php: '8.4.1'}
           - { distro: 'rockylinux:8', php: '8.4.2'}
@@ -112,6 +113,7 @@ jobs:
           - { distro: 'rockylinux:8', php: '8.4.8'}
           - { distro: 'rockylinux:8', php: '8.4.9'}
           - { distro: 'rockylinux:8', php: '8.4.10'}
+          - { distro: 'rockylinux:8', php: '8.4.11'}
 
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"
