@@ -36,19 +36,19 @@ matrix:
       osx_image: xcode9.4
       env: DEFINITION=7.4.33
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode12.0
       env: DEFINITION=8.0.30
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode12.0
       env: DEFINITION=8.1.33
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode14.1
       env: DEFINITION=8.2.29
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode15.0
       env: DEFINITION=8.3.27
     - os: osx
-      osx_image: xcode9.4
+      osx_image: xcode26.0
       env: DEFINITION=8.4.14
 
 before_install:
