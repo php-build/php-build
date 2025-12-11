@@ -6,6 +6,8 @@ configure_option "--with-mhash"
 configure_option -D "--with-xmlrpc"
 
 patch_file "php-8.0-support-openssl-3.patch"
+patch_file "php-8.0-libxml2-2.12-compat.patch"
+patch_file "php-8.0-icu-74-compat.patch"
 
 install_package "https://secure.php.net/distributions/php-8.0.0.tar.bz2"
 install_xdebug "3.4.7"
