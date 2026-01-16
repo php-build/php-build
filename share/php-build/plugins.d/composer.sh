@@ -23,9 +23,9 @@ download_composer() {
     if [ ! -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
         log Composer "Downloading from $composer_url"
         curl $composer_url -o "$PHP_BUILD_TMPDIR/packages/composer.phar"
-    else
-        log Composer "self updating in $PHP_BUILD_TMPDIR/packages/composer.phar"
-        $PHP $PHP_BUILD_TMPDIR/packages/composer.phar self-update
+    # else
+    #     log Composer "self updating in $PHP_BUILD_TMPDIR/packages/composer.phar"
+    #     $PHP $PHP_BUILD_TMPDIR/packages/composer.phar self-update
     fi
 }
 
