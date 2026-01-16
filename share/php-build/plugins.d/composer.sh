@@ -20,13 +20,13 @@ download_composer() {
         composer_url="https://getcomposer.org/download/latest-stable/composer.phar"
     fi
 
-    if [ ! -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
-        log Composer "Downloading from $composer_url"
-        curl $composer_url -o "$PHP_BUILD_TMPDIR/packages/composer.phar"
-    # else
-    #     log Composer "self updating in $PHP_BUILD_TMPDIR/packages/composer.phar"
-    #     $PHP $PHP_BUILD_TMPDIR/packages/composer.phar self-update
+    log Composer "Downloading from $composer_url"
+
+    if [ -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
+      rm "$PHP_BUILD_TMPDIR/packages/composer.phar"
     fi
+
+    curl $composer_url -o "$PHP_BUILD_TMPDIR/packages/composer.phar"
 }
 
 copy_composer_phar() {
