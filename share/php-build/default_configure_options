@@ -1,7 +1,6 @@
 --enable-sockets
 --enable-exif
 --with-zlib
---with-zlib-dir=/usr
 --with-bz2
 --enable-intl
 --with-openssl
@@ -10,7 +9,7 @@
 --with-xsl
 --enable-ftp
 --enable-cgi
---with-curl=/usr
+--with-curl
 --with-tidy
 --with-xmlrpc
 --enable-sysvsem
