@@ -987,8 +987,8 @@ trigger_after_install 2>&4
 # Installed extensions defined by environment variable
 install_extensions 2>&4
 
-# Installed plugins in php-build/plugins.d
-install_composer
+# # Installed plugins in php-build/plugins.d
+# install_composer 2>&4
 
 # Unbind the error handler.
 trap - ERR
