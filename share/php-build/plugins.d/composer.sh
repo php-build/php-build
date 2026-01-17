@@ -7,8 +7,9 @@ install_composer() {
     download_composer
     # copy_composer_phar
 
-    log Composer "Installing executable in $PREFIX/bin/composer"
+    log -f Composer "Installing executable in $PREFIX/bin/composer"
 
+    echo "$PREFIX/bin/composer.phar"
     mv "$PREFIX/bin/composer.phar" "$PREFIX/bin/composer"
 
     chmod +x "$PREFIX/bin/composer"
