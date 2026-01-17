@@ -9,10 +9,7 @@ install_composer() {
 
     log Composer "Installing executable in $PREFIX/bin/composer"
 
-    # cp -f "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer.phar"
-    # mv "$PREFIX/bin/composer.phar" "$PREFIX/bin/composer"
-
-    mv -f "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer"
+    mv "$PREFIX/bin/composer.phar" "$PREFIX/bin/composer"
 
     chmod +x "$PREFIX/bin/composer"
 }
@@ -26,11 +23,15 @@ download_composer() {
 
     log Composer "Downloading from $composer_url"
 
-    if [ -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
-      rm "$PHP_BUILD_TMPDIR/packages/composer.phar"
+    if [ -f "$PREFIX/bin/composer.phar" ]; then
+      rm "$PREFIX/bin/composer.phar"
     fi
+    curl -s $composer_url -o "$PREFIX/bin/composer.phar"
 
-    curl -s $composer_url -o "$PHP_BUILD_TMPDIR/packages/composer.phar"
+    # if [ -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
+    #   rm "$PHP_BUILD_TMPDIR/packages/composer.phar"
+    # fi
+    # curl -s $composer_url -o "$PHP_BUILD_TMPDIR/packages/composer.phar"
 }
 
 copy_composer_phar() {
