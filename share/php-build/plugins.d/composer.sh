@@ -5,17 +5,16 @@ PHP="$PREFIX/bin/php"
 install_composer() {
 
     download_composer
-    # copy_composer_phar
 
-    log -f Composer "Installing executable in $PREFIX/bin/composer"
+    log Composer "Installing executable in $PREFIX/bin/composer"
 
-    echo "$PREFIX/bin/composer.phar"
     mv "$PREFIX/bin/composer.phar" "$PREFIX/bin/composer"
 
     chmod +x "$PREFIX/bin/composer"
 }
 
 download_composer() {
+
     local composer_url="$1"
 
     if [ -z "$composer_url" ]; then
@@ -27,14 +26,6 @@ download_composer() {
     if [ -f "$PREFIX/bin/composer.phar" ]; then
       rm "$PREFIX/bin/composer.phar"
     fi
+
     curl -s $composer_url -o "$PREFIX/bin/composer.phar"
-
-    # if [ -f "$PHP_BUILD_TMPDIR/packages/composer.phar" ]; then
-    #   rm "$PHP_BUILD_TMPDIR/packages/composer.phar"
-    # fi
-    # curl -s $composer_url -o "$PHP_BUILD_TMPDIR/packages/composer.phar"
-}
-
-copy_composer_phar() {
-    cp -f "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer.phar"
 }
