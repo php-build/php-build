@@ -26,9 +26,9 @@ download_composer() {
       rm "$PHP_BUILD_TMPDIR/packages/composer.phar"
     fi
 
-    curl $composer_url -o "$PHP_BUILD_TMPDIR/packages/composer.phar"
+    curl -s $composer_url -o "$PHP_BUILD_TMPDIR/packages/composer.phar"
 }
 
 copy_composer_phar() {
-    yes | cp "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer.phar"
+    cp -f "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer.phar"
 }
