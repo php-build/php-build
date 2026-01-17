@@ -57,11 +57,13 @@ jobs:
           - { distro: 'ubuntu:22.04', php: '5.5.38'}
           - { distro: 'ubuntu:24.04', php: '5.5.38'}
           # PHP 5.6
+          - { distro: 'rockylinux:8', php: '5.6.40'}
           - { distro: 'rockylinux:9', php: '5.6.40'}
           - { distro: 'ubuntu:20.04', php: '5.6.40'}
           - { distro: 'ubuntu:22.04', php: '5.6.40'}
           - { distro: 'ubuntu:24.04', php: '5.6.40'}
           # PHP 7.0
+          - { distro: 'rockylinux:8', php: '7.0.33'}
           - { distro: 'rockylinux:9', php: '7.0.33'}
           - { distro: 'ubuntu:20.04', php: '7.0.33'}
           - { distro: 'ubuntu:22.04', php: '7.0.33'}
