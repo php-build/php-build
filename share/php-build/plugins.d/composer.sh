@@ -9,9 +9,10 @@ install_composer() {
 
     log Composer "Installing executable in $PREFIX/bin/composer"
 
-    cp -f "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer.phar"
+    # cp -f "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer.phar"
+    # mv "$PREFIX/bin/composer.phar" "$PREFIX/bin/composer"
 
-    mv "$PREFIX/bin/composer.phar" "$PREFIX/bin/composer"
+    mv -f "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer"
 
     chmod +x "$PREFIX/bin/composer"
 }
