@@ -3,10 +3,13 @@
 PHP="$PREFIX/bin/php"
 
 install_composer() {
+
     download_composer
-    copy_composer_phar
+    # copy_composer_phar
 
     log Composer "Installing executable in $PREFIX/bin/composer"
+
+    cp -f "$PHP_BUILD_TMPDIR/packages/composer.phar" "$PREFIX/bin/composer.phar"
 
     mv "$PREFIX/bin/composer.phar" "$PREFIX/bin/composer"
 
