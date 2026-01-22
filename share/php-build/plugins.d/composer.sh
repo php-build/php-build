@@ -18,7 +18,11 @@ install_composer() {
         rm -f "$composer_path"
     fi
 
-    if [ $(which curl) ] ; then
+    if [ -f /etc/os-release ] ; then
+      distro=$(awk -F "=" '/^ID/ { print $2; }' /etc/os-release)
+    fi
+
+    if [ $distro == "rockylinux" || [ $(which curl) ] ; then
       curl -sS "$composer_url" -o "$composer_path" || exit 1
     elif [ $(which wget) ] ; then
       wget -q -O "$composer_path" "$composer_url" || exit 1
