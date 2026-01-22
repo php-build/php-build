@@ -20,6 +20,8 @@ install_composer() {
 
     if [ -f /etc/os-release ] ; then
       distro=$(awk -F "=" '/^ID/ { print $2; }' /etc/os-release)
+    else
+      distro=''
     fi
 
     if [ $distro == "rockylinux" || [ $(which curl) ] ; then
