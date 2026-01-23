@@ -24,7 +24,7 @@ install_composer() {
       distro=''
     fi
 
-    if [[ "$distro" == "rockylinux" ]] || [[ $(which curl) ]] ; then
+    if [[ "$distro" == "rocky" ]] || [[ $(which curl) ]] ; then
       curl -sS "$composer_url" -o "$composer_path" || exit 1
     elif [[ $(which wget) ]] ; then
       wget -q -O "$composer_path" "$composer_url"  || exit 1
