@@ -24,13 +24,17 @@ install_composer() {
       distro=''
     fi
 
-    if [[ "$distro" == "rocky" ]] || [[ $(which curl) ]] ; then
+    if [[ "$distro" == "rocky" ]] ; then
       curl -sS "$composer_url" -o "$composer_path" || exit 1
-    elif [[ $(which wget) ]] ; then
-      wget -q -O "$composer_path" "$composer_url"  || exit 1
     else
-      log Composer "You don't have curl nor wget."
-      exit 2
+      if [[ $(which curl) ]] ; then
+        curl -sS "$composer_url" -o "$composer_path" || exit 1
+      elif [[ $(which wget) ]] ; then
+        wget -q -O "$composer_path" "$composer_url"  || exit 1
+      else
+        log Composer "You don't have curl nor wget."
+        exit 2
+      fi
     fi
 
     chmod +x "$composer_path"
