@@ -18,20 +18,8 @@ install_composer() {
         rm -f "$composer_path"
     fi
 
-    if [[ -f /etc/os-release ]] ; then
-      distro=$(awk -F "=" '/^ID/ { gsub(/"/, "") ; print $2; }' /etc/os-release)
-    else
-      distro=''
-    fi
-
-    if [[ "$distro" == "rocky" ]] ; then
-      curl -sS "$composer_url" -o "$composer_path" || exit 1
-    else
-      if [[ $(which curl) ]] ; then
-        curl -sS "$composer_url" -o "$composer_path" || exit 1
-      elif [[ $(which wget) ]] ; then
-        wget -q -O "$composer_path" "$composer_url"  || exit 1
-      else
+    if [[ ! $(curl -sS "$composer_url" -o "$composer_path") ]] ; then
+      if [[ ! $(wget -q -O "$composer_path" "$composer_url") ]] ; then
         log Composer "You don't have curl nor wget."
         exit 2
       fi
