@@ -19,7 +19,7 @@ install_composer() {
     fi
 
     if [[ -f /etc/os-release ]] ; then
-      distro=$(awk -F "=" '/^ID/ { print $2; }' /etc/os-release)
+      distro=$(awk -F "=" '/^ID/ { gsub(/"/, "") ; print $2; }' /etc/os-release)
     else
       distro=''
     fi
