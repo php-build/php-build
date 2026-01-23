@@ -18,7 +18,7 @@ install_composer() {
         rm -f "$composer_path"
     fi
 
-    if [] -f /etc/os-release ]] ; then
+    if [[ -f /etc/os-release ]] ; then
       distro=$(awk -F "=" '/^ID/ { print $2; }' /etc/os-release)
     else
       distro=''
