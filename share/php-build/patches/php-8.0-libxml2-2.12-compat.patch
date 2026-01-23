@@ -1,0 +1,29 @@
+--- a/ext/libxml/libxml.c
++++ b/ext/libxml/libxml.c
+@@ -678,7 +678,7 @@ static void php_libxml_internal_error_handler(int error_type, const char *msg,
+
+ PHP_LIBXML_API void php_libxml_structured_error_handler(void *userData, xmlErrorPtr error)
+ {
+-	_php_list_set_error_structure(error, NULL);
++	_php_list_set_error_structure((xmlError *)error, NULL);
+
+ 	return;
+ }
+@@ -968,7 +968,7 @@ PHP_FUNCTION(libxml_use_internal_errors)
+ 			LIBXML(error_list) = NULL;
+ 		}
+ 	} else {
+-		xmlSetStructuredErrorFunc(NULL, php_libxml_structured_error_handler);
++		xmlSetStructuredErrorFunc(NULL, (xmlStructuredErrorFunc)php_libxml_structured_error_handler);
+ 		if (LIBXML(error_list) == NULL) {
+ 			LIBXML(error_list) = (zend_llist *) emalloc(sizeof(zend_llist));
+ 			zend_llist_init(LIBXML(error_list), sizeof(xmlError), _php_libxml_free_error, 0);
+@@ -985,7 +985,7 @@ PHP_FUNCTION(libxml_get_last_error)
+ 		return;
+ 	}
+
+-	error = xmlGetLastError();
++	error = (xmlError *)xmlGetLastError();
+
+ 	if (error) {
+ 		object_init_ex(return_value, libxmlerror_class_entry);
