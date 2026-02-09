@@ -62,7 +62,7 @@ debian|ubuntu)
         re2c \
         zlib1g-dev
     ;;
-rhel)
+rhel|rocky)
     $SUDO dnf install -y yum-utils epel-release
     if [[ "$VERSION_ID" =~ ^8 ]]; then
         $SUDO dnf install -y dnf-plugins-core
