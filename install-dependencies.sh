@@ -1,22 +1,21 @@
 #!/bin/sh
-set -eu
+set -eua
 
 if [ -f /`etc/os-release ]; then
-    set -a
     . /etc/os-release
-    set +a
-    if [ "$NAME" = "Arch Linux" ]; then
-        DISTRO=arch
+    DISTRO="$ID"
+fi
+if [ -z "$ID" ]; then
+    if [ -f /etc/debian_version ]; then
+        DISTRO=debian
+    elif [ -f /etc/redhat-release ]; then
+        DISTRO=rhel
+    elif [ "$(uname -s)" = "Darwin" ]; then
+        DISTRO=darwin
+    else
+        echo "Unsupported operating system"
+        exit 1
     fi
-elif [ -f /etc/debian_version ]; then
-    DISTRO=debian
-elif [ -f /etc/redhat-release ]; then
-    DISTRO=rhel
-elif [ "$(uname -s)" = "Darwin" ]; then
-    DISTRO=darwin
-else
-    echo "Unsupported operating system"
-    exit 1
 fi
 
 if command -v sudo; then
@@ -31,7 +30,7 @@ fi
 #     with custom openssl 1.0.2 builds required for PHP 5.5 and lower.
 
 case $DISTRO in
-debian)
+debian|ubuntu)
     export DEBIAN_FRONTEND=nointeractive
     $SUDO apt-get update -q
     $SUDO apt-get install -q -y --no-install-recommends \
