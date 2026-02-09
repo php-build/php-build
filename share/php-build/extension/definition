@@ -10,7 +10,7 @@
 "igbinary","https://pecl.php.net/get/igbinary-$version.tgz","https://github.com/igbinary/igbinary.git",,,"extension",
 "imagick","https://pecl.php.net/get/imagick-$version.tgz","https://github.com/mkoppanen/imagick.git",,,"extension",
 "imap","https://pecl.php.net/get/imap-$version.tgz","https://github.com/php/pecl-mail-imap.git",,,"extension",
-"libsodium","https://pecl.php.net/get/libsodium-$version.tgz","https://github.com/jedisct1/libsodium-php.git",,,"extension",
+"libsodium","https://pecl.php.net/get/libsodium-$version.tgz","https://github.com/jedisct1/libsodium-php.git",,"--with-sodium","extension",
 "mailparse","https://pecl.php.net/get/mailparse-$version.tgz","https://github.com/php/pecl-mail-mailparse.git",,,"extension",
 "maxminddb","https://pecl.php.net/get/maxminddb-$version.tgz","https://github.com/maxmind/MaxMind-DB-Reader-php.git",,,"extension",
 "memcache","https://pecl.php.net/get/memcache-$version.tgz","git@git.php.net:/pecl/caching/memcache.git",,,"extension",
@@ -25,7 +25,7 @@
 "rar","https://pecl.php.net/get/rar-$version.tgz","https://github.com/cataphract/php-rar.git",,,"extension",
 "redis","https://pecl.php.net/get/redis-$version.tgz","https://github.com/phpredis/phpredis.git",,,"extension",
 "ssh2","https://pecl.php.net/get/ssh2-$version.tgz","https://github.com/php/pecl-networking-ssh2.git",,,"extension",
-"openswoole","https://pecl.php.net/get/openswoole-$version.tgz","https://github.com/openswoole/ext-openswoole.git",,,"extension",
+"openswoole","https://pecl.php.net/get/openswoole-$version.tgz","https://github.com/openswoole/ext-openswoole.git",,"--with-swoole","extension",
 "scrypt","https://pecl.php.net/get/scrypt-$version.tgz","https://github.com/DomBlack/php-scrypt.git",,,"extension",
 "swoole","https://pecl.php.net/get/swoole-$version.tgz","https://github.com/swoole/swoole-src.git",,,"extension",
 "uprofiler",,"https://github.com/FriendsOfPHP/uprofiler.git","extension",,"extension","uprofiler_after_install"
