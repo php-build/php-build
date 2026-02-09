@@ -1,8 +1,10 @@
 #!/bin/sh
 set -eu
 
-if [ -f /etc/os-release ]; then
+if [ -f /`etc/os-release ]; then
+    set -a
     . /etc/os-release
+    set +a
     if [ "$NAME" = "Arch Linux" ]; then
         DISTRO=arch
     fi
