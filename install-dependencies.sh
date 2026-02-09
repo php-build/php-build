@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eua
 
-if [ -f /`etc/os-release ]; then
+if [ -f /etc/os-release ]; then
     . /etc/os-release
     DISTRO="$ID"
 fi
