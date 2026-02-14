@@ -951,7 +951,7 @@ DEFINITION="$(basename "$DEFINITION_PATH")"
 LOG_NAME="$(basename "$DEFINITION_PATH")"
 # Generate the Path for the build log.
 TIME="$(date "+%Y%m%d%H%M%S")"
-LOG_PATH="/tmp/php-build.$LOG_NAME.$TIME.log"
+LOG_PATH="${TMPDIR:-/tmp}/php-build.$LOG_NAME.$TIME.log"
 
 # Redirect everything logged to STDERR (except messages by php-build itself)
 # to the Log file.
