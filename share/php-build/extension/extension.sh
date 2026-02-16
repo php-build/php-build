@@ -125,9 +125,8 @@ function _checkout_extension {
     fi
 
     if [ ! -n "$revision" ]; then
-        revision="origin/master"
+        revision=$((git remote show origin | grep 'HEAD branch' | awk '{print $NF}'))
     fi
-
     if [ -n "$revision" ]; then
         log "$name" "Checkout specified revision: $revision"
         cd "$source_dir"
