@@ -116,10 +116,11 @@ function _checkout_extension {
         git clean -fdx
         git reset --hard HEAD
         git fetch origin > /dev/null
+        git submodule update --init --recursive
         cd "$cwd"
     else
         log "$name" "Fetching from $url_source"
-        git clone "$url_source" "$source_dir" 2>&4
+        git clone --recursive "$url_source" "$source_dir" 2>&4
         log "$name" "commit $(cd ${source_dir} && git rev-parse HEAD)"
     fi
 
@@ -130,6 +131,7 @@ function _checkout_extension {
     if [ -n "$revision" ]; then
         log "$name" "Checkout specified revision: $revision"
         cd "$source_dir"
+        git submodule update --init --recursive
         git checkout $revision
         git reset --hard $revision
         cd "$cwd"
