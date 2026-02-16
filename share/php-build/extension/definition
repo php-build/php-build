@@ -15,7 +15,6 @@
 "maxminddb","https://pecl.php.net/get/maxminddb-$version.tgz","https://github.com/maxmind/MaxMind-DB-Reader-php.git",,,"extension",
 "memcache","https://pecl.php.net/get/memcache-$version.tgz","git@git.php.net:/pecl/caching/memcache.git",,,"extension",
 "memcached","https://pecl.php.net/get/memcached-$version.tgz","https://github.com/php-memcached-dev/php-memcached.git",,"--disable-memcached-sasl","extension",
-"memcache","https://pecl.php.net/get/memcache-$version.tgz","git@git.php.net:/pecl/caching/memcache.git",,,"extension",
 "mongodb","https://pecl.php.net/get/mongodb-$version.tgz","http://github.com/mongodb/mongo-php-driver.git",,,"extension",
 "msgpack","https://pecl.php.net/get/msgpack-$version.tgz","https://github.com/msgpack/msgpack-php.git",,,"extension",
 "PAM","https://pecl.php.net/get/PAM-$version.tgz","https://github.com/amishmm/php-pam.git",,,"extension",
