@@ -6,7 +6,7 @@ install_pie() {
     local pie_path="$PREFIX/bin/pie"
 
     if [[ -z "$pie_url" ]]; then
-        pie_url="https://github.com/php/pie/release/latest/download/pie.phar"
+        pie_url="https://github.com/php/pie/releases/latest/download/pie.phar"
     fi
 
     log Pie "Downloading from $pie_url"
@@ -18,7 +18,7 @@ install_pie() {
         rm -f "$pie_path"
     fi
 
-    curl -sS "$pie_url" -o "$pie_path"
+    curl -sSL "$pie_url" -o "$pie_path"
     if [[ $? -ne 0 ]] ; then
       wget -q -O "$pie_path" "$pie_url"
       if [[ $? -ne 0 ]] ; then
