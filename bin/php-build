@@ -984,6 +984,9 @@ source "$DEFINITION_PATH"
 # Run executables placed in `share/php-build/after-install.d`
 trigger_after_install 2>&4
 
+# Installed plugins in php-build/plugin.d
+install_pie 2>&4
+
 # Installed extensions defined by environment variable
 install_extensions 2>&4
 
