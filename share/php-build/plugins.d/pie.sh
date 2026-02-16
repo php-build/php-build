@@ -6,7 +6,7 @@ install_pie() {
     local pie_path="$PREFIX/bin/pie"
 
     if [[ -z "$pie_url" ]]; then
-        pie_url="https://https://github.com/php/pie/release/latest/download/pie.phar"
+        pie_url="https://github.com/php/pie/release/latest/download/pie.phar"
     fi
 
     log Pie "Downloading from $pie_url"
