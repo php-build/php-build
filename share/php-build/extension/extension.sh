@@ -160,8 +160,7 @@ function _build_extension {
 
     {
         $PREFIX/bin/phpize
-        "$(pwd)/configure" --with-php-config=$PREFIX/bin/php-config \
-            $configure_args
+        "$(pwd)/configure" --with-php-config=$PREFIX/bin/php-config $configure_args
 
         make
         make install
