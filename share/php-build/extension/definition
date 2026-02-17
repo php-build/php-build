@@ -10,7 +10,7 @@
 "igbinary","https://pecl.php.net/get/igbinary-$version.tgz","https://github.com/igbinary/igbinary.git",,,"extension",
 "imagick","https://pecl.php.net/get/imagick-$version.tgz","https://github.com/mkoppanen/imagick.git",,,"extension",
 "imap","https://pecl.php.net/get/imap-$version.tgz","https://github.com/php/pecl-mail-imap.git",,"--with-imap-ssl","extension",
-"libsodium","https://pecl.php.net/get/libsodium-$version.tgz","https://github.com/jedisct1/libsodium-php.git","--with-sodium",,"extension",
+"libsodium","https://pecl.php.net/get/libsodium-$version.tgz","https://github.com/jedisct1/libsodium-php.git",,,"extension",
 "mailparse","https://pecl.php.net/get/mailparse-$version.tgz","https://github.com/php/pecl-mail-mailparse.git",,,"extension",
 "maxminddb","https://pecl.php.net/get/maxminddb-$version.tgz","https://github.com/maxmind/MaxMind-DB-Reader-php.git",,,"extension",
 "memcache","https://pecl.php.net/get/memcache-$version.tgz","git@git.php.net:/pecl/caching/memcache.git",,,"extension",
