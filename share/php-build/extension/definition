@@ -6,7 +6,7 @@
 "eio","https://pecl.php.net/get/eio-$version.tgz","https://github.com/rosmanov/pecl-eio.git",,,"extension",
 "ev","https://pecl.php.net/get/ev-$version.tgz","https://bitbucket.org/osmanov/pecl-ev/src/master/",,,"extension",
 "gmagick","https://pecl.php.net/get/gmagick-$version.tgz","https://github.com/vitoc/gmagick.git",,,"extension",
-"gnupg","https://pecl.php.net/get/gnupg-$version.tgz","https://github.com/rosmanov/pecl-eio.git",,,"extension",
+"gnupg","https://pecl.php.net/get/gnupg-$version.tgz","https://github.com/php-gnupg/php-gnupg.git",,,"extension",
 "igbinary","https://pecl.php.net/get/igbinary-$version.tgz","https://github.com/igbinary/igbinary.git",,,"extension",
 "imagick","https://pecl.php.net/get/imagick-$version.tgz","https://github.com/mkoppanen/imagick.git",,,"extension",
 "imap","https://pecl.php.net/get/imap-$version.tgz","https://github.com/php/pecl-mail-imap.git",,,"extension",
