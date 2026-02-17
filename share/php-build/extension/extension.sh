@@ -124,12 +124,12 @@ function _checkout_extension {
         log "$name" "commit $(cd ${source_dir} && git rev-parse HEAD)"
     fi
 
+    cd "$source_dir"
     if [ ! -n "$revision" ]; then
         revision=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
     fi
     if [ -n "$revision" ]; then
         log "$name" "Checkout specified revision: $revision"
-        cd "$source_dir"
         git submodule update --init --recursive
         git checkout $revision
         git reset --hard $revision
