@@ -18,7 +18,7 @@ install_composer() {
         rm -f "$composer_path"
     fi
 
-    curl -sS "$composer_url" -o "$composer_path"
+    curl -sSL "$composer_url" -o "$composer_path"
     if [[ $? -ne 0 ]] ; then
       wget -q -O "$composer_path" "$composer_url"
       if [[ $? -ne 0 ]] ; then
