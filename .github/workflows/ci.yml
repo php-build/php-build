@@ -98,9 +98,9 @@ jobs:
           - { distro: 'rockylinux:8',  php: '8.3.30'}
           - { distro: 'rockylinux:9',  php: '8.3.30'}
           # PHP 8.4
-          - { distro: 'rockylinux:8',  php: '8.4.19'}
+          - { distro: 'rockylinux:8',  php: '8.4.20'}
           # PHP 8.5
-          - { distro: 'rockylinux:8',  php: '8.5.4'}
+          - { distro: 'rockylinux:8',  php: '8.5.5'}
 
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"
