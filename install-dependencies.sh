@@ -34,8 +34,7 @@ debian|ubuntu)
     export DEBIAN_FRONTEND=nointeractive
     $SUDO apt-get update -q
     $SUDO apt-get install -q -y --no-install-recommends \
-        autoconf2.13 \
-        autoconf2.64 \
+        autoconf \
         autoconf \
         bash \
         bison \
