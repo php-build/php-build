@@ -35,7 +35,6 @@ debian|ubuntu)
     $SUDO apt-get update -q
     $SUDO apt-get install -q -y --no-install-recommends \
         autoconf \
-        autoconf \
         bash \
         bison \
         build-essential \
