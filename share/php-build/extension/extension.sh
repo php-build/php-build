@@ -109,6 +109,7 @@ function _checkout_extension {
     local extension_type="$6"
     local after_install="$7"
     local source_dir="$PHP_BUILD_TMPDIR/source/$name-master"
+    local cwd="$(pwd)"
 
     if [ -d "$source_dir" ] && [ -d "$source_dir/.git" ]; then
         log "$name" "Updating $name from Git Master"
