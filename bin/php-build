@@ -475,8 +475,21 @@ function install_extensions() {
 
         # If no version is provided, get latest version from the pecl website
         if [ "x${version}" = "x" ]; then
-               latest_package=$(curl -sI "https://pecl.php.net/get/${extension}" | grep -i 'content-disposition' | sed 's/^.*=//')
-               IFS='-' read -r extension version <<< "${latest_package%.*}"
+            local pecl_url="https://pecl.php.net/get/${extension}"
+            local pecl_headers
+
+            if ! pecl_headers=$(curl -sIf "$pecl_url"); then
+                log Error "Pecl package not found: $extension ($pecl_url)"
+                exit 1
+            fi
+
+            local latest_package=$(echo "$pecl_headers" | grep -i 'content-disposition' | sed 's/^.*=//')
+            if [ "x${latest_package}" = "x" ]; then
+                log Error "Could not determine latest version for pecl package: $extension ($pecl_url)"
+                exit 1
+            fi
+
+            IFS='-' read -r extension version <<< "${latest_package%.*}"
         fi
 
         local first_char=$(echo $version | cut -c1 )
