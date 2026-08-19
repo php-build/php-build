@@ -479,14 +479,14 @@ function install_extensions() {
             local pecl_headers
 
             if ! pecl_headers=$(curl -sIf "$pecl_url"); then
-                log Error "Pecl package not found: $extension ($pecl_url)"
-                exit 1
+                log Error "Pecl package not found, skipping: $extension ($pecl_url)"
+                continue
             fi
 
             local latest_package=$(echo "$pecl_headers" | grep -i 'content-disposition' | sed 's/^.*=//')
             if [ "x${latest_package}" = "x" ]; then
-                log Error "Could not determine latest version for pecl package: $extension ($pecl_url)"
-                exit 1
+                log Error "Could not determine latest version, skipping: $extension ($pecl_url)"
+                continue
             fi
 
             IFS='-' read -r extension version <<< "${latest_package%.*}"
