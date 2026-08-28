@@ -2,6 +2,12 @@
 
 php-build is a utility for building versions of PHP to use them side by side with each other. The overall structure is loosly borrowed from Sam Stephenson's [ruby-build].
 
+**Usage:**
+
+`PHP_BUILD_CONFIGURE_OPTS="--with-gmp" PHP_BUILD_INSTALL_EXTENSION="raphf igbinary pecl_http redis ssh2 xdebug" phpenv install -v -k 8.5.2`
+
+The example adds `gmp` support and installs the latest pecl extensions `raphf, igbinary, pecl_http, redis, ssh2, xdebug` with verbosity enabled (-v) and it doesn't run `make clean` (-k) after installing PHP version 8.5.2.
+
 ## Overview
 
 * [Installation](#installation)

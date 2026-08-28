@@ -470,8 +470,28 @@ function install_extensions() {
     # handle extensions that should be installed by defined environment variable
     # variable must be in the format: extension_name=version extension_name=version
     for extension_def in $PHP_BUILD_INSTALL_EXTENSION; do
-        local extension=$(echo $extension_def | cut -d"=" -f1)
-        local version=$(echo $extension_def | cut -d"=" -f2)
+        # Set the Internal Field Separator to '='
+        IFS='=' read -r extension version <<< "$extension_def"
+
+        # If no version is provided, get latest version from the pecl website
+        if [ "x${version}" = "x" ]; then
+            local pecl_url="https://pecl.php.net/get/${extension}"
+            local pecl_headers
+
+            if ! pecl_headers=$(curl -sIf "$pecl_url"); then
+                log Error "Pecl package not found, skipping: $extension ($pecl_url)"
+                continue
+            fi
+
+            local latest_package=$(echo "$pecl_headers" | grep -i 'content-disposition' | sed 's/^.*=//')
+            if [ "x${latest_package}" = "x" ]; then
+                log Error "Could not determine latest version, skipping: $extension ($pecl_url)"
+                continue
+            fi
+
+            IFS='-' read -r extension version <<< "${latest_package%.*}"
+        fi
+
         local first_char=$(echo $version | cut -c1 )
 
         # if first character of version is an "@" it's meant to be a revision
