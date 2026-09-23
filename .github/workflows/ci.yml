@@ -32,6 +32,7 @@ jobs:
           - '8.3.33'
           - '8.4.25'
           - '8.5.10'
+          # - '8.6.0'
         exclude:
           # # PHP 5.2
           # - { distro: 'rockylinux:8',  php: '5.2.17'}
@@ -113,6 +114,8 @@ jobs:
           - { distro: 'rockylinux:8',  php: '8.4.25'}
           # PHP 8.5
           - { distro: 'rockylinux:8',  php: '8.5.10'}
+          # PHP 8.6
+          # - { distro: 'rockylinux:8',  php: '8.5.10'}
 
     name: "test (php-${{ matrix.php }}, ${{ matrix.distro }})"
     container: "${{ matrix.distro }}"

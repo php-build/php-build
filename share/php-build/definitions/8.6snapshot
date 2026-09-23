@@ -4,6 +4,6 @@ configure_option "--with-zip"
 
 configure_option -D "--with-xmlrpc"
 
-install_package_from_github PHP-8.2
+install_package_from_github PHP-8.6
 install_xdebug_master
 enable_builtin_opcache
